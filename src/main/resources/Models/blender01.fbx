@@ -11,10 +11,10 @@ FBXHeaderExtension:  {
 		Year: 2019
 		Month: 12
 		Day: 25
-		Hour: 13
-		Minute: 36
-		Second: 23
-		Millisecond: 512
+		Hour: 15
+		Minute: 12
+		Second: 22
+		Millisecond: 385
 	}
 	Creator: "FBX SDK/FBX Plugins version 2013.3"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -73,7 +73,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 75167360, "", "Scene" {
+	Document: 77330048, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Default Take"
@@ -314,7 +314,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	NodeAttribute: 75484080, "NodeAttribute::", "CameraSwitcher" {
+	NodeAttribute: 77646768, "NodeAttribute::", "CameraSwitcher" {
 		Properties70:  {
 			P: "Camera Index", "Integer", "", "A+",100
 		}
@@ -324,12 +324,12 @@ Objects:  {
 		CameraName: 100
 		CameraIndexName: 
 	}
-	Geometry: 75547056, "Geometry::", "Mesh" {
+	Geometry: 77710272, "Geometry::", "Mesh" {
 		Vertices: *24 {
 			a: 0.5,0.5,-0.5,0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,0.5,-0.5,0.5,0.499999,0.5,0.499999,-0.5,0.5,-0.5,-0.5,0.5,-0.5,0.5,0.5
 		} 
-		PolygonVertexIndex: *24 {
-			a: 0,1,2,-4,4,7,6,-6,0,4,5,-2,1,5,6,-3,2,6,7,-4,4,0,3,-8
+		PolygonVertexIndex: *36 {
+			a: 0,2,-4,7,5,-5,4,1,-1,5,2,-2,6,3,-3,0,7,-5,0,1,-3,7,6,-6,4,5,-2,5,6,-3,6,7,-4,0,3,-8
 		} 
 		GeometryVersion: 124
 		LayerElementNormal: 0 {
@@ -337,8 +337,8 @@ Objects:  {
 			Name: ""
 			MappingInformationType: "ByPolygonVertex"
 			ReferenceInformationType: "Direct"
-			Normals: *72 {
-				a: 0,0,-1,0,0,-1,0,0,-1,0,0,-1,0,0,1,0,0,1,0,0,1,0,0,1,1,-0,0,1,-0,0,1,-0,0,1,-0,0,-0,-1,-0,-0,-1,-0,-0,-1,-0,-0,-1,-0,-1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,1,0,0,1,0,0,1,0,0,1,0
+			Normals: *108 {
+				a: 0,0,-1,0,0,-1,0,0,-1,0,0,1,0,0,1,0,0,1,1,0,-0,1,0,-0,1,0,-0,-0,-1,-0,-0,-1,-0,-0,-1,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,1,0,0,1,0,0,1,0,-0,0,-1,-0,0,-1,-0,0,-1,0,0,1,0,0,1,0,0,1,1,-1e-006,0,1,-1e-006,0,1,-1e-006,0,-0,-1,0,-0,-1,0,-0,-1,0,-1,0,-0,-1,0,-0,-1,0,-0,0,1,0,0,1,0,0,1,0
 			} 
 		}
 		LayerElementUV: 0 {
@@ -347,10 +347,10 @@ Objects:  {
 			MappingInformationType: "ByPolygonVertex"
 			ReferenceInformationType: "IndexToDirect"
 			UV: *38 {
-				a: 0.5,1,0.498047,1,-0,1,0,0,0.5,0.498047,0,0.496094,0.498047,0,0.498047,0.496094,0.49707,0.499023,0.49707,0.999023,0,0.999023,0,0.499023,0.498047,0.5,0.49707,0.50293,-0.000977,0.999023,-0.000977,0.50293,1,0.498047,1,1,0,0.5
+				a: 0.5,1,0.498047,1,-0,1,0.498047,0.496094,0.5,0.498047,0,0,0,0.496094,0.49707,0.999023,0,0.499023,0.49707,0.499023,0,0.5,0.498047,0.5,-0.000977,0.50293,-0.000977,0.999023,0.498047,0,0,0.999023,1,0.498047,1,1,0.49707,0.50293
 			} 
-			UVIndex: *24 {
-				a: 4,16,17,0,5,3,6,7,8,9,10,11,12,1,2,18,13,9,14,15,14,15,13,9
+			UVIndex: *36 {
+				a: 4,17,0,5,3,6,7,8,9,1,10,11,7,12,18,12,7,13,4,16,17,5,14,3,7,15,8,1,2,10,7,13,12,12,18,7
 			} 
 		}
 		LayerElementMaterial: 0 {
@@ -378,7 +378,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 75481488, "Model::Camera Switcher", "CameraSwitcher" {
+	Model: 77644176, "Model::Camera Switcher", "CameraSwitcher" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMin", "Vector3D", "Vector", "",1,1,1
@@ -387,7 +387,7 @@ Objects:  {
 		Shading: W
 		Culling: "CullingOff"
 	}
-	Model: 75544800, "Model::Cube", "Mesh" {
+	Model: 77708016, "Model::Cube", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "ScalingMin", "Vector3D", "Vector", "",1,1,1
@@ -399,18 +399,18 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Pose: 75534864, "Pose::BIND_POSES", "BindPose" {
+	Pose: 77707488, "Pose::BIND_POSES", "BindPose" {
 		Type: "BindPose"
 		Version: 100
 		NbPoseNodes: 1
 		PoseNode:  {
-			Node: 75544800
+			Node: 77708016
 			Matrix: *16 {
 				a: -7.5497901e-008,0,1,0,1,0,7.5497901e-008,0,0,1,0,0,0,0,0,1
 			} 
 		}
 	}
-	Material: 75852960, "Material::Material__grassblock_png", "" {
+	Material: 78089792, "Material::Material__grassblock_png", "" {
 		Version: 102
 		ShadingModel: "lambert"
 		MultiLayer: 0
@@ -434,7 +434,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 75623584, "Video::grassblock_png", "Clip" {
+	Video: 77698304, "Video::grassblock_png", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "C:\Development\Java\iland\src\main\resources\Textures\grassblock.png"
@@ -444,7 +444,7 @@ Objects:  {
 		Filename: "C:\Development\Java\iland\src\main\resources\Textures\grassblock.png"
 		RelativeFilename: "..\Textures\grassblock.png"
 	}
-	Texture: 75548144, "Texture::grassblock_png", "" {
+	Texture: 77697552, "Texture::grassblock_png", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::grassblock_png"
@@ -461,36 +461,36 @@ Objects:  {
 		Texture_Alpha_Source: "None"
 		Cropping: 0,0,0,0
 	}
-	AnimationStack: 75535264, "AnimStack::Default Take", "" {
+	AnimationStack: 77712624, "AnimStack::Default Take", "" {
 		Properties70:  {
 			P: "LocalStop", "KTime", "Time", "",479181389250
 			P: "ReferenceStop", "KTime", "Time", "",479181389250
 		}
 	}
-	AnimationLayer: 75535648, "AnimLayer::Layer0", "" {
+	AnimationLayer: 77757632, "AnimLayer::Layer0", "" {
 	}
-	AnimationCurveNode: 75591184, "AnimCurveNode::T", "" {
+	AnimationCurveNode: 77758736, "AnimCurveNode::T", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",0
 			P: "d|Z", "Number", "", "A",0
 		}
 	}
-	AnimationCurveNode: 75591552, "AnimCurveNode::R", "" {
+	AnimationCurveNode: 78109056, "AnimCurveNode::R", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",90
 			P: "d|Y", "Number", "", "A",-0
 			P: "d|Z", "Number", "", "A",180
 		}
 	}
-	AnimationCurveNode: 75693312, "AnimCurveNode::S", "" {
+	AnimationCurveNode: 78088464, "AnimCurveNode::S", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",1
 			P: "d|Y", "Number", "", "A",1
 			P: "d|Z", "Number", "", "A",1
 		}
 	}
-	AnimationCurve: 75712944, "AnimCurve::", "" {
+	AnimationCurve: 78118144, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -511,7 +511,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75713264, "AnimCurve::", "" {
+	AnimationCurve: 78118464, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -532,7 +532,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75713584, "AnimCurve::", "" {
+	AnimationCurve: 78118784, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -553,7 +553,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75692352, "AnimCurve::", "" {
+	AnimationCurve: 78109776, "AnimCurve::", "" {
 		Default: 90
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -574,7 +574,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75692672, "AnimCurve::", "" {
+	AnimationCurve: 78110096, "AnimCurve::", "" {
 		Default: -0
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -595,7 +595,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75692992, "AnimCurve::", "" {
+	AnimationCurve: 78110416, "AnimCurve::", "" {
 		Default: 180
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -616,7 +616,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75693680, "AnimCurve::", "" {
+	AnimationCurve: 78088832, "AnimCurve::", "" {
 		Default: 1
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -637,7 +637,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75852320, "AnimCurve::", "" {
+	AnimationCurve: 78089152, "AnimCurve::", "" {
 		Default: 1
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -658,7 +658,7 @@ Objects:  {
 			a: 1
 		} 
 	}
-	AnimationCurve: 75852640, "AnimCurve::", "" {
+	AnimationCurve: 78089472, "AnimCurve::", "" {
 		Default: 1
 		KeyVer: 4008
 		KeyTime: *1 {
@@ -687,70 +687,70 @@ Objects:  {
 Connections:  {
 	
 	;Model::Cube, Model::RootNode
-	C: "OO",75544800,0
+	C: "OO",77708016,0
 	
 	;NodeAttribute::, Model::Camera Switcher
-	C: "OO",75484080,75481488
+	C: "OO",77646768,77644176
 	
 	;Geometry::, Model::Cube
-	C: "OO",75547056,75544800
+	C: "OO",77710272,77708016
 	
 	;Material::Material__grassblock_png, Model::Cube
-	C: "OO",75852960,75544800
+	C: "OO",78089792,77708016
 	
 	;AnimCurveNode::T, Model::Cube
-	C: "OP",75591184,75544800, "Lcl Translation"
+	C: "OP",77758736,77708016, "Lcl Translation"
 	
 	;AnimCurveNode::R, Model::Cube
-	C: "OP",75591552,75544800, "Lcl Rotation"
+	C: "OP",78109056,77708016, "Lcl Rotation"
 	
 	;AnimCurveNode::S, Model::Cube
-	C: "OP",75693312,75544800, "Lcl Scaling"
+	C: "OP",78088464,77708016, "Lcl Scaling"
 	
 	;Video::grassblock_png, Texture::grassblock_png
-	C: "OO",75623584,75548144
+	C: "OO",77698304,77697552
 	
 	;AnimLayer::Layer0, AnimStack::Default Take
-	C: "OO",75535648,75535264
+	C: "OO",77757632,77712624
 	
 	;AnimCurveNode::T, AnimLayer::Layer0
-	C: "OO",75591184,75535648
+	C: "OO",77758736,77757632
 	
 	;AnimCurveNode::R, AnimLayer::Layer0
-	C: "OO",75591552,75535648
+	C: "OO",78109056,77757632
 	
 	;AnimCurveNode::S, AnimLayer::Layer0
-	C: "OO",75693312,75535648
+	C: "OO",78088464,77757632
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",75712944,75591184, "d|X"
+	C: "OP",78118144,77758736, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",75713264,75591184, "d|Y"
+	C: "OP",78118464,77758736, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",75713584,75591184, "d|Z"
+	C: "OP",78118784,77758736, "d|Z"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",75692352,75591552, "d|X"
+	C: "OP",78109776,78109056, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",75692672,75591552, "d|Y"
+	C: "OP",78110096,78109056, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",75692992,75591552, "d|Z"
+	C: "OP",78110416,78109056, "d|Z"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",75693680,75693312, "d|X"
+	C: "OP",78088832,78088464, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",75852320,75693312, "d|Y"
+	C: "OP",78089152,78088464, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",75852640,75693312, "d|Z"
+	C: "OP",78089472,78088464, "d|Z"
 	
 	;Texture::grassblock_png, Material::Material__grassblock_png
-	C: "OP",75548144,75852960, "DiffuseColor"
+	C: "OP",77697552,78089792, "DiffuseColor"
 }
 ;Takes section
 ;----------------------------------------------------

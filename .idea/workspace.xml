@@ -42,7 +42,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -112,26 +112,30 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="276" y="384" width="408" height="288" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.1040@0.0.1920.1040" timestamp="1576812196419" />
-    <state x="260" y="266" key="FileChooserDialogImpl" timestamp="1577291062000">
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1577304629907">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577291062000" />
-    <state width="1877" height="266" key="GridCell.Tab.0.bottom" timestamp="1577302999036">
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577304629907" />
+    <state x="260" y="266" key="FileChooserDialogImpl" timestamp="1577303567765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577302999036" />
-    <state width="1877" height="266" key="GridCell.Tab.0.center" timestamp="1577302999036">
+    <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577303567765" />
+    <state width="907" height="266" key="GridCell.Tab.0.bottom" timestamp="1577311745850">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="266" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577302999036" />
-    <state width="1877" height="266" key="GridCell.Tab.0.left" timestamp="1577302999036">
+    <state width="907" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577311745850" />
+    <state width="907" height="266" key="GridCell.Tab.0.center" timestamp="1577311745849">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="266" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577302999036" />
-    <state width="1877" height="266" key="GridCell.Tab.0.right" timestamp="1577302999036">
+    <state width="907" height="266" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577311745849" />
+    <state width="907" height="266" key="GridCell.Tab.0.left" timestamp="1577311745849">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="266" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577302999036" />
+    <state width="907" height="266" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577311745849" />
+    <state width="907" height="266" key="GridCell.Tab.0.right" timestamp="1577311745850">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="907" height="266" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577311745850" />
     <state width="1877" height="346" key="GridCell.Tab.1.bottom" timestamp="1577298898364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -148,10 +152,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="346" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577298898364" />
-    <state x="63" y="131" key="SettingsEditor" timestamp="1576820055804">
+    <state x="63" y="131" key="SettingsEditor" timestamp="1577303568432">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="63" y="131" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1576820055804" />
+    <state x="63" y="131" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1577303568432" />
     <state x="661" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1577293462517">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -160,23 +164,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="615" y="180" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1576780242309" />
-    <state x="176" y="121" width="607" height="804" key="find.popup" timestamp="1577299030659">
+    <state x="176" y="121" width="607" height="804" key="find.popup" timestamp="1577308067999">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="176" y="121" width="607" height="804" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577299030659" />
-    <state x="143" y="230" width="672" height="678" key="search.everywhere.popup" timestamp="1576818813707">
+    <state x="176" y="121" width="607" height="804" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577308067999" />
+    <state x="143" y="230" width="672" height="678" key="search.everywhere.popup" timestamp="1577308070345">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="143" y="230" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1576818813707" />
+    <state x="143" y="230" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577308070345" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Game.java</url>
-          <line>40</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/engine/input/Mouse.java</url>
           <line>40</line>
@@ -191,6 +190,11 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/engine/renderer/Texture.java</url>
           <line>31</line>
           <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Renderer.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

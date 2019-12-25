@@ -13,10 +13,12 @@ public class Game implements IGame {
     private Vector3f cameraMoveDir;
 
     private final Renderer renderer;
-
     private final Camera camera;
 
     private Entity[] entities;
+
+    private Vector3f ambientLight;
+    private PointLight pointLight;
 
     private static final float MOUSE_SENSITIVITY = 8.4f;
     private static final float CAMERA_POS_STEP = 1.84f;
@@ -32,20 +34,27 @@ public class Game implements IGame {
     public void initialize(Window window) throws Exception {
         renderer.initialize(window);
 
-//        Mesh mesh = OBJ.loadMesh("/models/blender01.obj");
+        Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
 
-  //      Texture texture = new Texture("src/main/resources/Textures/grassblock.png");
+        Texture texture = mesh[0].getMaterial().getTexture();
 
-    //    mesh.setTexture(texture);
+        Material material = new Material(texture, 1.0f);
 
-        //Mesh[] houseMesh = StaticMeshLoader.load("src/main/resources/models/house/house.obj", "src/main/resources/models/house");
+        mesh[0].setMaterial(material);
 
-        Mesh[] houseMesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
-
-        Entity entity = new Entity(houseMesh);
+        Entity entity = new Entity(mesh);
         entity.setScale(0.5f);
         entity.setPosition(0, 0, -2);
         entities = new Entity[] { entity };
+
+        ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+        Vector3f lightColor = new Vector3f(1, 1, 1);
+        Vector3f lightPosition = new Vector3f(0, 0, 1);
+        float lightIntesnity = 1.0f;
+
+        pointLight = new PointLight(lightColor, lightPosition, lightIntesnity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
     }
 
     @Override
@@ -81,6 +90,13 @@ public class Game implements IGame {
         if (cameraMoveDir.length() > 0.0f) {
             cameraMoveDir.normalize();
         }
+
+        float lightPos = pointLight.getPosition().z;
+        if (window.isKeyPressed(GLFW_KEY_N)) {
+            this.pointLight.getPosition().z = lightPos + 0.1f;
+        } else if (window.isKeyPressed(GLFW_KEY_M)) {
+            this.pointLight.getPosition().z = lightPos - 0.1f;
+        }
     }
 
     @Override
@@ -95,6 +111,6 @@ public class Game implements IGame {
     @Override
     public void render(Window window) {
 
-        renderer.render(window, camera, entities);
+        renderer.render(window, camera, entities, ambientLight, pointLight);
     }
 }

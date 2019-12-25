@@ -19,11 +19,15 @@ public class Renderer {
 
     private Shader shader;
 
+    private float specularPower;
+
     public Renderer() {
         transform = new Transform();
+        specularPower = 10.0f;
     }
 
     public void initialize(Window window) throws Exception {
+
         shader = new Shader();
 
         String vsName = Resource.load("/Shaders/vertex.vs");
@@ -41,8 +45,11 @@ public class Renderer {
         shader.createUniform("modelViewMatrix");
         shader.createUniform("texture_sampler");
 
-        shader.createUniform("color");
-        shader.createUniform("useColor");
+        shader.createMaterialUniform("material");
+
+        shader.createUniform("specularPower");
+        shader.createUniform("ambientLight");
+        shader.createPointLightUniform("pointLight");
     }
 
     public void shutdown() {
@@ -55,7 +62,7 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, Camera camera, Entity[] entities) {
+    public void render(Window window, Camera camera, Entity[] entities, Vector3f ambientLight, PointLight pointLight) {
         clear();
 
         if (window.isResized()) {
@@ -72,6 +79,20 @@ public class Renderer {
         // Update the view matrix.
         Matrix4f viewMatrix = transform.getViewMatrix(camera);
 
+        // Update lights
+        shader.setUniform("ambientLight", ambientLight);
+        shader.setUniform("specularPower", specularPower);
+
+        PointLight curPointLight = new PointLight(pointLight);
+        Vector3f lightPos = curPointLight.getPosition();
+
+        Vector4f aux = new Vector4f(lightPos, 1);
+        aux.mul(viewMatrix);
+        lightPos.x = aux.x;
+        lightPos.y = aux.y;
+        lightPos.z = aux.z;
+        shader.setUniform("pointLight", curPointLight);
+
         shader.setUniform("texture_sampler", 0);
 
         for (Entity entity : entities) {
@@ -81,12 +102,7 @@ public class Renderer {
             Matrix4f modelViewMatrix = transform.getModelViewMatrix(entity, viewMatrix);
 
             shader.setUniform("modelViewMatrix", modelViewMatrix);
-
-            Vector4f ambientColor = mesh.getMaterial().getAmbientColour();
-            Vector3f color = new Vector3f(ambientColor.x, ambientColor.y, ambientColor.z);
-
-            shader.setUniform("color", color);
-            shader.setUniform("useColor", mesh.getMaterial().isTextured() ? 0 : 1);
+            shader.setUniform("material", mesh.getMaterial());
 
             mesh.render();
         }
