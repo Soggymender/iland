@@ -39,9 +39,9 @@ Blender 2.79b (or newer compatible)
 
 Save .blend files to subfolders of src/main/assets.
 Export FBX to subfolders of src/main/assets next to sibling .blend files.
-  export as text, not binary
+  export as text 6.1, not binary
   selected only
-  Z up, Y forward
+  Z up, Y forward (orientation doesn't seem to make a difference)
 
 Download autodesk FBX converter:
 http://images.autodesk.com/adsk/files/fbx20133_converter_win_x64.exe
@@ -50,6 +50,11 @@ Convert Blender's FBX 6.1 Text to FBX 2013 Text.
 Conversion destination should be subfolders of src/main/resources.
 
 This conversion is necessary because Blender only supports 6.1, while the engine uses ASSIMP which only supports 2013. Eventually a custom FBX importer will be written, but for now the conversion time is less than the coding time. Also, the official FBX SDK only natively supports Python and C++. Haven't found a reasonable Java binding.
+
+
+
+EXPORT TROUBLESHOOTING
+- If FBX Converter bakes in its own (incorrect) relative path to textures, it is because the textures referenced in Blender are no longer in the specified location. Reassign the textures or restore them, then re-export. This happened once after relocating the project files.
 
 
 
