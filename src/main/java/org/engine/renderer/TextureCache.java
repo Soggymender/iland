@@ -24,6 +24,7 @@ public class TextureCache {
         Texture texture = texturesMap.get(path);
         if ( texture == null ) {
             texture = new Texture(path);
+
             texturesMap.put(path, texture);
         }
         return texture;

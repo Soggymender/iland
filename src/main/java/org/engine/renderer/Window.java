@@ -92,7 +92,7 @@ public class Window {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
     }
 
