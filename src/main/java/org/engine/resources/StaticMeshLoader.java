@@ -128,8 +128,8 @@ public class StaticMeshLoader {
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
             vertices.add(aiVertex.x());
-            vertices.add(aiVertex.y());
             vertices.add(aiVertex.z());
+            vertices.add(-aiVertex.y());
         }
     }
 
@@ -138,8 +138,8 @@ public class StaticMeshLoader {
         while (aiNormals != null && aiNormals.remaining() > 0) {
             AIVector3D aiNormal = aiNormals.get();
             normals.add(aiNormal.x());
-            normals.add(aiNormal.y());
             normals.add(aiNormal.z());
+            normals.add(-aiNormal.y());
         }
     }
 
