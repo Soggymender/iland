@@ -1,9 +1,8 @@
+import org.engine.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 
-import org.engine.IGame;
-import org.engine.core.*;
 import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.resources.*;
@@ -12,28 +11,19 @@ public class Game implements IGame {
 
     private Vector3f cameraMoveDir;
 
-    private final Renderer renderer;
+    private final SceneRenderer sceneRenderer;
     private final Camera camera;
 
-    private Entity[] entities;
-
-    private Vector3f ambientLight;
-    private PointLight[] pointLightList;
-    private SpotLight[] spotLightList;
-
-    private DirectionalLight directionalLight;
+    private Scene scene;
 
     private float lightAngle;
-
-    private float spotAngle = 0;
-    private float spotInc = 1;
 
     private static final float MOUSE_SENSITIVITY = 8.4f;
     private static final float CAMERA_POS_STEP = 1.84f;
 
     public Game()
     {
-        renderer = new Renderer();
+        sceneRenderer = new SceneRenderer();
         camera = new Camera();
         cameraMoveDir = new Vector3f(0, 0, 0);
 
@@ -42,49 +32,80 @@ public class Game implements IGame {
 
     @Override
     public void initialize(Window window) throws Exception {
-        renderer.initialize(window);
+        sceneRenderer.initialize(window);
+
+        scene = new Scene();
+
+        float reflectance = 1.0f;
 
         Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
-
         Texture texture = mesh[0].getMaterial().getTexture();
-
         Material material = new Material(texture, 1.0f);
-
         mesh[0].setMaterial(material);
 
-        Entity entity = new Entity(mesh);
-        entity.setScale(0.5f);
-        entity.setPosition(0, 0, -2);
-        entities = new Entity[] { entity };
+        float blockScale = 0.5f;
+        float skyboxScale = 15.0f;
+        float extension = 2.0f;
 
-        ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
+        float startx = extension * (-skyboxScale + blockScale);
+        float startz = extension * (skyboxScale - blockScale);
+        float starty = -1.0f;
+        float inc = blockScale * 2;
 
-        // Point Light
-        Vector3f lightPosition = new Vector3f(0, 0, 1);
+        float posx = startx;
+        float posz = startz;
+        float incy = 0.0f;
+        int NUM_ROWS = (int)(extension * skyboxScale * 2 / inc);
+        int NUM_COLS = (int)(extension * skyboxScale * 2/ inc);
+        Entity[] entities  = new Entity[NUM_ROWS * NUM_COLS];
+        for(int i=0; i<NUM_ROWS; i++) {
+            for(int j=0; j<NUM_COLS; j++) {
+                Entity entity = new Entity(mesh);
+                entity.setScale(blockScale);
+                incy = Math.random() > 0.9f ? blockScale * 2 : 0f;
+                entity.setPosition(posx, starty + incy, posz);
+                entities[i*NUM_COLS + j] = entity;
+
+                posx += inc;
+            }
+            posx = startx;
+            posz -= inc;
+        }
+        scene.setEntities(entities);
+
+
+        // Setup  SkyBox
+
+        Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
+        skybox.setScale(skyboxScale);
+        scene.setSkybox(skybox);
+
+
+        // Setup Lights
+        setupLights();
+
+        camera.getPosition().x = 0.65f;
+        camera.getPosition().y = 1.15f;
+        camera.getPosition().y = 4.34f;
+    }
+
+    private void setupLights() {
+        SceneLighting sceneLighting = new SceneLighting();
+        scene.setSceneLighting(sceneLighting);
+
+        // Ambient Light
+        sceneLighting.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
+
+        // Directional Light
         float lightIntensity = 1.0f;
-        PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-        pointLight.setAttenuation(att);
-        pointLightList = new PointLight[]{pointLight};
-
-        // Spot Light
-        lightPosition = new Vector3f(0, 0.0f, 10f);
-        pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
-        att = new PointLight.Attenuation(0.0f, 0.0f, 0.02f);
-        pointLight.setAttenuation(att);
-        Vector3f coneDir = new Vector3f(0, 0, -1);
-        float cutoff = (float) Math.cos(Math.toRadians(140));
-        SpotLight spotLight = new SpotLight(pointLight, coneDir, cutoff);
-        spotLightList = new SpotLight[]{spotLight, new SpotLight(spotLight)};
-
-        lightPosition = new Vector3f(-1, 0, 0);
-        directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        Vector3f lightPosition = new Vector3f(-1, 0, 0);
+        sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
     }
 
     @Override
     public void shutdown() {
-        renderer.shutdown();
-
+        sceneRenderer.shutdown();
+        Entity[] entities = scene.getEntities();
         for (Entity entity : entities) {
             entity.getMesh().shutdown();
         }
@@ -114,13 +135,6 @@ public class Game implements IGame {
         if (cameraMoveDir.length() > 0.0f) {
             cameraMoveDir.normalize();
         }
-
-        float lightPos = spotLightList[0].getPointLight().getPosition().z;
-        if (window.isKeyPressed(GLFW_KEY_N)) {
-            this.spotLightList[0].getPointLight().getPosition().z = lightPos + 0.1f;
-        } else if (window.isKeyPressed(GLFW_KEY_M)) {
-            this.spotLightList[0].getPointLight().getPosition().z = lightPos - 0.1f;
-        }
     }
 
     @Override
@@ -128,19 +142,11 @@ public class Game implements IGame {
 
         camera.movePosition(cameraMoveDir.x * CAMERA_POS_STEP * interval, cameraMoveDir.y * CAMERA_POS_STEP * interval, cameraMoveDir.z * CAMERA_POS_STEP * interval);
 
-         Vector2f rotVec = mouse.getDisplayVec();
-         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY * interval, rotVec.y * MOUSE_SENSITIVITY * interval, 0);
+        Vector2f rotVec = mouse.getDisplayVec();
+        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY * interval, rotVec.y * MOUSE_SENSITIVITY * interval, 0);
 
-        // Update spot light direction
-        spotAngle += spotInc * 0.05f;
-        if (spotAngle > 2) {
-            spotInc = -1;
-        } else if (spotAngle < -2) {
-            spotInc = 1;
-        }
-        double spotAngleRad = Math.toRadians(spotAngle);
-        Vector3f coneDir = spotLightList[0].getConeDirection();
-        coneDir.y = (float) Math.sin(spotAngleRad);
+        SceneLighting sceneLighting = scene.getSceneLighting();
+        DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
 
         // Update directional light direction, intensity and colour
         lightAngle += 1.1f;
@@ -168,6 +174,6 @@ public class Game implements IGame {
     @Override
     public void render(Window window) {
 
-        renderer.render(window, camera, entities, ambientLight, pointLightList, spotLightList, directionalLight);
+        sceneRenderer.render(window, camera, scene);
     }
 }

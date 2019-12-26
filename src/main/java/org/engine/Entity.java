@@ -1,4 +1,4 @@
-package org.engine.core;
+package org.engine;
 
 import org.joml.Vector3f;
 import org.engine.renderer.Mesh;
