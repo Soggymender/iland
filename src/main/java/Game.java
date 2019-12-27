@@ -48,13 +48,22 @@ public class Game implements IGame {
 
         float reflectance = 1.0f;
 
-        Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
-        Texture texture = mesh[0].getMaterial().getTexture();
+        // Avatar placeholder.
+        Mesh[] avatarMesh = StaticMeshLoader.load("src/main/resources/models/human01.fbx", "src/main/resources/models/");
+        Texture texture = avatarMesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
+        avatarMesh[0].setMaterial(material);
+
+        Entity avatarEntity = new Entity(avatarMesh);
+        scene.addEntities(avatarEntity);
+
+        Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
+        texture = mesh[0].getMaterial().getTexture();
+        material = new Material(texture, 1.0f);
         mesh[0].setMaterial(material);
 
-        float blockScale = 0.5f;
-        float skyboxScale = 15.0f;
+        float blockScale = 1.0f;
+        float skyboxScale = 100.0f;
         float extension = 2.0f;
 
         float startx = extension * (-skyboxScale + blockScale);
@@ -81,8 +90,10 @@ public class Game implements IGame {
             posx = startx;
             posz -= inc;
         }
-        scene.setEntities(entities);
 
+        //entities[entities.length - 1] = avatarEntity;
+
+        scene.setEntities(entities);
 
         // Setup  SkyBox
 

@@ -30,7 +30,27 @@ public class Scene {
 
         for (int i = 0; i < numEntities; i++) {
             Entity entity = entities[i];
-            Mesh mesh = entity.getMesh();
+
+            Mesh[] meshes = entity.getMeshes();
+
+            for (Mesh mesh : meshes) {
+                List<Entity> list = meshMap.get(mesh);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    meshMap.put(mesh, list);
+                }
+
+                list.add(entity);
+            }
+        }
+    }
+
+    public void addEntities(Entity entity) {
+
+        Mesh[] meshes = entity.getMeshes();
+
+        for (Mesh mesh : meshes) {
+
             List<Entity> list = meshMap.get(mesh);
             if (list == null) {
                 list = new ArrayList<>();

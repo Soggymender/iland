@@ -96,8 +96,8 @@ public class Mouse {
             displVec.x = (float) deltay;
         }
 
-       // if (displVec.length() > 0) {
-     //       System.out.println(displVec.x + ", " + displVec.y + "] " + currentPos.x + ", " + currentPos.y + ", " + previousPos.x + ", " + previousPos.y);
+        //if (displVec.length() > 0) {
+         //   System.out.println(displVec.x + ", " + displVec.y + "] " + currentPos.x + ", " + currentPos.y + ", " + previousPos.x + ", " + previousPos.y);
         //}
     }
 
