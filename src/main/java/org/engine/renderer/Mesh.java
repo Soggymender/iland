@@ -145,6 +145,18 @@ public class Mesh {
         endRender();
     }
 
+    public void deleteBuffers() {
+        glDisableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        for (int vboId : vboIdList) {
+            glDeleteBuffers(vboId);
+        }
+
+        glBindVertexArray(0);
+        glDeleteVertexArrays(vaoId);
+    }
+
     public void shutdown() {
         glDisableVertexAttribArray(0);
 

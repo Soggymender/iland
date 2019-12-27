@@ -24,6 +24,7 @@ public class SceneRenderer {
 
     private Shader defaultShader;
     private Shader skyboxShader;
+    private Shader hudShader;
 
     private float specularPower;
 
@@ -83,11 +84,22 @@ public class SceneRenderer {
         skyboxShader.createUniform("ambientLight");
     }
 
+    private void initializeHudShader() throws Exception {
+        hudShader = new Shader();
+        hudShader.createVertexShader(Resource.load("/shaders/hud_vertex.vs"));
+        hudShader.createFragmentShader(Resource.load("/shaders/hud_fragment.fs"));
+        hudShader.link();
+
+        // Create uniforms for Ortographic-model projection matrix and base colour
+        hudShader.createUniform("projModelMatrix");
+        hudShader.createUniform("color");
+    }
 
     public void initialize(Window window) throws Exception {
 
         initializeDefaultShader();
         initializeSkyboxShader();
+        initializeHudShader();
     }
 
     public void shutdown() {
@@ -98,13 +110,17 @@ public class SceneRenderer {
         if (skyboxShader != null) {
             skyboxShader.shutdown();
         }
+
+        if (hudShader != null) {
+            hudShader.shutdown();
+        }
     }
 
     public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, Camera camera, Scene scene) {
+    public void render(Window window, Camera camera, Scene scene, IHud hud) {
         clear();
 
         if (window.isResized()) {
@@ -114,6 +130,8 @@ public class SceneRenderer {
 
         renderScene(window, camera, scene);
         renderSkybox(window, camera, scene);
+
+        renderHud(window, hud);
     }
 
     private void renderScene(Window window, Camera camera, Scene scene) {
@@ -220,6 +238,23 @@ public class SceneRenderer {
         dir.mul(viewMatrix);
         currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
         defaultShader.setUniform("directionalLight", currDirLight);
+    }
 
+    private void renderHud(Window window, IHud hud) {
+        hudShader.bind();
+
+        Matrix4f ortho = transform.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
+        for (Entity entity : hud.getEntities()) {
+            Mesh mesh = entity.getMesh();
+            // Set ortohtaphic and model matrix for this HUD item
+            Matrix4f projModelMatrix = transform.getOrthoModelMatrix(entity, ortho);
+            hudShader.setUniform("projModelMatrix", projModelMatrix);
+            hudShader.setUniform("color", entity.getMesh().getMaterial().getAmbientColor());
+
+            // Render the mesh for this HUD item
+            mesh.render();
+        }
+
+        hudShader.unbind();
     }
 }

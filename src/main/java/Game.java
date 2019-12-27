@@ -16,6 +16,8 @@ public class Game implements IGame {
 
     private Scene scene;
 
+    private Hud hud;
+
     private float lightAngle;
 
     private static final float MOUSE_SENSITIVITY = 8.4f;
@@ -87,6 +89,8 @@ public class Game implements IGame {
         camera.getPosition().x = 0.65f;
         camera.getPosition().y = 1.15f;
         camera.getPosition().y = 4.34f;
+
+        hud = new Hud("text");
     }
 
     private void setupLights() {
@@ -109,6 +113,8 @@ public class Game implements IGame {
         for (Entity entity : entities) {
             entity.getMesh().shutdown();
         }
+
+        hud.shutdown();
     }
 
     @Override
@@ -173,7 +179,7 @@ public class Game implements IGame {
 
     @Override
     public void render(Window window) {
-
-        sceneRenderer.render(window, camera, scene);
+        hud.updateSize(window);
+        sceneRenderer.render(window, camera, scene, hud);
     }
 }
