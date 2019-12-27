@@ -23,6 +23,10 @@ public class Game implements IGame {
     private static final float MOUSE_SENSITIVITY = 8.4f;
     private static final float CAMERA_POS_STEP = 1.84f;
 
+    private float accumulator = 0.0f;
+    private float fpsTotal = 0.0f;
+    private int   fpsSamples = 0;
+
     public Game()
     {
         sceneRenderer = new SceneRenderer();
@@ -90,7 +94,7 @@ public class Game implements IGame {
         camera.getPosition().y = 1.15f;
         camera.getPosition().y = 4.34f;
 
-        hud = new Hud("text");
+        hud = new Hud("0.0");
     }
 
     private void setupLights() {
@@ -155,7 +159,7 @@ public class Game implements IGame {
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
 
         // Update directional light direction, intensity and colour
-        lightAngle += 1.1f;
+        lightAngle += 1.1f * interval;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 360) {
@@ -175,6 +179,23 @@ public class Game implements IGame {
         double angRad = Math.toRadians(lightAngle);
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);
+
+       if (accumulator >= 1.0f) {
+
+           float fps = fpsTotal / fpsSamples;
+
+           String fpsString = String.format("%.2f", fps);
+           hud.setStatusText(fpsString);
+
+           accumulator = 0.0f;
+           fpsTotal = 0.0f;
+           fpsSamples = 0;
+       }
+
+       float fps = 1.0f / interval;
+       accumulator += interval;
+       fpsTotal += fps;
+       fpsSamples++;
     }
 
     @Override

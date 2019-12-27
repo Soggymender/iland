@@ -6,9 +6,6 @@ import org.engine.renderer.Window;
 
 public class Engine {//} implements Runnable {
 
-    public static final int TARGET_FPS = 75;
-    public static final int TARGET_UPS = 30;
-
     private final Window window;
     private final Timer timer;
 
@@ -48,38 +45,17 @@ public class Engine {//} implements Runnable {
 
     protected void gameLoop() {
         float elapsedTime;
-        float accumulator = 0f;
-        float interval = 1f / TARGET_UPS;
 
         boolean running = true;
         while (running && !window.windowShouldClose()) {
             elapsedTime = timer.getElapsedTime();
-            accumulator += elapsedTime;
 
             input();
 
-            while (accumulator >= interval) {
-                update(interval);
-                accumulator -= interval;
-            }
+            update(elapsedTime);
 
             render();
-
-            if (!window.isvSync()) {
-                sync();
-            }
-        }
-    }
-
-    private void sync() {
-        float loopSlot = 1f / TARGET_FPS;
-        double endTime = timer.getLastLoopTime() + loopSlot;
-        while (timer.getTime() < endTime) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ie) {
-            }
-        }
+       }
     }
 
     protected void input() {

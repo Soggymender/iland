@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            boolean vSync = true;
+            boolean vSync = false;//true;
             IGame gameLogic = new Game();
             Engine engine = new Engine("GAME", 600, 480, vSync, gameLogic);
             engine.run();
