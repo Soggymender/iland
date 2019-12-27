@@ -1,4 +1,8 @@
 import org.engine.*;
+
+import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,7 +24,7 @@ public class Game implements IGame {
 
     private float lightAngle;
 
-    private static final float MOUSE_SENSITIVITY = 8.4f;
+    private static final float MOUSE_SENSITIVITY = 30.0f;
     private static final float CAMERA_POS_STEP = 1.84f;
 
     private float accumulator = 0.0f;
@@ -113,9 +117,10 @@ public class Game implements IGame {
     @Override
     public void shutdown() {
         sceneRenderer.shutdown();
-        Entity[] entities = scene.getEntities();
-        for (Entity entity : entities) {
-            entity.getMesh().shutdown();
+
+        Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
+        for (Mesh mesh : mapMeshes.keySet()) {
+            mesh.shutdown();
         }
 
         hud.shutdown();

@@ -4,13 +4,19 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+
 import org.joml.*;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
+
 import org.lwjgl.system.MemoryUtil;
+
+import org.engine.Entity; // I don't want this here.
 
 public class Mesh {
 
@@ -141,6 +147,17 @@ public class Mesh {
 
         // Draw the vertices
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        endRender();
+    }
+
+    public void renderList(List<Entity> entities, Consumer<Entity> consumer) {
+        beginRender();
+
+        for (Entity entity : entities) {
+            consumer.accept(entity);
+            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+        }
 
         endRender();
     }

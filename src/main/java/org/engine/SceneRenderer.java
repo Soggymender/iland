@@ -1,5 +1,8 @@
 package org.engine;
 
+import java.util.List;
+import java.util.Map;
+
 import org.engine.renderer.*;
 import org.engine.resources.Resource;
 
@@ -128,6 +131,9 @@ public class SceneRenderer {
             window.setResized(false);
         }
 
+        transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        transform.updateViewMatrix(camera);
+
         renderScene(window, camera, scene);
         renderSkybox(window, camera, scene);
 
@@ -139,24 +145,24 @@ public class SceneRenderer {
         defaultShader.bind();
 
         // Update the projection matrix.
-        Matrix4f projectionMatrix = transform.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        Matrix4f projectionMatrix = transform.getProjectionMatrix();
         defaultShader.setUniform("projectionMatrix", projectionMatrix);
 
         // Update the view matrix.
-        Matrix4f viewMatrix = transform.getViewMatrix(camera);
+        Matrix4f viewMatrix = transform.getViewMatrix();
 
         renderLights(viewMatrix, scene.getSceneLighting());
 
         defaultShader.setUniform("texture_sampler", 0);
 
-        for (Entity entity : scene.getEntities()) {
+        Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
+        for (Mesh mesh : mapMeshes.keySet()) {
 
-            Mesh mesh = entity.getMesh();
-
-            Matrix4f modelViewMatrix = transform.getModelViewMatrix(entity, viewMatrix);
-
-            defaultShader.setUniform("modelViewMatrix", modelViewMatrix);
             defaultShader.setUniform("material", mesh.getMaterial());
+            mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
+                Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
+                defaultShader.setUniform("modelViewMatrix", modelViewMatrix);
+            });
 
             mesh.render();
         }
@@ -176,14 +182,14 @@ public class SceneRenderer {
         skyboxShader.setUniform("texture_sampler", 0);
 
         // Update projection Matrix
-        Matrix4f projectionMatrix = transform.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        Matrix4f projectionMatrix = transform.getProjectionMatrix();
         skyboxShader.setUniform("projectionMatrix", projectionMatrix);
 
-        Matrix4f viewMatrix = transform.getViewMatrix(camera);
+        Matrix4f viewMatrix = transform.getViewMatrix();
         viewMatrix.m30(0);
         viewMatrix.m31(0);
         viewMatrix.m32(0);
-        Matrix4f modelViewMatrix = transform.getModelViewMatrix(skybox, viewMatrix);
+        Matrix4f modelViewMatrix = transform.buildModelViewMatrix(skybox, viewMatrix);
         skyboxShader.setUniform("modelViewMatrix", modelViewMatrix);
         skyboxShader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
 
@@ -247,7 +253,7 @@ public class SceneRenderer {
         for (Entity entity : hud.getEntities()) {
             Mesh mesh = entity.getMesh();
             // Set ortohtaphic and model matrix for this HUD item
-            Matrix4f projModelMatrix = transform.getOrthoModelMatrix(entity, ortho);
+            Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
             hudShader.setUniform("projModelMatrix", projModelMatrix);
             hudShader.setUniform("color", entity.getMesh().getMaterial().getAmbientColor());
 
