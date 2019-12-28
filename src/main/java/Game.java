@@ -13,10 +13,8 @@ import org.engine.resources.*;
 
 public class Game implements IGame {
 
-    private Vector3f cameraMoveDir;
-
     private final SceneRenderer sceneRenderer;
-    private final Camera camera;
+    private final GameCamera camera;
 
     private Scene scene;
 
@@ -25,7 +23,6 @@ public class Game implements IGame {
     private float lightAngle;
 
     private static final float MOUSE_SENSITIVITY = 30.0f;
-    private static final float CAMERA_POS_STEP = 1.84f;
 
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
@@ -34,8 +31,7 @@ public class Game implements IGame {
     public Game()
     {
         sceneRenderer = new SceneRenderer();
-        camera = new Camera();
-        cameraMoveDir = new Vector3f(0, 0, 0);
+        camera = new GameCamera();
 
         lightAngle = -90;
     }
@@ -140,36 +136,13 @@ public class Game implements IGame {
     @Override
     public void input(Window window, Mouse mouse) {
 
-        cameraMoveDir.set(0, 0, 0);
-
-        if ( window.isKeyPressed(GLFW_KEY_W) ) {
-            cameraMoveDir.z = -1;
-        }
-
-        if ( window.isKeyPressed(GLFW_KEY_S) ) {
-            cameraMoveDir.z = 1;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_A)) {
-            cameraMoveDir.x = -1;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_D)) {
-            cameraMoveDir.x = 1;
-        }
-
-        if (cameraMoveDir.length() > 0.0f) {
-            cameraMoveDir.normalize();
-        }
+        camera.input(window, mouse);
     }
 
     @Override
     public void update(float interval, Mouse mouse) {
 
-        camera.movePosition(cameraMoveDir.x * CAMERA_POS_STEP * interval, cameraMoveDir.y * CAMERA_POS_STEP * interval, cameraMoveDir.z * CAMERA_POS_STEP * interval);
-
-        Vector2f rotVec = mouse.getDisplayVec();
-        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY * interval, rotVec.y * MOUSE_SENSITIVITY * interval, 0);
+        camera.update(interval, mouse);
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
