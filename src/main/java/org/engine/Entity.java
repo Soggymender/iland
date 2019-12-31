@@ -9,13 +9,13 @@ public class Entity {
 
     protected Vector3f position;
 
-    protected float scale;
+    protected Vector3f scale;
 
     protected Vector3f rotation;
 
     public Entity() {
         position = new Vector3f(0, 0, 0);
-        scale = 1;
+        scale = new Vector3f(1.0f, 1.0f, 1.0f);
         rotation = new Vector3f(0, 0, 0);
     }
 
@@ -43,12 +43,17 @@ public class Entity {
         this.position.set(position);
     }
 
-    public float getScale() {
+    public Vector3f getScale()
+    {
         return scale;
     }
 
-    public void setScale(float scale) {
+    public void setScale(Vector3f scale) {
         this.scale = scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale.set(scale);
     }
 
     public Vector3f getRotation() {

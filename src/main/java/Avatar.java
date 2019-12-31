@@ -37,7 +37,6 @@ public class Avatar extends Entity {
         avatarMesh[0].setMaterial(material);
 
         setMesh(avatarMesh);
- //       entity = new Entity(avatarMesh);
     }
 
     public void input(Window window, Mouse mouse) {
@@ -99,11 +98,7 @@ public class Avatar extends Entity {
             float angY = -forward.angleSigned(moveDir, Math.up);
 
             rotation.y = rotation.y + angY;
-            //rotation.y += 1.0f * interval;//angY
 
-            String blah = String.format(rotation.y + " " + angY);
-
-            System.out.println(blah);
     //    }
 
 

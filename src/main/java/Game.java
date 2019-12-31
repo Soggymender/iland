@@ -11,6 +11,8 @@ import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.resources.*;
 
+import org.engine.Terrain;
+
 public class Game implements IGame {
 
     private final SceneRenderer sceneRenderer;
@@ -49,15 +51,18 @@ public class Game implements IGame {
         float reflectance = 1.0f;
 
         avatar.initialize();
-        scene.addEntities(avatar);//.getEntity());
+        scene.addEntities(avatar);
 
+        avatar.setPosition(0.0f, -35.0f, 0.0f);
+
+        /*
         Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
         Texture texture = mesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
         mesh[0].setMaterial(material);
 
         float blockScale = 1.0f;
-        float skyboxScale = 100.0f;
+
         float extension = 2.0f;
 
         float startx = extension * (-skyboxScale + blockScale);
@@ -86,8 +91,22 @@ public class Game implements IGame {
         }
 
         scene.setEntities(entities);
+        */
+
+        // Setup the terrain
+        Vector3f terrainScale = new Vector3f(1000.0f, 200.0f, 1000.0f);
+        int terrainSize = 3;
+        float minY = 0.0f;//-0.1f;
+        float maxY = 0.2f;//0.1f;
+        int textInc = 40;
+
+        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/main/resources/textures/heightmap.png", "src/main/resources/textures/terrain.png", textInc);
+
+        scene.setEntities(terrain.getEntities());
+
 
         // Setup  SkyBox
+        float skyboxScale = 100.0f;
         Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
         skybox.setScale(skyboxScale);
         scene.setSkybox(skybox);
