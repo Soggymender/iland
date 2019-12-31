@@ -47,7 +47,7 @@ public class Transform {
 
         viewMatrix.identity();
 
-        viewMatrix.rotate((float)Math.toRadians(rotation.x), new Vector3f(1, 0, 0)).rotate((float)Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
+        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
         viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
         return viewMatrix;
@@ -57,9 +57,9 @@ public class Transform {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
-                rotateX((float)Math.toRadians(-rotation.x)).
-                rotateY((float)Math.toRadians(-rotation.y)).
-                rotateZ((float)Math.toRadians(-rotation.z)).
+                rotateX(-rotation.x).
+                rotateY(-rotation.y).
+                rotateZ(-rotation.z).
                 scale(entity.getScale());
 
         modelViewMatrix.set(viewMatrix);
@@ -77,9 +77,9 @@ public class Transform {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
-                rotateX((float)Math.toRadians(-rotation.x)).
-                rotateY((float)Math.toRadians(-rotation.y)).
-                rotateZ((float)Math.toRadians(-rotation.z)).
+                rotateX(-rotation.x).
+                rotateY(-rotation.y).
+                rotateZ(-rotation.z).
                 scale(entity.getScale());
 
         orthoModelMatrix.set(orthoMatrix);

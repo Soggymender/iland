@@ -15,6 +15,9 @@ public class Mouse {
 
     private final Vector2f displVec;
 
+    DoubleBuffer x;
+    DoubleBuffer y;
+
     private boolean isActive = false;
     private boolean inWindow = false;
 
@@ -26,14 +29,24 @@ public class Mouse {
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();
+
+        x = org.lwjgl.BufferUtils.createDoubleBuffer(1);
+        y = org.lwjgl.BufferUtils.createDoubleBuffer(1);
+
     }
 
     public void initialize(Window window) {
 
-        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+//        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+ //       glfwSetInputMode(window.getWindowHandle(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
+
+
+
+
   //          currentPos.x = xpos;
     //        currentPos.y = ypos;
 
@@ -62,11 +75,14 @@ public class Mouse {
 
     public void input(Window window) {
 
+
+
+
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
 
-        DoubleBuffer x = org.lwjgl.BufferUtils.createDoubleBuffer(1);
-        DoubleBuffer y = org.lwjgl.BufferUtils.createDoubleBuffer(1);
+        x.clear();
+        y.clear();
 
         glfwGetCursorPos(window.getWindowHandle(), x, y);
 
@@ -78,6 +94,7 @@ public class Mouse {
 
         if (!isActive) {
             isActive = true;
+            System.out.println("crap");
             return;
         }
 
@@ -96,9 +113,9 @@ public class Mouse {
             displVec.x = (float) deltay;
         }
 
-        //if (displVec.length() > 0) {
-         //   System.out.println(displVec.x + ", " + displVec.y + "] " + currentPos.x + ", " + currentPos.y + ", " + previousPos.x + ", " + previousPos.y);
-        //}
+        if (deltax != 0 || deltay != 0) {//.length() > 0) {
+            System.out.println(displVec.x + ", " + displVec.y + "] " + currentPos.x + ", " + currentPos.y + ", " + previousPos.x + ", " + previousPos.y);
+        }
     }
 
     public boolean isLeftButtonPressed() {

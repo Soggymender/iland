@@ -4,6 +4,8 @@ import org.engine.core.Timer;
 import org.engine.input.*;
 import org.engine.renderer.Window;
 
+import static java.lang.Thread.sleep;
+
 public class Engine {//} implements Runnable {
 
     private final Window window;
@@ -43,11 +45,15 @@ public class Engine {//} implements Runnable {
         gameLogic.shutdown();
     }
 
-    protected void gameLoop() {
+    protected void gameLoop() throws Exception{
         float elapsedTime;
+
+        long targetTime = 1000L / 60;
 
         boolean running = true;
         while (running && !window.windowShouldClose()) {
+            long startTime = (long)(timer.getTime() * 1000);
+
             elapsedTime = timer.getElapsedTime();
 
             input();
@@ -55,6 +61,10 @@ public class Engine {//} implements Runnable {
             update(elapsedTime);
 
             render();
+
+            long endTime = (long)(timer.getTime() * 1000);
+            //sleep(startTime + targetTime - endTime);
+            //sleep(30);
        }
     }
 

@@ -14,6 +14,8 @@ import org.engine.resources.*;
 public class Game implements IGame {
 
     private final SceneRenderer sceneRenderer;
+
+    private final Avatar avatar;
     private final GameCamera camera;
 
     private Scene scene;
@@ -31,7 +33,9 @@ public class Game implements IGame {
     public Game()
     {
         sceneRenderer = new SceneRenderer();
-        camera = new GameCamera();
+
+        avatar = new Avatar();
+        camera = new GameCamera(avatar);
 
         lightAngle = -90;
     }
@@ -44,18 +48,12 @@ public class Game implements IGame {
 
         float reflectance = 1.0f;
 
-        // Avatar placeholder.
-        Mesh[] avatarMesh = StaticMeshLoader.load("src/main/resources/models/human01.fbx", "src/main/resources/models/");
-        Texture texture = avatarMesh[0].getMaterial().getTexture();
-        Material material = new Material(texture, 1.0f);
-        avatarMesh[0].setMaterial(material);
-
-        Entity avatarEntity = new Entity(avatarMesh);
-        scene.addEntities(avatarEntity);
+        avatar.initialize();
+        scene.addEntities(avatar);//.getEntity());
 
         Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
-        texture = mesh[0].getMaterial().getTexture();
-        material = new Material(texture, 1.0f);
+        Texture texture = mesh[0].getMaterial().getTexture();
+        Material material = new Material(texture, 1.0f);
         mesh[0].setMaterial(material);
 
         float blockScale = 1.0f;
@@ -87,12 +85,9 @@ public class Game implements IGame {
             posz -= inc;
         }
 
-        //entities[entities.length - 1] = avatarEntity;
-
         scene.setEntities(entities);
 
         // Setup  SkyBox
-
         Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
         skybox.setScale(skyboxScale);
         scene.setSkybox(skybox);
@@ -136,19 +131,21 @@ public class Game implements IGame {
     @Override
     public void input(Window window, Mouse mouse) {
 
+        avatar.input(window, mouse);
         camera.input(window, mouse);
     }
 
     @Override
     public void update(float interval, Mouse mouse) {
 
+        avatar.update(interval, mouse, camera);
         camera.update(interval, mouse);
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
 
         // Update directional light direction, intensity and colour
-        lightAngle += 1.1f * interval;
+        lightAngle += 3f * interval;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 360) {

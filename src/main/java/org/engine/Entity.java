@@ -7,11 +7,11 @@ public class Entity {
 
     private Mesh[] meshes;
 
-    private final Vector3f position;
+    protected Vector3f position;
 
-    private float scale;
+    protected float scale;
 
-    private final Vector3f rotation;
+    protected Vector3f rotation;
 
     public Entity() {
         position = new Vector3f(0, 0, 0);
@@ -39,6 +39,10 @@ public class Entity {
         this.position.z = z;
     }
 
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
+    }
+
     public float getScale() {
         return scale;
     }
@@ -57,6 +61,10 @@ public class Entity {
         this.rotation.z = z;
     }
 
+    public void setRotation(Vector3f rotation) {
+        this.rotation.set(rotation);
+    }
+
     public Mesh getMesh() {
         return meshes[0];
     }
@@ -71,6 +79,10 @@ public class Entity {
 
     public void setMesh(Mesh mesh) {
         this.meshes = new Mesh[]{ mesh };
+    }
+
+    public void setMesh(Mesh[] meshes) {
+        this.meshes = meshes;
     }
 
     public void Shutdown() {
