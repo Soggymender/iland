@@ -51,6 +51,8 @@ Conversion destination should be subfolders of src/main/resources.
 
 This conversion is necessary because Blender only supports 6.1, while the engine uses ASSIMP which only supports 2013. Eventually a custom FBX importer will be written, but for now the conversion time is less than the coding time. Also, the official FBX SDK only natively supports Python and C++. Haven't found a reasonable Java binding.
 
+All resource paths and filenames must be all lower case to maintain Linux compatibility. FBX will bake mixed-case file references, but the code will toLowerCase() filenames - at least for textures where it has been a problem. All code paths and filenames must be lower case only.
+
 
 
 EXPORT TROUBLESHOOTING
