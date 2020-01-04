@@ -27,6 +27,7 @@ public class StaticMeshLoader {
     }
 
     public static Mesh[] load(String resourcePath, String texturesDir, int flags) throws Exception {
+
         AIScene aiScene = aiImportFile(resourcePath, flags);
         if (aiScene == null) {
 
@@ -69,6 +70,7 @@ public class StaticMeshLoader {
             }
             textureFile += textPath;
             textureFile = textureFile.replace("//", "/");
+            textureFile = textureFile.replace( "\\", "/");
             texture = textCache.getTexture(textureFile);
         }
 

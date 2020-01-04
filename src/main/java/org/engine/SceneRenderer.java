@@ -40,8 +40,8 @@ public class SceneRenderer {
 
         defaultShader = new Shader();
 
-        String vsName = Resource.load("/Shaders/default_vertex.vs");
-        String fsName = Resource.load("/Shaders/default_fragment.fs");
+        String vsName = Resource.load("/shaders/default_vertex.vs");
+        String fsName = Resource.load("/shaders/default_fragment.fs");
 
         if (vsName.isEmpty() || fsName.isEmpty()) {
             return;
@@ -69,8 +69,8 @@ public class SceneRenderer {
 
         skyboxShader = new Shader();
 
-        String vsName = Resource.load("/Shaders/skybox_vertex.vs");
-        String fsName = Resource.load("/Shaders/skybox_fragment.fs");
+        String vsName = Resource.load("/shaders/skybox_vertex.vs");
+        String fsName = Resource.load("/shaders/skybox_fragment.fs");
 
         if (vsName.isEmpty() || fsName.isEmpty()) {
             return;
