@@ -1,6 +1,8 @@
 import org.joml.Vector3f;
 
 import org.engine.Entity;
+import org.engine.Terrain;
+
 import org.engine.renderer.Camera;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
@@ -64,10 +66,12 @@ public class Avatar extends Entity {
         }
     }
 
-    public void update(float interval, Mouse mouse, Camera camera) {
+    public void update(float interval, Mouse mouse, Camera camera, Terrain terrain) {
+
+        // Move
 
         float offsetX = moveDir.x * speed * interval;
-        float offsetY = moveDir.y * speed * interval;
+     //   float offsetY = moveDir.y * speed * interval;
         float offsetZ = moveDir.z * speed * interval;
 
         Vector3f cameraRotation = camera.getRotation();
@@ -80,30 +84,43 @@ public class Avatar extends Entity {
             position.x += (float)Math.sin(cameraRotation.y - Math.toRadians(90)) * -1.0f * offsetX;
             position.z += (float)Math.cos(cameraRotation.y - Math.toRadians(90)) * offsetX;
         }
-        position.y += offsetY;
+
+        //position.y += offsetY;
+
+  //      float oldY = position.y;
+
+
+        // "gravity"
+//        position.y -= 9.8f * interval;
+
+position.y = -500;
+
+
+
+        // Terrain collision
+
+        float height = terrain.getHeight(position);
+        if (position.y <= height) {
+    //        position.y = oldY;
+        position.y = height;
+        }
 
 
 
 
-  //      if (moveDir.length() > 0.0f) {
+        // Turn
 
-            moveDir.rotateY(-cameraRotation.y);
-
-
-            Vector3f forward = new Vector3f();
-            forward.set(Math.forward);
-
-            forward.rotateY(-rotation.y);
-
-            float angY = -forward.angleSigned(moveDir, Math.up);
-
-            rotation.y = rotation.y + angY;
-
-    //    }
+        moveDir.rotateY(-cameraRotation.y);
 
 
+        Vector3f forward = new Vector3f();
+        forward.set(Math.forward);
 
-        //entity.setRotation(rotation);
+        forward.rotateY(-rotation.y);
+
+        float angY = -forward.angleSigned(moveDir, Math.up);
+
+        rotation.y = rotation.y + angY;
     }
 
     public Entity getEntity() {

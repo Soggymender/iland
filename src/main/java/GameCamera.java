@@ -38,6 +38,7 @@ public class GameCamera extends Camera {
     public void input(Window window, Mouse mouse) {
 
     }
+    private static boolean once = false;
 
     public void update(float interval, Mouse mouse) {
 
@@ -46,11 +47,13 @@ public class GameCamera extends Camera {
         followRotation.x += rotVec.x * MOUSE_SENSITIVITY * interval;
         followRotation.y += rotVec.y * MOUSE_SENSITIVITY * interval;
 
-        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-45.0f));
-        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(45.0f));
+        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-90));//-45.0f));
+        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(90));//45.0f));
 
-
+        if (!once) {
+  //          once = true;
         follow(interval);
+        }
     }
 
     private void follow(float interval) {

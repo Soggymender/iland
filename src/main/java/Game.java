@@ -20,6 +20,8 @@ public class Game implements IGame {
     private final Avatar avatar;
     private final GameCamera camera;
 
+    Terrain terrain;
+
     private Scene scene;
 
     private Hud hud;
@@ -53,7 +55,7 @@ public class Game implements IGame {
         avatar.initialize();
         scene.addEntities(avatar);
 
-        avatar.setPosition(0.0f, -35.0f, 0.0f);
+        avatar.setPosition(0.0f, 0.0f, 0.0f);
 
         /*
         Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
@@ -94,13 +96,13 @@ public class Game implements IGame {
         */
 
         // Setup the terrain
-        Vector3f terrainScale = new Vector3f(1000.0f, 200.0f, 1000.0f);
+        Vector3f terrainScale = new Vector3f(500.0f, 100.0f, 500.0f);
         int terrainSize = 3;
-        float minY = 0.0f;//-0.1f;
-        float maxY = 0.2f;//0.1f;
+        float minY = -0.1f;//-0.1f;
+        float maxY = 0.1f;//0.1f;
         int textInc = 40;
 
-        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/main/resources/textures/heightmap.png", "src/main/resources/textures/terrain.png", textInc);
+        terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/main/resources/textures/heightmap.png", "src/main/resources/textures/terrain.png", textInc);
 
         scene.setEntities(terrain.getEntities());
 
@@ -157,7 +159,7 @@ public class Game implements IGame {
     @Override
     public void update(float interval, Mouse mouse) {
 
-        avatar.update(interval, mouse, camera);
+        avatar.update(interval, mouse, camera, terrain);
         camera.update(interval, mouse);
 
         SceneLighting sceneLighting = scene.getSceneLighting();

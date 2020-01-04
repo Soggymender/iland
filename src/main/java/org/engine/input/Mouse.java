@@ -112,10 +112,6 @@ public class Mouse {
         if (rotateY) {
             displVec.x = (float) deltay;
         }
-
-        if (deltax != 0 || deltay != 0) {//.length() > 0) {
-            System.out.println(displVec.x + ", " + displVec.y + "] " + currentPos.x + ", " + currentPos.y + ", " + previousPos.x + ", " + previousPos.y);
-        }
     }
 
     public boolean isLeftButtonPressed() {
