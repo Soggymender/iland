@@ -31,6 +31,18 @@
                 <native.target>natives-windows</native.target>
             </properties>
         </profile>
+        <profile>
+            <id>linux-profile</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-linux</native.target>
+            </properties>
+        </profile>
+
     </profiles>
 
     <dependencyManagement>
