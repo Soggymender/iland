@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.engine.core.BoundingBox;
 import org.joml.*;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -29,7 +30,16 @@ public class Mesh {
 
     private Material material;
 
+    boolean hasPositions = false;
+    float[] positions;
+    private BoundingBox bbox;
+
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
+
+        this(positions, textCoords, normals, indices, new BoundingBox());
+    }
+
+    public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
         FloatBuffer vecNormalsBuffer = null;
@@ -43,6 +53,9 @@ public class Mesh {
             glBindVertexArray(vaoId);
 
             // Position VBO
+            this.positions = positions;
+            this.hasPositions = true;
+
             int vboId = glGenBuffers();
             vboIdList.add(vboId);
             posBuffer = MemoryUtil.memAllocFloat(positions.length);
@@ -79,6 +92,9 @@ public class Mesh {
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
+
+            this.bbox = bbox;
+
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
@@ -114,6 +130,10 @@ public class Mesh {
     public int getVertexCount() {
 
         return vertexCount;
+    }
+
+    public BoundingBox getBbox() {
+        return bbox;
     }
 
     public void beginRender() {

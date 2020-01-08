@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.engine.core.BoundingBox;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
@@ -29,6 +31,7 @@ public class HeightMapMesh {
 
     private final float[][] heightArray;
 
+    // Heightmap mesh from heightmap.
     public HeightMapMesh(float minY, float maxY, ByteBuffer heightMapImage, int width, int height, String textureFilename, int textInc) throws Exception {
 
         this.minY = minY;
@@ -84,6 +87,34 @@ public class HeightMapMesh {
         this.mesh = new Mesh(posArr, textCoordsArr, normalsArr, indicesArr);
         Material material = new Material(texture, 0.0f);
         mesh.setMaterial(material);
+    }
+
+
+    // Heightmap mesh from mesh.
+    public HeightMapMesh(Mesh mesh) throws Exception {
+
+        BoundingBox bbox = mesh.getBbox();
+
+        int width  = (int)(bbox.max.x - bbox.min.x) + 1;
+        int height = (int)(bbox.max.z - bbox.min.z) + 1;
+
+        String textureFilename;
+        int textInc;
+
+        this.minY = mesh.getBbox().min.y;
+        this.maxY = mesh.getBbox().max.y;
+
+        heightArray = new float[height][width];
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+
+                float currentHeight = getHeight(col, row, width - 1, mesh);
+                heightArray[row][col] = currentHeight;
+            }
+        }
+
+        this.mesh = mesh;
     }
 
     public Mesh getMesh() {
@@ -189,5 +220,26 @@ public class HeightMapMesh {
         int argb = ((0xFF & a) << 24) | ((0xFF & r) << 16)
                 | ((0xFF & g) << 8) | (0xFF & b);
         return this.minY + Math.abs(this.maxY - this.minY) * ((float) argb / (float) MAX_COLOR);
+    }
+
+    public float getHeight(int x, int z, int width, Mesh mesh) {
+
+        float fx = x - width / 2;
+        float fz = z - width / 2;
+
+        for (int i = 0; i < mesh.positions.length; i += 3) {
+
+            float px = mesh.positions[i];
+            float py = mesh.positions[i + 1];
+            float pz = mesh.positions[i + 2];
+
+            if (Math.abs(px - fx) <= 0.001f && Math.abs(pz - fz) <= 0.001f) {
+                return py;
+            }
+
+
+        }
+
+        return 0.0f;
     }
 }

@@ -8,6 +8,8 @@ import java.util.Map;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Skybox;
 
+import static org.lwjgl.assimp.Assimp.*;
+
 public class Scene {
 
     private Map<Mesh, List<Entity>> meshMap;
@@ -45,7 +47,7 @@ public class Scene {
         }
     }
 
-    public void addEntities(Entity entity) {
+    public void addEntity(Entity entity) {
 
         Mesh[] meshes = entity.getMeshes();
 
@@ -58,6 +60,13 @@ public class Scene {
             }
 
             list.add(entity);
+        }
+    }
+
+    public void addEntities(Entity[] entities) {
+
+        for (Entity entity : entities) {
+            addEntity(entity);
         }
     }
 

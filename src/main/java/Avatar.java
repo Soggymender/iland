@@ -9,8 +9,7 @@ import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.renderer.Window;
 import org.engine.input.Mouse;
-import org.engine.resources.StaticMeshLoader;
-import org.joml.Vector3f;
+import org.engine.resources.ResourceLoader;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -33,7 +32,7 @@ public class Avatar extends Entity {
     public void initialize() throws Exception {
 
         // Avatar placeholder.
-        Mesh[] avatarMesh = StaticMeshLoader.load("src/main/resources/models/human01.fbx", "src/main/resources/models/");
+        Mesh[] avatarMesh = ResourceLoader.loadMesh("src/main/resources/models/human01.fbx", "src/main/resources/models/");
         Texture texture = avatarMesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
         avatarMesh[0].setMaterial(material);
@@ -93,18 +92,20 @@ public class Avatar extends Entity {
         // "gravity"
 //        position.y -= 9.8f * interval;
 
-position.y = -500;
 
 
 
         // Terrain collision
+        if (terrain != null) {
 
-        float height = terrain.getHeight(position);
-        if (position.y <= height) {
-    //        position.y = oldY;
-        position.y = height;
+            position.y = -500;
+
+            float height = terrain.getHeight(position);
+            if (position.y <= height) {
+                //        position.y = oldY;
+                position.y = height;
+            }
         }
-
 
 
 

@@ -4,9 +4,13 @@ import static org.lwjgl.stb.STBImage.*;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import org.engine.renderer.Mesh;
 import org.lwjgl.system.MemoryStack;
 
 import org.joml.Vector3f;
+
+import org.engine.core.BoundingBox;
 import org.engine.renderer.HeightMapMesh;
 
 public class Terrain {
@@ -16,9 +20,44 @@ public class Terrain {
     private final int terrainSize;
     private final int verticesPerCol;
     private final int verticesPerRow;
+
+    private boolean fromMesh = false;
     private final HeightMapMesh heightMapMesh;
 
     private final Box2D[][] boundingBoxes;
+
+    public Terrain(Mesh mesh) throws Exception {
+
+        fromMesh = true;
+        BoundingBox bbox = mesh.getBbox();
+
+        this.terrainSize = 1;
+
+        int width  = (int)(bbox.max.x - bbox.min.x);
+        int height = (int)(bbox.max.z - bbox.min.z);
+
+        verticesPerCol = width;
+        verticesPerRow = height;
+
+        entities = new Entity[terrainSize * terrainSize];
+        heightMapMesh = new HeightMapMesh(mesh);
+
+        boundingBoxes = new Box2D[terrainSize][terrainSize];
+
+        for (int row = 0; row < terrainSize; row++) {
+            for (int col = 0; col < terrainSize; col++) {
+                float xDisplacement = (col - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getXLength();
+                float zDisplacement = (row - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getZLength();
+
+                Entity terrainBlock = new Entity(heightMapMesh.getMesh());
+                terrainBlock.setScale(1.0f);
+                terrainBlock.setPosition(xDisplacement, 0, zDisplacement);
+                entities[row * terrainSize + col] = terrainBlock;
+
+                boundingBoxes[row][col] = new Box2D(bbox.min.x, bbox.min.z, width, height);
+            }
+        }
+    }
 
     public Terrain(int terrainSize, Vector3f scale, float minY, float maxY, String heightMapFilename, String textureFilename, int textInc) throws Exception {
 
@@ -109,8 +148,6 @@ public class Terrain {
         int col = (int) ((position.x - boundingBox.x) / cellWidth);
         int row = (int) ((position.z - boundingBox.y) / cellHeight);
 
-        System.out.println(col + ", " + row);
-
         Vector3f[] triangle = new Vector3f[3];
         triangle[1] = new Vector3f(
                 boundingBox.x + col * cellWidth,
@@ -157,6 +194,7 @@ public class Terrain {
     }
 
     private Box2D getBoundingBox(Entity terrainBlock) {
+
         Vector3f scale = terrainBlock.getScale();
         Vector3f position = terrainBlock.getPosition();
 

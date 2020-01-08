@@ -22,7 +22,7 @@ public class GameCamera extends Camera {
 
     private static final float IDEAL_FOLLOW_DISTANCE = 5.0f;
 
-    private static final float MOUSE_SENSITIVITY = 0.25f;
+    private static final float MOUSE_SENSITIVITY = 3.5f;
     private static final float CAMERA_POS_STEP = 1.84f;
 
     public GameCamera(Entity target) {
@@ -47,8 +47,8 @@ public class GameCamera extends Camera {
         followRotation.x += rotVec.x * MOUSE_SENSITIVITY * interval;
         followRotation.y += rotVec.y * MOUSE_SENSITIVITY * interval;
 
-        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-90));//-45.0f));
-        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(90));//45.0f));
+        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-45.0f));
+        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(45.0f));
 
         if (!once) {
   //          once = true;

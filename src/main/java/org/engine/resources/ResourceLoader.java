@@ -3,37 +3,113 @@ package org.engine.resources;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.engine.core.BoundingBox;
+import org.engine.resources.Resource;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.assimp.AIColor4D;
-import org.lwjgl.assimp.AIFace;
-import org.lwjgl.assimp.AIMaterial;
-import org.lwjgl.assimp.AIMesh;
-import org.lwjgl.assimp.AIScene;
-import org.lwjgl.assimp.AIString;
-import org.lwjgl.assimp.AIVector3D;
-import org.lwjgl.assimp.Assimp;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.assimp.*;
+
 import static org.lwjgl.assimp.Assimp.*;
 
+import org.engine.Entity;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.renderer.TextureCache;
 
-public class StaticMeshLoader {
+public class ResourceLoader {
 
-    public static Mesh[] load(String resourcePath, String texturesDir) throws Exception {
-        return load(resourcePath, texturesDir, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
-    }
+    public static void loadEntities(String resourcePath, String texturesDir, IResourceLoaderEvent eventHandler) throws Exception {
 
-    public static Mesh[] load(String resourcePath, String texturesDir, int flags) throws Exception {
-
-        AIScene aiScene = aiImportFile(resourcePath, flags);
+        AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
         if (aiScene == null) {
-
             String error = aiGetErrorString();
             throw new Exception(error);
         }
+
+        processNode(aiScene.mRootNode(), aiScene, eventHandler);
+    }
+
+    public static void processNode(AINode aiNode, AIScene aiScene, IResourceLoaderEvent eventHandler) throws Exception {
+
+        if (aiNode.mMetadata() != null) {
+
+            for (int i = 0; i < aiNode.mMetadata().mNumProperties(); i++) {
+
+                AIString blah = (aiNode.mMetadata().mKeys().get(i));
+
+                if (blah.dataString().equalsIgnoreCase("p_type")) {
+
+                    System.out.println(blah.dataString());
+
+                    // Get the value.
+                    AIMetaDataEntry entry = (aiNode.mMetadata().mValues().get(i));
+
+                    if  (entry.mType() == AI_AISTRING) {
+
+                        int capacity = entry.sizeof();
+                        java.nio.ByteBuffer buffer = entry.mData(capacity);
+
+                        // I don't know the correct way to use ASSIMP to cast this data to appropriate types, but this works for now.
+                        String valueString = MemoryUtil.memASCII(buffer);
+
+                        // Theres a bunch of nasty whitespace leading the valid text. I'm assuming it's some sort of type header data.
+                        valueString = valueString.trim();
+
+                        if (valueString.compareTo("terrain") == 0) {
+
+                            Mesh[] meshes = parseMesh(aiScene, aiNode);
+
+                            // Stash it in an entry so it can be moved around regardless of type.
+                            Entity entity = new Entity(meshes);
+                            eventHandler.resourceLoadedEvent(valueString, entity);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < aiNode.mNumChildren(); i++) {
+
+            AINode child = AINode.create(aiNode.mChildren().get(i));
+            processNode(child, aiScene, eventHandler);
+        }
+    }
+
+    public static Mesh[] loadMesh(String resourcePath, String texturesDir) throws Exception {
+
+        AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
+        if (aiScene == null) {
+            String error = aiGetErrorString();
+            throw new Exception(error);
+        }
+
+        return parseMesh(aiScene, texturesDir);
+    }
+
+    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode) throws Exception {
+
+        // Material storage.
+        List<Material> materials = new ArrayList<>();
+
+        int numMeshes = aiNode.mNumMeshes();
+        IntBuffer aiMeshes = aiNode.mMeshes();
+        Mesh[] meshes = new Mesh[numMeshes];
+        for (int i = 0; i < numMeshes; i++) {
+
+            int meshIndex = aiMeshes.get(i);
+            AIMesh aiMesh = AIMesh.create(aiScene.mMeshes().get(meshIndex));
+            Mesh mesh = processMesh(aiMesh, materials);
+            meshes[i] = mesh;
+        }
+
+        return meshes;
+    }
+
+
+    public static Mesh[] parseMesh(AIScene aiScene, String texturesDir) throws Exception {
 
         int numMaterials = aiScene.mNumMaterials();
         PointerBuffer aiMaterials = aiScene.mMaterials();
@@ -103,7 +179,9 @@ public class StaticMeshLoader {
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
 
-        processVertices(aiMesh, vertices);
+        BoundingBox bbox = new BoundingBox();
+
+        processVertices(aiMesh, vertices, bbox);
         processNormals(aiMesh, normals);
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
@@ -111,7 +189,8 @@ public class StaticMeshLoader {
         Mesh mesh = new Mesh(Resource.listToArray(vertices),
                 Resource.listToArray(textures),
                 Resource.listToArray(normals),
-                Resource.listIntToArray(indices)
+                Resource.listIntToArray(indices),
+                bbox
         );
         Material material;
         int materialIdx = aiMesh.mMaterialIndex();
@@ -125,13 +204,35 @@ public class StaticMeshLoader {
         return mesh;
     }
 
-    private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
+    private static void processVertices(AIMesh aiMesh, List<Float> vertices, BoundingBox bbox) {
+
+        bbox.min.set( 9999,  9999,  9999);
+        bbox.max.set(-9999, -9999, -9999);
+
+        int i = 0;
+
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
-            vertices.add(aiVertex.x());
-            vertices.add(aiVertex.z());
-            vertices.add(-aiVertex.y());
+
+            float x =  aiVertex.x();
+            float y =  aiVertex.z();
+            float z = -aiVertex.y();
+
+            vertices.add(x);
+            vertices.add(y);
+            vertices.add(z);
+
+            bbox.min.x = Math.min(bbox.min.x, x);
+            bbox.min.y = Math.min(bbox.min.y, y);
+            bbox.min.z = Math.min(bbox.min.z, z);
+
+            bbox.max.x = Math.max(bbox.max.x, x);
+            bbox.max.y = Math.max(bbox.max.y, y);
+            bbox.max.z = Math.max(bbox.max.z, z);
+
+            System.out.println(i + "] " + x + ", " + y + ", " + z);
+            i++;
         }
     }
 
@@ -162,7 +263,9 @@ public class StaticMeshLoader {
             AIFace aiFace = aiFaces.get(i);
             IntBuffer buffer = aiFace.mIndices();
             while (buffer.remaining() > 0) {
-                indices.add(buffer.get());
+                int index = buffer.get();
+                indices.add(index);
+                System.out.println(index);
             }
         }
     }

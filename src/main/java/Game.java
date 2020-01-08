@@ -13,7 +13,7 @@ import org.engine.resources.*;
 
 import org.engine.Terrain;
 
-public class Game implements IGame {
+public class Game implements IGame, IResourceLoaderEvent {
 
     private final SceneRenderer sceneRenderer;
 
@@ -41,7 +41,7 @@ public class Game implements IGame {
         avatar = new Avatar();
         camera = new GameCamera(avatar);
 
-        lightAngle = -90;
+        lightAngle = -45;
     }
 
     @Override
@@ -53,51 +53,27 @@ public class Game implements IGame {
         float reflectance = 1.0f;
 
         avatar.initialize();
-        scene.addEntities(avatar);
+        scene.addEntity(avatar);
 
         avatar.setPosition(0.0f, 0.0f, 0.0f);
 
+
+
+
+
+
+
+
+        // Load entities from FBX - their types specified via Blender custom properties.
+        // Manually add each to the scene.
+        // Afterward, programatically add other entities to the scene.
+        ResourceLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/", this);
+
+
         /*
-        Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/blender01.fbx", "src/main/resources/models/");
-        Texture texture = mesh[0].getMaterial().getTexture();
-        Material material = new Material(texture, 1.0f);
-        mesh[0].setMaterial(material);
-
-        float blockScale = 1.0f;
-
-        float extension = 2.0f;
-
-        float startx = extension * (-skyboxScale + blockScale);
-        float startz = extension * (skyboxScale - blockScale);
-        float starty = -1.0f;
-        float inc = blockScale * 2;
-
-        float posx = startx;
-        float posz = startz;
-        float incy = 0.0f;
-        int NUM_ROWS = (int)(extension * skyboxScale * 2 / inc);
-        int NUM_COLS = (int)(extension * skyboxScale * 2/ inc);
-        Entity[] entities  = new Entity[NUM_ROWS * NUM_COLS];
-        for(int i=0; i<NUM_ROWS; i++) {
-            for(int j=0; j<NUM_COLS; j++) {
-                Entity entity = new Entity(mesh);
-                entity.setScale(blockScale);
-                incy = Math.random() > 0.9f ? blockScale * 2 : 0f;
-                entity.setPosition(posx, starty + incy, posz);
-                entities[i*NUM_COLS + j] = entity;
-
-                posx += inc;
-            }
-            posx = startx;
-            posz -= inc;
-        }
-
-        scene.setEntities(entities);
-        */
-
         // Setup the terrain
         Vector3f terrainScale = new Vector3f(500.0f, 100.0f, 500.0f);
-        int terrainSize = 3;
+        int terrainSize = 1;//3;
         float minY = -0.1f;//-0.1f;
         float maxY = 0.1f;//0.1f;
         int textInc = 40;
@@ -105,7 +81,15 @@ public class Game implements IGame {
         terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/main/resources/textures/heightmap.png", "src/main/resources/textures/terrain.png", textInc);
 
         scene.setEntities(terrain.getEntities());
+        */
 
+ //       Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/");
+        //Texture texture = mesh[0].getMaterial().getTexture();
+        //Material material = new Material(texture, 1.0f);
+        //mesh[0].setMaterial(material);
+
+//        Entity entity = new Entity(mesh);
+//        scene.addEntities(entity);
 
         // Setup  SkyBox
         float skyboxScale = 100.0f;
@@ -166,7 +150,7 @@ public class Game implements IGame {
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
 
         // Update directional light direction, intensity and colour
-        lightAngle += 3f * interval;
+        //lightAngle += 3f * interval;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 360) {
@@ -209,5 +193,17 @@ public class Game implements IGame {
     public void render(Window window) {
         hud.updateSize(window);
         sceneRenderer.render(window, camera, scene, hud);
+    }
+
+    public void resourceLoadedEvent(String type, Entity entity) throws Exception {
+
+        if (type.compareTo("terrain") == 0) {
+
+            // Create a terrain from the mesh.
+            terrain = new Terrain(entity.getMesh());
+        }
+
+        // Add these entities to the scene.
+        scene.addEntity(entity);
     }
 }
