@@ -1,5 +1,7 @@
 package org.engine;
 
+import org.engine.scene.Entity;
+
 public interface IHud {
 
     Entity[] getEntities();

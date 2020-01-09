@@ -1,17 +1,19 @@
-package org.engine;
+package org.engine.scene;
 
 import org.joml.Vector3f;
 import org.engine.renderer.Mesh;
 
 public class Entity {
 
+    private boolean renderable = false;
     private Mesh[] meshes;
 
     protected Vector3f position;
+    protected Vector3f rotation;
 
     protected Vector3f scale;
 
-    protected Vector3f rotation;
+    private Entity parent;
 
     public Entity() {
         position = new Vector3f(0, 0, 0);
@@ -22,11 +24,19 @@ public class Entity {
     public Entity(Mesh mesh) {
         this();
         this.meshes = new Mesh[]{mesh};
+
+        renderable = true;
     }
 
     public Entity(Mesh[] meshes) {
         this();
         this.meshes = meshes;
+
+        renderable = true;
+    }
+
+    public void setParent(Entity parent) {
+        this.parent = parent;
     }
 
     public Vector3f getPosition() {
@@ -43,8 +53,8 @@ public class Entity {
         this.position.set(position);
     }
 
-    public Vector3f getScale()
-    {
+    public Vector3f getScale() {
+
         return scale;
     }
 
@@ -80,14 +90,18 @@ public class Entity {
 
     public void setMeshes(Mesh[] meshes) {
         this.meshes = meshes;
+
+        renderable = true;
     }
 
     public void setMesh(Mesh mesh) {
         this.meshes = new Mesh[]{ mesh };
+        renderable = true;
     }
 
-    public void setMesh(Mesh[] meshes) {
-        this.meshes = meshes;
+    public void clearMeshes() {
+        this.meshes = null;
+        renderable = false;
     }
 
     public void Shutdown() {

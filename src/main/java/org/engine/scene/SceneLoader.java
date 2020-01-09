@@ -1,11 +1,11 @@
-package org.engine.resources;
+package org.engine.scene;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.engine.core.BoundingBox;
-import org.engine.resources.Resource;
+import org.engine.Utilities;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -13,15 +13,20 @@ import org.lwjgl.assimp.*;
 
 import static org.lwjgl.assimp.Assimp.*;
 
-import org.engine.Entity;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.renderer.TextureCache;
 
-public class ResourceLoader {
+public class SceneLoader {
 
-    public static void loadEntities(String resourcePath, String texturesDir, IResourceLoaderEvent eventHandler) throws Exception {
+    public interface IEventHandler {
+
+        public Entity preLoadEntityEvent(String type) throws Exception;
+        public void postLoadEntityEvent(Entity entity) throws Exception;
+    }
+
+    public static void loadEntities(String resourcePath, String texturesDir, IEventHandler eventHandler) throws Exception {
 
         AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
         if (aiScene == null) {
@@ -29,10 +34,18 @@ public class ResourceLoader {
             throw new Exception(error);
         }
 
-        processNode(aiScene.mRootNode(), aiScene, eventHandler);
+        int numMaterials = aiScene.mNumMaterials();
+        PointerBuffer aiMaterials = aiScene.mMaterials();
+        List<Material> materials = new ArrayList<>();
+        for (int i = 0; i < numMaterials; i++) {
+            AIMaterial aiMaterial = AIMaterial.create(aiMaterials.get(i));
+            processMaterial(aiMaterial, materials, texturesDir);
+        }
+
+        processNode(aiScene.mRootNode(), aiScene, materials, eventHandler);
     }
 
-    public static void processNode(AINode aiNode, AIScene aiScene, IResourceLoaderEvent eventHandler) throws Exception {
+    public static void processNode(AINode aiNode, AIScene aiScene, List<Material> materials, IEventHandler eventHandler) throws Exception {
 
         if (aiNode.mMetadata() != null) {
 
@@ -60,11 +73,12 @@ public class ResourceLoader {
 
                         if (valueString.compareTo("terrain") == 0) {
 
-                            Mesh[] meshes = parseMesh(aiScene, aiNode);
+                            Entity entity = eventHandler.preLoadEntityEvent(valueString);
 
-                            // Stash it in an entry so it can be moved around regardless of type.
-                            Entity entity = new Entity(meshes);
-                            eventHandler.resourceLoadedEvent(valueString, entity);
+                            Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                            entity.setMeshes(meshes);
+
+                            eventHandler.postLoadEntityEvent(entity);
                         }
                     }
                 }
@@ -74,7 +88,7 @@ public class ResourceLoader {
         for (int i = 0; i < aiNode.mNumChildren(); i++) {
 
             AINode child = AINode.create(aiNode.mChildren().get(i));
-            processNode(child, aiScene, eventHandler);
+            processNode(child, aiScene, materials, eventHandler);
         }
     }
 
@@ -89,10 +103,7 @@ public class ResourceLoader {
         return parseMesh(aiScene, texturesDir);
     }
 
-    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode) throws Exception {
-
-        // Material storage.
-        List<Material> materials = new ArrayList<>();
+    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials) throws Exception {
 
         int numMeshes = aiNode.mNumMeshes();
         IntBuffer aiMeshes = aiNode.mMeshes();
@@ -186,10 +197,10 @@ public class ResourceLoader {
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh = new Mesh(Resource.listToArray(vertices),
-                Resource.listToArray(textures),
-                Resource.listToArray(normals),
-                Resource.listIntToArray(indices),
+        Mesh mesh = new Mesh(Utilities.listToArray(vertices),
+                Utilities.listToArray(textures),
+                Utilities.listToArray(normals),
+                Utilities.listIntToArray(indices),
                 bbox
         );
         Material material;
@@ -208,8 +219,6 @@ public class ResourceLoader {
 
         bbox.min.set( 9999,  9999,  9999);
         bbox.max.set(-9999, -9999, -9999);
-
-        int i = 0;
 
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         while (aiVertices.remaining() > 0) {
@@ -230,9 +239,6 @@ public class ResourceLoader {
             bbox.max.x = Math.max(bbox.max.x, x);
             bbox.max.y = Math.max(bbox.max.y, y);
             bbox.max.z = Math.max(bbox.max.z, z);
-
-            System.out.println(i + "] " + x + ", " + y + ", " + z);
-            i++;
         }
     }
 
@@ -265,7 +271,6 @@ public class ResourceLoader {
             while (buffer.remaining() > 0) {
                 int index = buffer.get();
                 indices.add(index);
-                System.out.println(index);
             }
         }
     }

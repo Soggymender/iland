@@ -1,19 +1,16 @@
 package org.engine.renderer;
 
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.engine.core.BoundingBox;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
 
-import org.engine.resources.Resource;
+import org.engine.Utilities;
 
 public class HeightMapMesh {
 
@@ -80,9 +77,9 @@ public class HeightMapMesh {
                 }
             }
         }
-        float[] posArr = Resource.listToArray(positions);
+        float[] posArr = Utilities.listToArray(positions);
         int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
-        float[] textCoordsArr = Resource.listToArray(textCoords);
+        float[] textCoordsArr = Utilities.listToArray(textCoords);
         float[] normalsArr = calcNormals(posArr, width, height);
         this.mesh = new Mesh(posArr, textCoordsArr, normalsArr, indicesArr);
         Material material = new Material(texture, 0.0f);
@@ -91,14 +88,13 @@ public class HeightMapMesh {
 
 
     // Heightmap mesh from mesh.
-    public HeightMapMesh(Mesh mesh) throws Exception {
+    public HeightMapMesh(Mesh mesh, String textureFilename) throws Exception {
 
         BoundingBox bbox = mesh.getBbox();
 
         int width  = (int)(bbox.max.x - bbox.min.x) + 1;
         int height = (int)(bbox.max.z - bbox.min.z) + 1;
 
-        String textureFilename;
         int textInc;
 
         this.minY = mesh.getBbox().min.y;
@@ -115,6 +111,11 @@ public class HeightMapMesh {
         }
 
         this.mesh = mesh;
+
+        Texture texture = new Texture(textureFilename);
+
+        Material material = new Material(texture, 0.0f);
+        mesh.setMaterial(material);
     }
 
     public Mesh getMesh() {
@@ -209,7 +210,7 @@ public class HeightMapMesh {
                 normals.add(normal.z);
             }
         }
-        return Resource.listToArray(normals);
+        return Utilities.listToArray(normals);
     }
 
     public float getHeight(int x, int z, int width, ByteBuffer buffer) {

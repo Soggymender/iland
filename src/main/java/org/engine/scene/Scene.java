@@ -1,4 +1,4 @@
-package org.engine;
+package org.engine.scene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Skybox;
-
-import static org.lwjgl.assimp.Assimp.*;
 
 public class Scene {
 
@@ -26,30 +24,12 @@ public class Scene {
         return meshMap;
     }
 
-    public void setEntities(Entity[] entities) {
-
-        int numEntities = entities != null ? entities.length : 0;
-
-        for (int i = 0; i < numEntities; i++) {
-            Entity entity = entities[i];
-
-            Mesh[] meshes = entity.getMeshes();
-
-            for (Mesh mesh : meshes) {
-                List<Entity> list = meshMap.get(mesh);
-                if (list == null) {
-                    list = new ArrayList<>();
-                    meshMap.put(mesh, list);
-                }
-
-                list.add(entity);
-            }
-        }
-    }
-
     public void addEntity(Entity entity) {
 
         Mesh[] meshes = entity.getMeshes();
+        if (meshes == null) {
+            return;
+        }
 
         for (Mesh mesh : meshes) {
 

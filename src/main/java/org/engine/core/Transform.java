@@ -1,6 +1,6 @@
 package org.engine.core;
 
-import org.engine.Entity;
+import org.engine.scene.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.engine.renderer.Camera;

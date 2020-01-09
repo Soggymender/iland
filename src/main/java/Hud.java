@@ -1,5 +1,5 @@
 import org.joml.Vector4f;
-import org.engine.Entity;
+import org.engine.scene.Entity;
 import org.engine.IHud;
 import org.engine.TextBox;
 

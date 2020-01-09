@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.engine.renderer.Mesh;
+import org.engine.scene.Entity;
 import org.lwjgl.system.MemoryStack;
 
 import org.joml.Vector3f;
@@ -13,52 +14,25 @@ import org.joml.Vector3f;
 import org.engine.core.BoundingBox;
 import org.engine.renderer.HeightMapMesh;
 
-public class Terrain {
+public class Terrain extends Entity{
 
-    private final Entity[] entities;
+    private Entity[] entities = null;
 
-    private final int terrainSize;
-    private final int verticesPerCol;
-    private final int verticesPerRow;
+    private int terrainSize = 0;
+    private int verticesPerCol = 0;
+    private int verticesPerRow = 0;
 
     private boolean fromMesh = false;
-    private final HeightMapMesh heightMapMesh;
+    private HeightMapMesh heightMapMesh = null;
 
-    private final Box2D[][] boundingBoxes;
+    private Box2D[][] boundingBoxes = null;
 
-    public Terrain(Mesh mesh) throws Exception {
+    public Terrain() throws Exception {
 
-        fromMesh = true;
-        BoundingBox bbox = mesh.getBbox();
-
-        this.terrainSize = 1;
-
-        int width  = (int)(bbox.max.x - bbox.min.x);
-        int height = (int)(bbox.max.z - bbox.min.z);
-
-        verticesPerCol = width;
-        verticesPerRow = height;
-
-        entities = new Entity[terrainSize * terrainSize];
-        heightMapMesh = new HeightMapMesh(mesh);
-
-        boundingBoxes = new Box2D[terrainSize][terrainSize];
-
-        for (int row = 0; row < terrainSize; row++) {
-            for (int col = 0; col < terrainSize; col++) {
-                float xDisplacement = (col - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getXLength();
-                float zDisplacement = (row - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getZLength();
-
-                Entity terrainBlock = new Entity(heightMapMesh.getMesh());
-                terrainBlock.setScale(1.0f);
-                terrainBlock.setPosition(xDisplacement, 0, zDisplacement);
-                entities[row * terrainSize + col] = terrainBlock;
-
-                boundingBoxes[row][col] = new Box2D(bbox.min.x, bbox.min.z, width, height);
-            }
-        }
     }
 
+    // Generate terrain from heightmap image.
+    //
     public Terrain(int terrainSize, Vector3f scale, float minY, float maxY, String heightMapFilename, String textureFilename, int textInc) throws Exception {
 
         this.terrainSize = terrainSize;
@@ -107,6 +81,44 @@ public class Terrain {
         stbi_image_free(buf);
     }
 
+
+    // Generate terrain from mesh.
+    //
+    public void createFromMesh(Mesh mesh, String textureFilename) throws Exception {
+
+        fromMesh = true;
+        BoundingBox bbox = mesh.getBbox();
+
+        this.terrainSize = 1;
+
+        int width  = (int)(bbox.max.x - bbox.min.x);
+        int height = (int)(bbox.max.z - bbox.min.z);
+
+        verticesPerCol = width;
+        verticesPerRow = height;
+
+        entities = new Entity[terrainSize * terrainSize];
+        heightMapMesh = new HeightMapMesh(mesh, textureFilename);
+
+        boundingBoxes = new Box2D[terrainSize][terrainSize];
+
+        for (int row = 0; row < terrainSize; row++) {
+            for (int col = 0; col < terrainSize; col++) {
+                float xDisplacement = (col - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getXLength();
+                float zDisplacement = (row - ((float) terrainSize - 1) / (float) 2) * HeightMapMesh.getZLength();
+
+                Entity terrainBlock = new Entity(heightMapMesh.getMesh());
+                terrainBlock.setParent(this);
+
+                terrainBlock.setScale(1.0f);
+                terrainBlock.setPosition(xDisplacement, 0, zDisplacement);
+                entities[row * terrainSize + col] = terrainBlock;
+
+                boundingBoxes[row][col] = new Box2D(bbox.min.x, bbox.min.z, width, height);
+            }
+        }
+    }
+
     public Entity[] getEntities() {
         return entities;
     }
@@ -125,8 +137,6 @@ public class Terrain {
                 found = boundingBox.contains(position.x, position.z);
 
             }
-
-
         }
 
         // If we have found a terrain block that contains the position we need

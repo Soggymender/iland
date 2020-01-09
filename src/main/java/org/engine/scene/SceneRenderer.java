@@ -1,10 +1,11 @@
-package org.engine;
+package org.engine.scene;
 
 import java.util.List;
 import java.util.Map;
 
+import org.engine.IHud;
 import org.engine.renderer.*;
-import org.engine.resources.Resource;
+import org.engine.Utilities;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -40,8 +41,8 @@ public class SceneRenderer {
 
         defaultShader = new Shader();
 
-        String vsName = Resource.load("/shaders/default_vertex.vs");
-        String fsName = Resource.load("/shaders/default_fragment.fs");
+        String vsName = Utilities.load("/shaders/default_vertex.vs");
+        String fsName = Utilities.load("/shaders/default_fragment.fs");
 
         if (vsName.isEmpty() || fsName.isEmpty()) {
             return;
@@ -69,8 +70,8 @@ public class SceneRenderer {
 
         skyboxShader = new Shader();
 
-        String vsName = Resource.load("/shaders/skybox_vertex.vs");
-        String fsName = Resource.load("/shaders/skybox_fragment.fs");
+        String vsName = Utilities.load("/shaders/skybox_vertex.vs");
+        String fsName = Utilities.load("/shaders/skybox_fragment.fs");
 
         if (vsName.isEmpty() || fsName.isEmpty()) {
             return;
@@ -89,8 +90,8 @@ public class SceneRenderer {
 
     private void initializeHudShader() throws Exception {
         hudShader = new Shader();
-        hudShader.createVertexShader(Resource.load("/shaders/hud_vertex.vs"));
-        hudShader.createFragmentShader(Resource.load("/shaders/hud_fragment.fs"));
+        hudShader.createVertexShader(Utilities.load("/shaders/hud_vertex.vs"));
+        hudShader.createFragmentShader(Utilities.load("/shaders/hud_fragment.fs"));
         hudShader.link();
 
         // Create uniforms for Ortographic-model projection matrix and base colour

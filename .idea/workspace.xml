@@ -2,31 +2,48 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61821ac4-6dfa-40d7-a8b2-315708f9d6df" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/core/BoundingBox.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/resources/IResourceLoaderEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/assets/models/terrain_mesh_test.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/assets/models/terrain_mesh_test.fbx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/assets/models/terrain_mesh_test01.blend" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/assets/models/terrain_mesh_test01.blend" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Avatar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Avatar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Hud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Hud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/IHud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/IHud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/SceneLighting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneLighting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/SceneRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/Terrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/Terrain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/TextBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/TextBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/core/Transform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/core/Transform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Camera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/HeightMapMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/HeightMapMesh.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Mesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Mesh.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Skybox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Skybox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/resources/StaticMeshLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/resources/ResourceLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/resources/IResourceLoaderEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/resources/Resource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/Utilities.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/resources/ResourceLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Models/terrain_mesh_test.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Models/terrain_mesh_test.fbx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Avatar.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Avatar.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Game.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/GameCamera.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/GameCamera.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/Scene.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/Scene.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/SceneRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/SceneRenderer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Hud.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Hud.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Models/terrain_mesh_test.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Models/terrain_mesh_test.fbx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/Entity.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/IHud.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/IHud.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/Scene.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/SceneLighting.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/SceneRenderer.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/engine/Terrain$Box2D.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/Terrain$Box2D.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/engine/Terrain.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/Terrain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/input/Mouse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/input/Mouse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/TextBox.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/TextBox.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/core/Transform.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/core/Transform.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Camera.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Camera.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/HeightMapMesh.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/HeightMapMesh.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Mesh.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Mesh.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Skybox.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Skybox.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/TextureCache.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/TextureCache.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/resources/StaticMeshLoader.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/resources/Resource.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +81,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -76,6 +93,9 @@
       <recent name="org.engine" />
       <recent name="org.engine.renderer" />
       <recent name="" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Development\Java\iland\src\main\java" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Development\Java" />
@@ -125,10 +145,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="179" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1576779567526" />
-    <state x="414" y="175" width="1092" height="776" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1576728547418">
+    <state x="414" y="175" width="1092" height="776" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1578539494648">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="414" y="175" width="1092" height="776" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576728547418" />
+    <state x="414" y="175" width="1092" height="776" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578539494648" />
     <state x="242" y="324" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1577320377708">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -153,46 +173,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577379008107" />
-    <state width="460" height="466" key="DebuggerActiveHint" timestamp="1578457188163">
+    <state width="460" height="466" key="DebuggerActiveHint" timestamp="1578462124571">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="460" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1578457188163" />
+    <state width="460" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1578462124571" />
     <state x="260" y="266" key="FileChooserDialogImpl" timestamp="1577303567765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577303567765" />
-    <state width="1877" height="265" key="GridCell.Tab.0.bottom" timestamp="1578460993539">
+    <state width="1877" height="345" key="GridCell.Tab.0.bottom" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578460993539" />
-    <state width="1877" height="265" key="GridCell.Tab.0.center" timestamp="1578460993539">
+    <state width="1877" height="345" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.0.center" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578460993539" />
-    <state width="1877" height="265" key="GridCell.Tab.0.left" timestamp="1578460993539">
+    <state width="1877" height="345" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.0.left" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578460993539" />
-    <state width="1877" height="265" key="GridCell.Tab.0.right" timestamp="1578460993539">
+    <state width="1877" height="345" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.0.right" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578460993539" />
-    <state width="1877" height="345" key="GridCell.Tab.1.bottom" timestamp="1578458110162">
+    <state width="1877" height="345" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.1.bottom" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="345" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578458110162" />
-    <state width="1877" height="345" key="GridCell.Tab.1.center" timestamp="1578458110162">
+    <state width="1877" height="345" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.1.center" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="345" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578458110162" />
-    <state width="1877" height="345" key="GridCell.Tab.1.left" timestamp="1578458110162">
+    <state width="1877" height="345" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.1.left" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="345" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578458110162" />
-    <state width="1877" height="345" key="GridCell.Tab.1.right" timestamp="1578458110162">
+    <state width="1877" height="345" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
+    <state width="1877" height="345" key="GridCell.Tab.1.right" timestamp="1578546469364">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="345" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578458110162" />
+    <state width="1877" height="345" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578546469364" />
     <state width="1877" height="347" key="GridCell.Tab.2.bottom" timestamp="1578140589509">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -247,14 +267,9 @@
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/engine/Terrain.java</url>
-          <line>59</line>
-          <option name="timeStamp" value="45" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/engine/Terrain.java</url>
-          <line>42</line>
-          <option name="timeStamp" value="46" />
+          <url>file://$PROJECT_DIR$/src/main/java/Game.java</url>
+          <line>210</line>
+          <option name="timeStamp" value="50" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

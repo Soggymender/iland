@@ -6,7 +6,7 @@ import java.util.List;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
-import org.engine.resources.*;
+import org.engine.scene.Entity;
 
 public class TextBox extends Entity {
 
@@ -85,8 +85,8 @@ public class TextBox extends Entity {
             indices.add(i*VERTICES_PER_QUAD + 2);
         }
 
-        float[] posArr = Resource.listToArray(positions);
-        float[] textCoordsArr = Resource.listToArray(textCoords);
+        float[] posArr = Utilities.listToArray(positions);
+        float[] textCoordsArr = Utilities.listToArray(textCoords);
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
         Mesh mesh = new Mesh(posArr, textCoordsArr, normals, indicesArr);
         mesh.setMaterial(new Material(texture));

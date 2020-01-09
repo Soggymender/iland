@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.system.MemoryUtil;
 
-import org.engine.Entity; // I don't want this here.
+import org.engine.scene.Entity; // I don't want this here.
 
 public class Mesh {
 

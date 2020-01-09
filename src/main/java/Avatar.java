@@ -1,6 +1,6 @@
 import org.joml.Vector3f;
 
-import org.engine.Entity;
+import org.engine.scene.Entity;
 import org.engine.Terrain;
 
 import org.engine.renderer.Camera;
@@ -9,7 +9,7 @@ import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.renderer.Window;
 import org.engine.input.Mouse;
-import org.engine.resources.ResourceLoader;
+import org.engine.scene.SceneLoader;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -32,12 +32,12 @@ public class Avatar extends Entity {
     public void initialize() throws Exception {
 
         // Avatar placeholder.
-        Mesh[] avatarMesh = ResourceLoader.loadMesh("src/main/resources/models/human01.fbx", "src/main/resources/models/");
+        Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/models/human01.fbx", "src/main/resources/models/");
         Texture texture = avatarMesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
         avatarMesh[0].setMaterial(material);
 
-        setMesh(avatarMesh);
+        setMeshes(avatarMesh);
     }
 
     public void input(Window window, Mouse mouse) {

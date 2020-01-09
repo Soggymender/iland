@@ -2,7 +2,7 @@ package org.engine.renderer;
 
 import org.joml.Vector3f;
 
-import org.engine.Entity;
+import org.engine.scene.Entity;
 
 public class Camera extends Entity {
 

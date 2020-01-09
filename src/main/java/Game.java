@@ -3,17 +3,15 @@ import org.engine.*;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector2f;
+import org.engine.scene.*;
 import org.joml.Vector3f;
-import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.input.*;
 import org.engine.renderer.*;
-import org.engine.resources.*;
 
 import org.engine.Terrain;
 
-public class Game implements IGame, IResourceLoaderEvent {
+public class Game implements IGame, SceneLoader.IEventHandler {
 
     private final SceneRenderer sceneRenderer;
 
@@ -67,7 +65,7 @@ public class Game implements IGame, IResourceLoaderEvent {
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
-        ResourceLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/", this);
+        SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/", this);
 
 
         /*
@@ -195,12 +193,31 @@ public class Game implements IGame, IResourceLoaderEvent {
         sceneRenderer.render(window, camera, scene, hud);
     }
 
-    public void resourceLoadedEvent(String type, Entity entity) throws Exception {
+
+    public Entity preLoadEntityEvent(String type) throws Exception {
 
         if (type.compareTo("terrain") == 0) {
 
-            // Create a terrain from the mesh.
-            terrain = new Terrain(entity.getMesh());
+            // Create a terrain entity.
+            terrain = new Terrain();
+            return terrain;
+        }
+
+        return null;
+   }
+
+    public void postLoadEntityEvent(Entity entity) throws Exception {
+
+        if (entity instanceof Terrain) {
+
+            Terrain terrainEntity = (Terrain)entity;
+
+            Mesh mesh = terrainEntity.getMesh();
+            terrainEntity.clearMeshes();
+
+            // Specify the textures since they can't be specified in the scene FBX. Yuck.
+            terrainEntity.createFromMesh(mesh, "src/main/resources/textures/terrain.png");
+            scene.addEntities(terrainEntity.getEntities());
         }
 
         // Add these entities to the scene.

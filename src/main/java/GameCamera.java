@@ -1,13 +1,10 @@
-import org.engine.Entity;
+import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Window;
 import org.engine.input.Mouse;
 import org.joml.*;
 
 import org.engine.core.Math;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class GameCamera extends Camera {
 

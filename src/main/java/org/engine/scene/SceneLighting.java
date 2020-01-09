@@ -1,4 +1,4 @@
-package org.engine;
+package org.engine.scene;
 
 import org.joml.Vector3f;
 import org.engine.renderer.DirectionalLight;

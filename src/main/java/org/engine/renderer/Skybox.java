@@ -1,7 +1,7 @@
 package org.engine.renderer;
 
-import org.engine.Entity;
-import org.engine.resources.ResourceLoader;
+import org.engine.scene.Entity;
+import org.engine.scene.SceneLoader;
 
 public class Skybox extends Entity {
 
@@ -9,7 +9,7 @@ public class Skybox extends Entity {
         super();
 
         // Export the skybox as FBX and include its own material and texture.
-        Mesh[] skyboxMesh = ResourceLoader.loadMesh(modelFilename, texturesDir);
+        Mesh[] skyboxMesh = SceneLoader.loadMesh(modelFilename, texturesDir);
 
         setMesh(skyboxMesh[0]);
         setPosition(0, 0, 0);
