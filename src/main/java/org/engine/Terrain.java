@@ -158,25 +158,33 @@ public class Terrain extends Entity{
         int col = (int) ((position.x - boundingBox.x) / cellWidth);
         int row = (int) ((position.z - boundingBox.y) / cellHeight);
 
-        Vector3f[] triangle = new Vector3f[3];
-        triangle[1] = new Vector3f(
+        Vector3f[] points = new Vector3f[4];
+
+        points[0] = new Vector3f(
                 boundingBox.x + col * cellWidth,
-                getWorldHeight(row + 1, col, terrainBlock),
-                boundingBox.y + (row + 1) * cellHeight);
-        triangle[2] = new Vector3f(
+                getWorldHeight(row, col, terrainBlock),
+                boundingBox.y + row * cellHeight);
+        points[1] = new Vector3f(
                 boundingBox.x + (col + 1) * cellWidth,
                 getWorldHeight(row, col + 1, terrainBlock),
                 boundingBox.y + row * cellHeight);
+        points[2] = new Vector3f(
+                boundingBox.x + (col + 1) * cellWidth,
+                getWorldHeight(row + 1, col + 1, terrainBlock),
+                boundingBox.y + (row + 1) * cellHeight);
+        points[3] = new Vector3f(
+                boundingBox.x + col * cellWidth,
+                getWorldHeight(row + 1, col, terrainBlock),
+                boundingBox.y + (row + 1) * cellHeight);
+
+
+        Vector3f[] triangle = new Vector3f[3];
+        triangle[1] = points[2];
+        triangle[2] = points[0];
         if (position.z < getDiagonalZCoord(triangle[1].x, triangle[1].z, triangle[2].x, triangle[2].z, position.x)) {
-            triangle[0] = new Vector3f(
-                    boundingBox.x + col * cellWidth,
-                    getWorldHeight(row, col, terrainBlock),
-                    boundingBox.y + row * cellHeight);
+            triangle[0] = points[1];
         } else {
-            triangle[0] = new Vector3f(
-                    boundingBox.x + (col + 1) * cellWidth,
-                    getWorldHeight(row + 1, col + 1, terrainBlock),
-                    boundingBox.y + (row + 1) * cellHeight);
+            triangle[0] = points[3];
         }
 
         return triangle;
