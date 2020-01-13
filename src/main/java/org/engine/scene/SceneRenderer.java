@@ -97,6 +97,7 @@ public class SceneRenderer {
         // Create uniforms for Ortographic-model projection matrix and base colour
         hudShader.createUniform("projModelMatrix");
         hudShader.createUniform("color");
+        hudShader.createUniform("hasTexture");
     }
 
     public void initialize(Window window) throws Exception {
@@ -256,7 +257,8 @@ public class SceneRenderer {
             // Set ortohtaphic and model matrix for this HUD item
             Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
             hudShader.setUniform("projModelMatrix", projModelMatrix);
-            hudShader.setUniform("color", entity.getMesh().getMaterial().getAmbientColor());
+            hudShader.setUniform("color", entity.getMesh().getMaterial().getDiffuseColor());
+            hudShader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
 
             // Render the mesh for this HUD item
             mesh.render();

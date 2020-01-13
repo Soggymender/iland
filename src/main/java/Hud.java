@@ -1,11 +1,21 @@
+import org.engine.core.Rect;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
+
 import org.engine.scene.Entity;
 import org.engine.IHud;
-import org.engine.TextBox;
+import org.engine.ui.Canvas;
+import org.engine.ui.Panel;
+import org.engine.ui.Text;
 
 import org.engine.renderer.Window;
 
 public class Hud implements IHud {
+
+    private Canvas canvas;
+    private Panel lPanel;
+    private Panel rPanel;
+
     private static final int FONT_COLS = 16;
     private static final int FONT_ROWS = 16;
 
@@ -13,16 +23,24 @@ public class Hud implements IHud {
 
     private Entity[] entities;
 
-    private final TextBox statusTextBox;
+    private final Text fpsText;
 
-    public Hud(String statusText) throws Exception {
-        this.statusTextBox = new TextBox(statusText, FONT_TEXTURE, FONT_COLS, FONT_ROWS);
-        this.statusTextBox.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
-        entities = new Entity[]{statusTextBox};
+    public Hud(Window window) throws Exception {
+
+        canvas = new Canvas(window, new Vector2f(720, 480));
+        lPanel  = new Panel(canvas, canvas, new Rect(100, 100, 100, 50), new Rect(0, 0, 0, 0));
+        rPanel  = new Panel(canvas, canvas, new Rect(-200, 100, 100, 50), new Rect(1, 0, 1, 0, true));
+
+
+        // Setup a text box.
+        fpsText = new Text("0.0", FONT_TEXTURE, FONT_COLS, FONT_ROWS);
+        fpsText.getMesh().getMaterial().setAmbientColor(new Vector4f(1, 1, 1, 1));
+
+        entities = new Entity[]{canvas, lPanel, rPanel, fpsText};
     }
 
     public void setStatusText(String statusText) {
-        this.statusTextBox.setText(statusText);
+        fpsText.setText(statusText);
     }
 
     @Override
@@ -31,6 +49,9 @@ public class Hud implements IHud {
     }
 
     public void updateSize(Window window) {
-        this.statusTextBox.setPosition(10f, window.getHeight() - 50f, 0);
+
+        canvas.updateSize(window);
+
+        fpsText.setPosition(10f, window.getHeight() - 50f, 0);
     }
 }

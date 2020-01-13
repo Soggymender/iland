@@ -103,7 +103,7 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         camera.getPosition().y = 1.15f;
         camera.getPosition().y = 4.34f;
 
-        hud = new Hud("0.0");
+        hud = new Hud(window);
     }
 
     private void setupLights() {

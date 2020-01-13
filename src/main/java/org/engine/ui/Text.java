@@ -1,14 +1,16 @@
-package org.engine;
+package org.engine.ui;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.engine.Utilities;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.scene.Entity;
 
-public class TextBox extends Entity {
+public class Text extends Entity {
 
     private static final float ZPOS = 0.0f;
 
@@ -17,10 +19,9 @@ public class TextBox extends Entity {
     private String text;
 
     private final int numCols;
-
     private final int numRows;
 
-    public TextBox(String text, String fontFileName, int numCols, int numRows) throws Exception {
+    public Text(String text, String fontFileName, int numCols, int numRows) throws Exception {
         super();
         this.text = text;
         this.numCols = numCols;
@@ -88,8 +89,10 @@ public class TextBox extends Entity {
         float[] posArr = Utilities.listToArray(positions);
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
+
         Mesh mesh = new Mesh(posArr, textCoordsArr, normals, indicesArr);
         mesh.setMaterial(new Material(texture));
+
         return mesh;
     }
 
@@ -99,8 +102,9 @@ public class TextBox extends Entity {
 
     public void setText(String text) {
         this.text = text;
-        Texture texture = this.getMesh().getMaterial().getTexture();
-        this.getMesh().deleteBuffers();
-        this.setMesh(buildMesh(texture, numCols, numRows));
+
+        Texture texture = getMesh().getMaterial().getTexture();
+        getMesh().deleteBuffers();
+        setMesh(buildMesh(texture, numCols, numRows));
     }
 }

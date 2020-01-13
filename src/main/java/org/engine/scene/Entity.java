@@ -1,5 +1,8 @@
 package org.engine.scene;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joml.Vector3f;
 import org.engine.renderer.Mesh;
 
@@ -13,7 +16,8 @@ public class Entity {
 
     protected Vector3f scale;
 
-    private Entity parent;
+    protected Entity parent;
+    protected List<Entity> children = null;
 
     public Entity() {
         position = new Vector3f(0, 0, 0);
@@ -37,6 +41,17 @@ public class Entity {
 
     public void setParent(Entity parent) {
         this.parent = parent;
+
+        this.parent.addChild(this);
+    }
+
+    public void addChild(Entity child) {
+
+        if (children == null) {
+            children = new ArrayList();
+        }
+
+        children.add(child);
     }
 
     public Vector3f getPosition() {
@@ -81,6 +96,11 @@ public class Entity {
     }
 
     public Mesh getMesh() {
+
+        if (meshes == null) {
+            return null;
+        }
+
         return meshes[0];
     }
 
@@ -102,6 +122,10 @@ public class Entity {
     public void clearMeshes() {
         this.meshes = null;
         renderable = false;
+    }
+
+    public void update() {
+
     }
 
     public void Shutdown() {
