@@ -28,8 +28,8 @@ public class Hud implements IHud {
     public Hud(Window window) throws Exception {
 
         canvas = new Canvas(window, new Vector2f(720, 480));
-        lPanel  = new Panel(canvas, canvas, new Rect(100, 100, 100, 50), new Rect(0, 0, 0, 0));
-        rPanel  = new Panel(canvas, canvas, new Rect(-200, 100, 100, 50), new Rect(1, 0, 1, 0, true));
+        lPanel  = new Panel(canvas, canvas, new Rect(100, 100, 100, 50),  new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
+        rPanel  = new Panel(canvas, canvas, new Rect(-100, 100, 100, 50), new Rect(1, 0, 1, 0, true), new Vector2f(1, 0));
 
 
         // Setup a text box.

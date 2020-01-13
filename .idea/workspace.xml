@@ -2,28 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61821ac4-6dfa-40d7-a8b2-315708f9d6df" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/core/Rect.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Canvas.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Panel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/RectTransform.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Hud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Hud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/TextBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Text.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/input/Mouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/input/Mouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/shaders/hud_fragment.fs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/shaders/hud_fragment.fs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Game.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Panel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Panel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/RectTransform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/RectTransform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Hud.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Hud.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/TextBox.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/input/Mouse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/input/Mouse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Window.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Window.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/shaders/hud_fragment.fs" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/shaders/hud_fragment.fs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,6 +140,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577379008107" />
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1578941776058">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578941776058" />
     <state width="491" height="466" key="DebuggerActiveHint" timestamp="1578941233470">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -164,22 +152,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577303567765" />
-    <state width="1877" height="265" key="GridCell.Tab.0.bottom" timestamp="1578941354390">
+    <state width="1877" height="265" key="GridCell.Tab.0.bottom" timestamp="1578942190477">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578941354390" />
-    <state width="1877" height="265" key="GridCell.Tab.0.center" timestamp="1578941354390">
+    <state width="1877" height="265" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578942190477" />
+    <state width="1877" height="265" key="GridCell.Tab.0.center" timestamp="1578942190477">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578941354390" />
-    <state width="1877" height="265" key="GridCell.Tab.0.left" timestamp="1578941354390">
+    <state width="1877" height="265" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578942190477" />
+    <state width="1877" height="265" key="GridCell.Tab.0.left" timestamp="1578942190477">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578941354390" />
-    <state width="1877" height="265" key="GridCell.Tab.0.right" timestamp="1578941354390">
+    <state width="1877" height="265" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578942190477" />
+    <state width="1877" height="265" key="GridCell.Tab.0.right" timestamp="1578942190477">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="265" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578941354390" />
+    <state width="1877" height="265" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578942190477" />
     <state width="1877" height="345" key="GridCell.Tab.1.bottom" timestamp="1578941284087">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -251,7 +239,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java</url>
-          <line>64</line>
+          <line>67</line>
           <option name="timeStamp" value="65" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

@@ -25,7 +25,7 @@ public class UiElement extends Entity {
         material = new Material();
     }
 
-    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor) {
+    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) {
 
         super();
 
@@ -33,6 +33,9 @@ public class UiElement extends Entity {
         setParent(parent);
 
         rectTrans = new RectTransform();
+
+        rectTrans.pivot.set(pivot);
+
         rectTrans.rect.set(rect);
 
         rectTrans.anchor.set(anchor);
@@ -71,15 +74,19 @@ public class UiElement extends Entity {
 
             // Calculate screen rect relative to parent.
 
+            Vector2f pivot = new Vector2f(rectTrans.pivot);
             Rect anchor = rectTrans.anchor.copy();
+
+            pivot.x = rectTrans.rect.getWidth() * pivot.x;
+            pivot.y = rectTrans.rect.getHeight() * pivot.y;
 
             anchor.xMin = parentRect.xMin + anchor.xMin * parentRect.xMax;
             anchor.yMin = parentRect.yMin + anchor.yMin * parentRect.yMax;
             anchor.xMax = parentRect.xMin + anchor.xMax * parentRect.xMax;
             anchor.yMax = parentRect.yMin + anchor.yMax * parentRect.yMax;
 
-            rectTrans.globalRect.xMin = anchor.xMin + rectTrans.rect.xMin;
-            rectTrans.globalRect.yMin = anchor.yMin + rectTrans.rect.yMin;
+            rectTrans.globalRect.xMin = anchor.xMin + rectTrans.rect.xMin - pivot.x;
+            rectTrans.globalRect.yMin = anchor.yMin + rectTrans.rect.yMin - pivot.y;
             rectTrans.globalRect.xMax = rectTrans.globalRect.xMin + rectTrans.rect.getWidth();
             rectTrans.globalRect.yMax = rectTrans.globalRect.yMin + rectTrans.rect.getHeight();
         }

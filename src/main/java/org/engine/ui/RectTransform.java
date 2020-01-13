@@ -1,16 +1,12 @@
 package org.engine.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.joml.Vector2f;
 
 import org.engine.core.Rect;
-import org.engine.renderer.Mesh;
-import org.joml.Vector4f;
 
 public class RectTransform {
 
-//    public float xPivot;
-//    public float yPivot;
+    protected Vector2f pivot;
 
     protected Rect rect;            // Local rect, relative to parent.
     protected Rect anchor;
@@ -21,6 +17,8 @@ public class RectTransform {
     protected Rect screenRect;      // rect transformed into screen space;
 
     public RectTransform() {
+        pivot = new Vector2f();
+
         rect = new Rect();
         anchor = new Rect();
 
