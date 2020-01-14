@@ -54,6 +54,15 @@ public class UiElement extends Entity {
         rectTrans.anchor = anchor;
     }
 
+    public float getDepth() {
+        return rectTrans.getDepth();
+    }
+
+    public void setDepth(float depth) {
+        rectTrans.setDepth(depth);
+        update();
+    }
+
     public void updateSize() {
 
         update();
@@ -63,9 +72,18 @@ public class UiElement extends Entity {
 
         Rect oldScreenRect = rectTrans.screenRect.copy();
 
+        // Use the canvas working resolution and reference resolution to calculate the screen space scale factor.
+        float scaleFactor = 1.0f;
+
+        if (canvas != null) {
+            scaleFactor = canvas.getReferenceScale();
+        }
+
         if (parent == null) {
             // This is the canvas.
+
             rectTrans.globalRect.set(rectTrans.rect);
+            //rectTrans.globalRect.scale(scaleFactor);
         } else {
             // This is a child or ancestor of the canvas.
 
@@ -77,27 +95,40 @@ public class UiElement extends Entity {
             Vector2f pivot = new Vector2f(rectTrans.pivot);
             Rect anchor = rectTrans.anchor.copy();
 
-            pivot.x = rectTrans.rect.getWidth() * pivot.x;
-            pivot.y = rectTrans.rect.getHeight() * pivot.y;
+            pivot.x = rectTrans.rect.getWidth() * scaleFactor * pivot.x;
+            pivot.y = rectTrans.rect.getHeight() * scaleFactor * pivot.y;
 
             anchor.xMin = parentRect.xMin + anchor.xMin * parentRect.xMax;
             anchor.yMin = parentRect.yMin + anchor.yMin * parentRect.yMax;
             anchor.xMax = parentRect.xMin + anchor.xMax * parentRect.xMax;
             anchor.yMax = parentRect.yMin + anchor.yMax * parentRect.yMax;
 
-            rectTrans.globalRect.xMin = anchor.xMin + rectTrans.rect.xMin - pivot.x;
-            rectTrans.globalRect.yMin = anchor.yMin + rectTrans.rect.yMin - pivot.y;
-            rectTrans.globalRect.xMax = rectTrans.globalRect.xMin + rectTrans.rect.getWidth();
-            rectTrans.globalRect.yMax = rectTrans.globalRect.yMin + rectTrans.rect.getHeight();
+            // If x axis anchors are equal, xMax represents width, otherwise it represents an offset from anchor xMax.
+            // Similarly for y axis and height.
+            // This model is based on observations from the Unity UI system.
+            boolean useWidth  = anchor.xMin == anchor.xMax;
+            boolean useHeight = anchor.yMin == anchor.yMax;
+
+            if (useWidth) {
+                rectTrans.globalRect.xMin = anchor.xMin + rectTrans.rect.xMin * scaleFactor - pivot.x;
+                rectTrans.globalRect.xMax = rectTrans.globalRect.xMin + rectTrans.rect.getWidth() * scaleFactor;
+            } else {
+                rectTrans.globalRect.xMin = anchor.xMin + rectTrans.rect.xMin * scaleFactor - pivot.x;
+                rectTrans.globalRect.xMax = anchor.xMax + rectTrans.rect.xMax * scaleFactor - pivot.x;
+            }
+
+            if (useHeight) {
+                rectTrans.globalRect.yMin = anchor.yMin + rectTrans.rect.yMin * scaleFactor - pivot.y;
+                rectTrans.globalRect.yMax = rectTrans.globalRect.yMin + rectTrans.rect.getHeight() * scaleFactor;
+            } else {
+                rectTrans.globalRect.yMin = anchor.yMin + rectTrans.rect.yMin * scaleFactor - pivot.y;
+                rectTrans.globalRect.yMax = anchor.yMax + rectTrans.rect.yMax * scaleFactor - pivot.y;
+
+            }
         }
 
         // To screen space.
         rectTrans.screenRect.set(rectTrans.globalRect);
-
-        // Use the canvas working resolution and reference resolution to calculate the screen space scale factor.
-        if (canvas != null) {
-            rectTrans.screenRect.scale(canvas.getReferenceScale());
-        }
 
 
         // If the screen rect didn't change, the children don't need to be updated.

@@ -12,6 +12,9 @@ public class Panel extends UiElement {
 
         super(canvas, parent, rect, anchor, pivot);
 
-        material.setDiffuseColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        java.util.Random rand = new java.util.Random();
+
+
+        material.setDiffuseColor(new Vector4f(rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, 1.0f));
     }
 }

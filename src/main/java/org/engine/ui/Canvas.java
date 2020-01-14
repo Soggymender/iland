@@ -36,10 +36,10 @@ public class Canvas extends UiElement {
         // Keep the canvas at the reference resolution. Changing the window size only affects the reference scale.
         Vector2f oldWorkingResolution = new Vector2f(workingResolution);
 
-        rectTrans.rect.set(0, 0, referenceResolution.x, referenceResolution.y);
-
         workingResolution.x = window.getWidth();
         workingResolution.y = window.getHeight();
+
+        rectTrans.rect.set(0, 0, workingResolution.x, workingResolution.y);
 
         if (workingResolution.x != oldWorkingResolution.x || workingResolution.y != oldWorkingResolution.y) {
             this.updateSize();
