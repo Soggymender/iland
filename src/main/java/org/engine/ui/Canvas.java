@@ -1,5 +1,6 @@
 package org.engine.ui;
 
+import org.engine.input.Mouse;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -44,6 +45,16 @@ public class Canvas extends UiElement {
         if (workingResolution.x != oldWorkingResolution.x || workingResolution.y != oldWorkingResolution.y) {
             this.updateSize();
         }
+    }
+
+    @Override
+    public boolean input(Mouse mouse) {
+
+        // Make sure the mouse is active.
+        return super.input(mouse);
+
+        // Walk to the children and work up.
+        // Leafs are drawn and detected top-most.
     }
 
     public float getReferenceScale() {

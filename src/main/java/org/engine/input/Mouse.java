@@ -73,6 +73,15 @@ public class Mouse {
         return displVec;
     }
 
+    public Vector2f getPosition() {
+
+        Vector2f pos = new Vector2f();
+        pos.x = (float)currentPos.x;
+        pos.y = (float)currentPos.y;
+
+        return pos;
+    }
+
     public void input(Window window) {
 
 

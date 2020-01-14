@@ -1,5 +1,6 @@
 package org.engine.ui;
 
+import org.engine.input.Mouse;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -42,8 +43,10 @@ public class UiElement extends Entity {
 
         material = new Material();
 
+        // Automatically draw in front of the parent.
         if (parent != null) {
-            float parentDepth = rectTrans.getDepth();
+            UiElement parentElem = (UiElement)parent;
+            float parentDepth = parentElem.rectTrans.getDepth();
             rectTrans.setDepth(parentDepth + 0.01f);
         }
 
@@ -66,6 +69,21 @@ public class UiElement extends Entity {
     public void updateSize() {
 
         update();
+    }
+
+    public boolean input(Mouse mouse) {
+
+        // Leafs are most user-facing so walk all the way down and work back up.
+
+        if (children != null) {
+            for (Entity childEntity : children) {
+
+                UiElement childElement = (UiElement)childEntity;
+                childElement.input(mouse);
+            }
+        }
+
+        return false;
     }
 
     public void update() {

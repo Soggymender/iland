@@ -41,4 +41,8 @@ public class RectTransform {
     public void setDepth(float depth) {
         this.depth = depth;
     }
+
+    public boolean pointInRect(Vector2f pos) {
+        return (pos.x >= globalRect.xMin && pos.x <= globalRect.xMax && pos.y >= globalRect.yMin && pos.y <= globalRect.yMax);
+    }
 }
