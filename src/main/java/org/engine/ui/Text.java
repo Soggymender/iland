@@ -5,26 +5,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.engine.Utilities;
+import org.engine.core.Rect;
 import org.engine.renderer.FontTexture;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
-import org.engine.renderer.Texture;
+import org.engine.renderer.FontTexture;
 import org.engine.scene.Entity;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-public class Text extends Entity {
+public class Text extends UiElement {
 
-    private static final float ZPOS = 0.0f;
+    private static final float ZPOS = 0.1f;
 
     private static final int VERTICES_PER_QUAD = 4;
 
     private String text;
     private final FontTexture fontTexture;
 
-    public Text(String text, FontTexture fontTexture) throws Exception {
-        super();
-        this.text = text;
+    public Text(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
+
+        super(canvas, parent, rect, anchor, pivot);
+
+        this.forwardsInput = false;
+        this.acceptsInput = false;
+        this.buildsMesh = false;
+
+        this.text = textString;
         this.fontTexture = fontTexture;
-        this.setMesh(buildMesh());
+        //this.setMesh(buildMesh());
+
+        update();
     }
 
     private Mesh buildMesh() {
@@ -48,7 +60,13 @@ public class Text extends Entity {
         char[] characters = text.toCharArray();
         int numChars = characters.length;
 
-        float startX = 0;
+        float maxWidth = rectTrans.globalRect.xMax - rectTrans.globalRect.xMin;
+        float maxHeight = rectTrans.globalRect.yMax - rectTrans.globalRect.yMin;
+
+        float scale = canvas.getReferenceScale();
+
+        float startX = rectTrans.globalRect.xMin;
+        float startY = rectTrans.globalRect.yMin;
         for(int i=0; i<numChars; i++) {
 
             FontTexture.CharInfo charInfo = fontTexture.getCharInfo(characters[i]);
@@ -62,7 +80,7 @@ public class Text extends Entity {
 
             // Left Top vertex
             positions.add(startX); // x
-            positions.add(0.0f); //y
+            positions.add(startY); //y
             positions.add(ZPOS); //z
             textCoords.add(charStartX / texWidth );
             textCoords.add(0.0f);
@@ -70,23 +88,23 @@ public class Text extends Entity {
 
             // Left Bottom vertex
             positions.add(startX); // x
-            positions.add(texHeight); //y
+            positions.add(startY + texHeight * scale); //y
             positions.add(ZPOS); //z
             textCoords.add((float)charStartX / texWidth );
             textCoords.add(1.0f );
             indices.add(i*VERTICES_PER_QUAD + 1);
 
             // Right Bottom vertex
-            positions.add(startX + charWidth); // x
-            positions.add(texHeight); //y
+            positions.add(startX + charWidth * scale); // x
+            positions.add(startY + texHeight * scale); //y
             positions.add(ZPOS); //z
             textCoords.add((charStartX + charWidth) / texWidth);
             textCoords.add(1.0f);
             indices.add(i*VERTICES_PER_QUAD + 2);
 
             // Right Top vertex
-            positions.add(startX + charWidth); // x
-            positions.add(0.0f); //y
+            positions.add(startX + charWidth * scale); // x
+            positions.add(startY); //y
             positions.add(ZPOS); //z
             textCoords.add((charStartX + charWidth) / texWidth);
             textCoords.add(0.0f);
@@ -96,7 +114,7 @@ public class Text extends Entity {
             indices.add(i*VERTICES_PER_QUAD);
             indices.add(i*VERTICES_PER_QUAD + 2);
 
-            startX += charWidth;
+            startX += charWidth * scale;
         }
 
         float[] posArr = Utilities.listToArray(positions);
@@ -118,5 +136,26 @@ public class Text extends Entity {
 
         getMesh().deleteBuffers();
         setMesh(buildMesh());
+
+        getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
+    }
+
+    public void update() {
+
+        super.update();
+
+        // Build the mesh but only add verts that fit.
+        setMesh(buildMesh());
+        getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
+
+
+        System.out.println(rectTrans.globalRect.xMin + ", " + rectTrans.globalRect.yMin);
+//        super.update();
+
+        //    Vector3f textPos = new Vector3f();
+          //  textPos.x = rectTrans.globalRect.xMin;
+            //textPos.y = rectTrans.globalRect.yMin;
+            //textPos.z = 0.0f;
+       // }
     }
 }

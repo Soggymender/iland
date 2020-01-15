@@ -29,6 +29,10 @@ public class Canvas extends UiElement {
 
         material.setDiffuseColor(new Vector4f(1.0f, 0.0f, 0.0f, 0.5f));
 
+        forwardsInput = true;
+        acceptsInput = false;
+        buildsMesh = false;
+
         updateSize(window);
     }
 
@@ -48,10 +52,10 @@ public class Canvas extends UiElement {
     }
 
     @Override
-    public boolean input(Mouse mouse) {
+    public boolean input(Mouse mouse, float interval) {
 
         // Make sure the mouse is active.
-        return super.input(mouse);
+        return super.input(mouse, interval);
 
         // Walk to the children and work up.
         // Leafs are drawn and detected top-most.

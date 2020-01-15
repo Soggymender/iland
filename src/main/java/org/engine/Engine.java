@@ -56,7 +56,7 @@ public class Engine {//} implements Runnable {
 
             elapsedTime = timer.getElapsedTime();
 
-            input();
+            input(elapsedTime);
 
             update(elapsedTime);
 
@@ -68,9 +68,9 @@ public class Engine {//} implements Runnable {
        }
     }
 
-    protected void input() {
+    protected void input(float interval) {
         mouse.input(window);
-        gameLogic.input(window, mouse);
+        gameLogic.input(window, mouse, interval);
     }
 
     protected void update(float interval) {

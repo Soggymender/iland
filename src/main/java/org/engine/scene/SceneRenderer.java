@@ -254,9 +254,14 @@ public class SceneRenderer {
         Matrix4f ortho = transform.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
         for (Entity entity : hud.getEntities()) {
             Mesh mesh = entity.getMesh();
+            if (mesh == null) {
+                continue;
+            }
             // Set ortohtaphic and model matrix for this HUD item
             Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
             hudShader.setUniform("projModelMatrix", projModelMatrix);
+
+
             hudShader.setUniform("color", entity.getMesh().getMaterial().getDiffuseColor());
             hudShader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
 

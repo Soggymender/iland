@@ -17,6 +17,10 @@ public class UiElement extends Entity {
     protected RectTransform rectTrans;
     protected Material material;
 
+    protected boolean forwardsInput = false;
+    protected boolean acceptsInput = false;
+    protected boolean buildsMesh = false;
+
     protected Canvas canvas = null;
 
     public UiElement() {
@@ -50,7 +54,7 @@ public class UiElement extends Entity {
             rectTrans.setDepth(parentDepth + 0.01f);
         }
 
-        updateSize();
+//        updateSize();
     }
 
     public void setAnchor(Rect anchor) {
@@ -71,7 +75,11 @@ public class UiElement extends Entity {
         update();
     }
 
-    public boolean input(Mouse mouse) {
+    public boolean input(Mouse mouse, float interval) {
+
+        if (!forwardsInput) {
+            return false;
+        }
 
         // Leafs are most user-facing so walk all the way down and work back up.
 
@@ -79,7 +87,7 @@ public class UiElement extends Entity {
             for (Entity childEntity : children) {
 
                 UiElement childElement = (UiElement)childEntity;
-                childElement.input(mouse);
+                childElement.input(mouse, interval);
             }
         }
 
@@ -154,7 +162,9 @@ public class UiElement extends Entity {
             return;
         }
 
-        buildMesh();
+        if (buildsMesh) {
+            buildMesh();
+        }
 
         if (children != null) {
             for (Entity childEntity : children) {

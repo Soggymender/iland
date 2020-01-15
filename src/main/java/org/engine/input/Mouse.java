@@ -21,6 +21,9 @@ public class Mouse {
     private boolean isActive = false;
     private boolean inWindow = false;
 
+    private boolean prevLeftButtonPressed = false;
+    private boolean prevRightButtonPressed = false;
+
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
 
@@ -58,10 +61,10 @@ public class Mouse {
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
             inWindow = entered;
         });
-        glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
-            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-            rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
-        });
+    //    glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
+//            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
+  //          rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
+      //  });
     }
 
     public void shutdown(Window window) {
@@ -83,9 +86,6 @@ public class Mouse {
     }
 
     public void input(Window window) {
-
-
-
 
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
@@ -121,13 +121,23 @@ public class Mouse {
         if (rotateY) {
             displVec.x = (float) deltay;
         }
+
+
+        prevLeftButtonPressed = leftButtonPressed;
+        prevRightButtonPressed = rightButtonPressed;
+
+        leftButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_1) != 0;
+        rightButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_2) != 0;
     }
 
-    public boolean isLeftButtonPressed() {
+    public boolean leftButtonPressed() {
         return leftButtonPressed;
     }
 
-    public boolean isRightButtonPressed() {
+    public boolean rightButtonPressed() {
         return rightButtonPressed;
     }
+
+    public boolean leftButtonJustPressed() { return leftButtonPressed && !prevLeftButtonPressed; }
+    public boolean rightButtonJustPressed() { return rightButtonPressed && !prevRightButtonPressed; }
 }
