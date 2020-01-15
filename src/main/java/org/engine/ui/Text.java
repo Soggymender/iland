@@ -17,12 +17,12 @@ import org.joml.Vector4f;
 
 public class Text extends UiElement {
 
-    private static final float ZPOS = 0.1f;
-
     private static final int VERTICES_PER_QUAD = 4;
 
     private String text;
     private final FontTexture fontTexture;
+
+    private boolean xJustifyCenter = true;
 
     public Text(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
 
@@ -60,13 +60,36 @@ public class Text extends UiElement {
         char[] characters = text.toCharArray();
         int numChars = characters.length;
 
+        float texWidth = (float)fontTexture.getWidth();
+        float texHeight = (float)fontTexture.getHeight();
+
         float maxWidth = rectTrans.globalRect.xMax - rectTrans.globalRect.xMin;
         float maxHeight = rectTrans.globalRect.yMax - rectTrans.globalRect.yMin;
 
         float scale = canvas.getReferenceScale();
 
+        float stringWidth = 0;
+        float stringHeight = 0;
+
+        // Pre calculate word width, and character fit.
+        for(int i=0; i<numChars; i++) {
+
+            FontTexture.CharInfo charInfo = fontTexture.getCharInfo(characters[i]);
+
+            float charWidth = (float)charInfo.getWidth();
+
+            stringWidth += charWidth * scale;
+        }
+
         float startX = rectTrans.globalRect.xMin;
-        float startY = rectTrans.globalRect.yMin;
+        if (xJustifyCenter) {
+            startX += (maxWidth - stringWidth) / 2;
+        }
+
+        float startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+
+        float depth = getDepth();
+        
         for(int i=0; i<numChars; i++) {
 
             FontTexture.CharInfo charInfo = fontTexture.getCharInfo(characters[i]);
@@ -75,13 +98,11 @@ public class Text extends UiElement {
 
             float charStartX = (float)charInfo.getStartX();
             float charWidth = (float)charInfo.getWidth();
-            float texWidth = (float)fontTexture.getWidth();
-            float texHeight = (float)fontTexture.getHeight();
 
             // Left Top vertex
             positions.add(startX); // x
             positions.add(startY); //y
-            positions.add(ZPOS); //z
+            positions.add(depth); //z
             textCoords.add(charStartX / texWidth );
             textCoords.add(0.0f);
             indices.add(i*VERTICES_PER_QUAD);
@@ -89,7 +110,7 @@ public class Text extends UiElement {
             // Left Bottom vertex
             positions.add(startX); // x
             positions.add(startY + texHeight * scale); //y
-            positions.add(ZPOS); //z
+            positions.add(depth); //z
             textCoords.add((float)charStartX / texWidth );
             textCoords.add(1.0f );
             indices.add(i*VERTICES_PER_QUAD + 1);
@@ -97,7 +118,7 @@ public class Text extends UiElement {
             // Right Bottom vertex
             positions.add(startX + charWidth * scale); // x
             positions.add(startY + texHeight * scale); //y
-            positions.add(ZPOS); //z
+            positions.add(depth); //z
             textCoords.add((charStartX + charWidth) / texWidth);
             textCoords.add(1.0f);
             indices.add(i*VERTICES_PER_QUAD + 2);
@@ -105,7 +126,7 @@ public class Text extends UiElement {
             // Right Top vertex
             positions.add(startX + charWidth * scale); // x
             positions.add(startY); //y
-            positions.add(ZPOS); //z
+            positions.add(depth); //z
             textCoords.add((charStartX + charWidth) / texWidth);
             textCoords.add(0.0f);
             indices.add(i*VERTICES_PER_QUAD + 3);
@@ -147,15 +168,5 @@ public class Text extends UiElement {
         // Build the mesh but only add verts that fit.
         setMesh(buildMesh());
         getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
-
-
-        System.out.println(rectTrans.globalRect.xMin + ", " + rectTrans.globalRect.yMin);
-//        super.update();
-
-        //    Vector3f textPos = new Vector3f();
-          //  textPos.x = rectTrans.globalRect.xMin;
-            //textPos.y = rectTrans.globalRect.yMin;
-            //textPos.z = 0.0f;
-       // }
     }
 }

@@ -49,7 +49,7 @@ public class Button extends UiElement {
         if (textString != null) {
             this.fontTexture = fontTexture;
 
-            text = new Text(canvas, this, new Rect(0, 0, 1, 1, true), new Rect(0, 0, 1, 1, true), pivot, textString, fontTexture);
+            text = new Text(canvas, this, new Rect(0, 0, 0, 0, true), new Rect(0, 0, 1, 1, true), pivot, textString, fontTexture);
         }
     }
 

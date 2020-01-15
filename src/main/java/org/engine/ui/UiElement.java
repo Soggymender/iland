@@ -126,8 +126,8 @@ public class UiElement extends Entity {
 
             anchor.xMin = parentRect.xMin + anchor.xMin * parentRect.xMax;
             anchor.yMin = parentRect.yMin + anchor.yMin * parentRect.yMax;
-            anchor.xMax = parentRect.xMin + anchor.xMax * parentRect.xMax;
-            anchor.yMax = parentRect.yMin + anchor.yMax * parentRect.yMax;
+            anchor.xMax = parentRect.xMin + anchor.xMax * (parentRect.xMax - parentRect.xMin);
+            anchor.yMax = parentRect.yMin + anchor.yMax * (parentRect.yMax - parentRect.yMin);
 
             // If x axis anchors are equal, xMax represents width, otherwise it represents an offset from anchor xMax.
             // Similarly for y axis and height.

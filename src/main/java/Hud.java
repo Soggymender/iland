@@ -25,7 +25,7 @@ public class Hud implements IHud {
     private static final int FONT_COLS = 16;
     private static final int FONT_ROWS = 16;
 
-    private static final Font FONT = new Font("Arial", Font.PLAIN, 32);
+    private static final Font FONT = new Font("Arial", Font.PLAIN, 24);
     private static final String CHARSET = "ISO-8859-1";
 
     private Entity[] entities;
