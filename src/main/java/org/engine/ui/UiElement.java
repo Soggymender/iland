@@ -14,14 +14,18 @@ import org.engine.renderer.Window;
 
 public class UiElement extends Entity {
 
+    protected class Flags {
+        protected boolean forwardsInput = false;
+        protected boolean acceptsInput = false;
+        protected boolean buildsMesh = false;
+    }
+
     protected RectTransform rectTrans;
     protected Material material;
 
-    protected boolean forwardsInput = false;
-    protected boolean acceptsInput = false;
-    protected boolean buildsMesh = false;
-
     protected Canvas canvas = null;
+
+    protected Flags flags = new Flags();
 
     public UiElement() {
         super();
@@ -77,7 +81,7 @@ public class UiElement extends Entity {
 
     public boolean input(Mouse mouse, float interval) {
 
-        if (!forwardsInput) {
+        if (!flags.forwardsInput) {
             return false;
         }
 
@@ -162,7 +166,7 @@ public class UiElement extends Entity {
             return;
         }
 
-        if (buildsMesh) {
+        if (flags.buildsMesh) {
             buildMesh();
         }
 

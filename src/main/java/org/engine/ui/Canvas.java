@@ -29,9 +29,9 @@ public class Canvas extends UiElement {
 
         material.setDiffuseColor(new Vector4f(1.0f, 0.0f, 0.0f, 0.5f));
 
-        forwardsInput = true;
-        acceptsInput = false;
-        buildsMesh = false;
+        flags.forwardsInput = true;
+        flags.acceptsInput = false;
+        flags.buildsMesh = false;
 
         updateSize(window);
     }

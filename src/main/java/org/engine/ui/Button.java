@@ -11,6 +11,11 @@ import org.engine.core.Rect;
 
 public class Button extends UiElement {
 
+    private class Flags {
+        private boolean  highlighted = false;
+        private boolean  pressed = false;
+    }
+
     private static final float HIGHLIGHTED_COLOR_OFFSET = 0.05f;
     private static final float PRESSED_COLOR_OFFSET = 0.15f;
     private static final float PRESSED_TIME = 0.125f;
@@ -19,14 +24,12 @@ public class Button extends UiElement {
     private Vector4f highlightedColor;
     private Vector4f pressedColor;
 
-    private boolean  highlighted = false;
-    private boolean  pressed = false;
-
     private float pressedTime = 0.0f;
 
     private Text text = null;
     private FontTexture fontTexture = null;
 
+    private Flags buttonFlags = new Flags();
 
     public Button(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
 
@@ -38,9 +41,9 @@ public class Button extends UiElement {
         highlightedColor = new Vector4f(color.x + HIGHLIGHTED_COLOR_OFFSET, color.y + HIGHLIGHTED_COLOR_OFFSET, color.z + HIGHLIGHTED_COLOR_OFFSET, color.w);
         pressedColor = new Vector4f(color.x + PRESSED_COLOR_OFFSET, color.y + PRESSED_COLOR_OFFSET, color.z + PRESSED_COLOR_OFFSET, color.w);
 
-        forwardsInput = false;
-        acceptsInput = true;
-        buildsMesh = true;
+        flags.forwardsInput = false;
+        flags.acceptsInput = true;
+        flags.buildsMesh = true;
 
         material.setDiffuseColor(color);
 
@@ -86,10 +89,10 @@ public class Button extends UiElement {
         Vector2f pos = mouse.getPosition();
 
         // End pressed state?
-        if (pressed) {
+        if (buttonFlags.pressed) {
             if (pressedTime >= PRESSED_TIME) {
                 pressedTime = 0.0f;
-                pressed = false;
+                buttonFlags.pressed = false;
                 material.setDiffuseColor(color);
             }
 
@@ -98,17 +101,17 @@ public class Button extends UiElement {
             if (rectTrans.pointInRect(pos)) {
 
                 if (mouse.leftButtonJustPressed()) {
-                    pressed = true;
+                    buttonFlags.pressed = true;
                     pressedTime = 0.0f;
 
                     material.setDiffuseColor(pressedColor);
                 } else {
-                    highlighted = true;
+                    buttonFlags.highlighted = true;
                     material.setDiffuseColor(highlightedColor);
                 }
             } else {
 
-                if (highlighted) {
+                if (buttonFlags.highlighted) {
                     material.setDiffuseColor(color);
                 }
             }

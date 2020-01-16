@@ -14,9 +14,9 @@ public class Panel extends UiElement {
 
         java.util.Random rand = new java.util.Random();
 
-        forwardsInput = true;
-        acceptsInput = false;
-        buildsMesh = true;
+        flags.forwardsInput = true;
+        flags.acceptsInput = false;
+        flags.buildsMesh = true;
 
         material.setDiffuseColor(new Vector4f(rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, 1.0f));
 
