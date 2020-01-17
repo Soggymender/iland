@@ -19,7 +19,5 @@ public class Panel extends UiElement {
         flags.buildsMesh = true;
 
         material.setDiffuseColor(new Vector4f(rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, rand.nextFloat() % 1.0f, 1.0f));
-
-        update();
     }
 }

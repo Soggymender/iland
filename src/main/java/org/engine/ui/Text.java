@@ -35,9 +35,6 @@ public class Text extends UiElement {
 
         this.text = textString;
         this.fontTexture = fontTexture;
-        //this.setMesh(buildMesh());
-
-        update();
     }
 
     private Mesh buildMesh() {
@@ -213,17 +210,31 @@ public class Text extends UiElement {
     public void setText(String text) {
         this.text = text;
 
-        getMesh().deleteBuffers();
-        setMesh(buildMesh());
+        flags.dirty = true;
 
-        getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
+//        if (getMesh() != null) {
+//            getMesh().deleteBuffers();
+//        }
+
+//        setMesh(buildMesh());
+
+ //       getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
     }
 
-    public void update() {
+    public void update(float interval) {
 
-        super.update();
+        if (!flags.dirty) {
+            super.update(interval);
+            return;
+        }
+
+        super.update(interval);
 
         // Build the mesh but only add verts that fit.
+        if (getMesh() != null) {
+            getMesh().deleteBuffers();
+        }
+
         setMesh(buildMesh());
         getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
     }

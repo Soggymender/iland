@@ -18,6 +18,7 @@ public class UiElement extends Entity {
         protected boolean forwardsInput = false;
         protected boolean acceptsInput = false;
         protected boolean buildsMesh = false;
+        protected boolean dirty = true; // Everything starts dirty so it'll do an initial update after construction.
     }
 
     protected RectTransform rectTrans;
@@ -71,34 +72,42 @@ public class UiElement extends Entity {
 
     public void setDepth(float depth) {
         rectTrans.setDepth(depth);
-        update();
     }
 
     public void updateSize() {
+        flags.dirty = true;
 
-        update();
+        // Recursively update the size of everything in the hierarchy to flag an update.
+        if (children == null) {
+            return;
+        }
+
+        for (Entity child : children) {
+            if (child instanceof UiElement) {
+                ((UiElement)child).updateSize();
+            }
+        }
     }
 
-    public boolean input(Mouse mouse, float interval) {
+    public void input(Mouse mouse, float interval) {
 
         if (!flags.forwardsInput) {
-            return false;
+            return;
         }
 
         // Leafs are most user-facing so walk all the way down and work back up.
 
-        if (children != null) {
-            for (Entity childEntity : children) {
-
-                UiElement childElement = (UiElement)childEntity;
-                childElement.input(mouse, interval);
-            }
-        }
-
-        return false;
+        super.input(mouse, interval);
     }
 
-    public void update() {
+    public void update(float interval) {
+
+        if (!flags.dirty) {
+            super.update(interval);
+            return;
+        }
+
+        flags.dirty = false;
 
         Rect oldScreenRect = rectTrans.screenRect.copy();
 
@@ -109,7 +118,7 @@ public class UiElement extends Entity {
             scaleFactor = canvas.getReferenceScale();
         }
 
-        if (parent == null) {
+        if (this == canvas) {
             // This is the canvas.
 
             rectTrans.globalRect.set(rectTrans.rect);
@@ -170,13 +179,7 @@ public class UiElement extends Entity {
             buildMesh();
         }
 
-        if (children != null) {
-            for (Entity childEntity : children) {
-
-                UiElement childElement = (UiElement)childEntity;
-                childElement.update();
-            }
-        }
+        super.update(interval);
     }
 
     private void buildMesh() {

@@ -47,15 +47,17 @@ public class Canvas extends UiElement {
         rectTrans.rect.set(0, 0, workingResolution.x, workingResolution.y);
 
         if (workingResolution.x != oldWorkingResolution.x || workingResolution.y != oldWorkingResolution.y) {
-            this.updateSize();
+            super.updateSize();
         }
     }
 
     @Override
-    public boolean input(Mouse mouse, float interval) {
+    public void input(Mouse mouse, float interval) {
 
         // Make sure the mouse is active.
-        return super.input(mouse, interval);
+        super.input(mouse, interval);
+
+        return;
 
         // Walk to the children and work up.
         // Leafs are drawn and detected top-most.

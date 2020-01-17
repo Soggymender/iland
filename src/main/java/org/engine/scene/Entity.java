@@ -3,12 +3,16 @@ package org.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.engine.input.Mouse;
 import org.joml.Vector3f;
 import org.engine.renderer.Mesh;
 
 public class Entity {
 
-    private boolean renderable = false;
+    protected class Flags {
+        public boolean renderable = false;
+    }
+
     private Mesh[] meshes;
 
     protected Vector3f position;
@@ -19,7 +23,12 @@ public class Entity {
     protected Entity parent;
     protected List<Entity> children = null;
 
+    public Flags flags = null;
+
     public Entity() {
+
+        flags = new Flags();
+
         position = new Vector3f(0, 0, 0);
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
         rotation = new Vector3f(0, 0, 0);
@@ -29,20 +38,27 @@ public class Entity {
         this();
         this.meshes = new Mesh[]{mesh};
 
-        renderable = true;
+        flags.renderable = true;
     }
 
     public Entity(Mesh[] meshes) {
         this();
         this.meshes = meshes;
 
-        renderable = true;
+        flags.renderable = true;
     }
 
     public void setParent(Entity parent) {
-        this.parent = parent;
 
-        this.parent.addChild(this);
+        if (this.parent == null) {
+            this.parent = parent;
+
+            this.parent.addChild(this);
+        } else {
+            // If there is already a parent, adopt.
+//            Entity oldParent = this.parent;
+//            this.parent.removeChild(this);
+        }
     }
 
     public void addChild(Entity child) {
@@ -52,6 +68,26 @@ public class Entity {
         }
 
         children.add(child);
+    }
+
+    public void removeChild(Entity child) {
+        if (children == null) {
+            return;
+        }
+
+        if (children.contains(child)) {
+            children.remove(child);
+        }
+    }
+
+    // Walk the ancestory and return the root back up the call stack.
+    public Entity findRoot() {
+
+        if (parent == null) {
+            return this;
+        }
+
+        return parent.findRoot();
     }
 
     public Vector3f getPosition() {
@@ -111,21 +147,38 @@ public class Entity {
     public void setMeshes(Mesh[] meshes) {
         this.meshes = meshes;
 
-        renderable = true;
+        flags.renderable = true;
     }
 
     public void setMesh(Mesh mesh) {
         this.meshes = new Mesh[]{ mesh };
-        renderable = true;
+        flags.renderable = true;
     }
 
     public void clearMeshes() {
         this.meshes = null;
-        renderable = false;
+        flags.renderable = false;
     }
 
-    public void update() {
+    public void input(Mouse mouse, float interval) {
 
+        if (children == null) {
+            return;
+        }
+
+        for (Entity child : children) {
+            child.input(mouse, interval);
+        }
+    }
+
+    public void update(float interval) {
+        if (children == null) {
+            return;
+        }
+
+        for (Entity child : children) {
+            child.update(interval);
+        }
     }
 
     public void Shutdown() {

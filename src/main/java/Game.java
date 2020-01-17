@@ -51,7 +51,7 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         float reflectance = 1.0f;
 
         avatar.initialize();
-        scene.addEntity(avatar);
+        scene.addEntityMeshes(avatar);
 
         avatar.setPosition(0.0f, 0.0f, 0.0f);
 
@@ -103,7 +103,7 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         camera.getPosition().y = 1.15f;
         camera.getPosition().y = 4.34f;
 
-        hud = new Hud(window);
+        hud = new Hud(window, scene);
     }
 
     private void setupLights() {
@@ -134,10 +134,10 @@ public class Game implements IGame, SceneLoader.IEventHandler {
     @Override
     public void input(Window window, Mouse mouse, float interval) {
 
-        hud.input(window, mouse, interval);
-
         avatar.input(window, mouse);
         camera.input(window, mouse);
+
+        scene.input(mouse, interval);
     }
 
     @Override
@@ -183,6 +183,8 @@ public class Game implements IGame, SceneLoader.IEventHandler {
            fpsSamples = 0;
        }
 
+       scene.update(interval);
+
        float fps = 1.0f / interval;
        accumulator += interval;
        fpsTotal += fps;
@@ -219,10 +221,10 @@ public class Game implements IGame, SceneLoader.IEventHandler {
 
             // Specify the textures since they can't be specified in the scene FBX. Yuck.
             terrainEntity.createFromMesh(mesh, "src/main/resources/textures/terrain.png");
-            scene.addEntities(terrainEntity.getEntities());
+            scene.addEntitiesMeshes(terrainEntity.getEntities());
         }
 
         // Add these entities to the scene.
-        scene.addEntity(entity);
+        scene.addEntityMeshes(entity);
     }
 }

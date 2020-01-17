@@ -47,8 +47,6 @@ public class Button extends UiElement {
 
         material.setDiffuseColor(color);
 
-        update();
-
         if (textString != null) {
             this.fontTexture = fontTexture;
 
@@ -84,7 +82,7 @@ public class Button extends UiElement {
         return text;
     }
 
-    public boolean input(Mouse mouse, float interval) {
+    public void input(Mouse mouse, float interval) {
 
         Vector2f pos = mouse.getPosition();
 
@@ -117,6 +115,10 @@ public class Button extends UiElement {
             }
         }
 
-        return false;
+        super.input(mouse, interval);
+    }
+
+    public void update(float interval) {
+        super.update(interval);
     }
 }

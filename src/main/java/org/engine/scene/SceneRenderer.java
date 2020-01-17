@@ -157,6 +157,10 @@ public class SceneRenderer {
 
         defaultShader.setUniform("texture_sampler", 0);
 
+        // This iterates through the meshes rather than the entities, because batching multiple instances
+        // of the same mesh side by side saves render state changes. So each mesh points at all of the entities
+        // that use it.
+
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
 

@@ -79,6 +79,6 @@ public class Engine {//} implements Runnable {
 
     protected void render() {
         gameLogic.render(window);
-        window.update();
+        window.update(0.0f); // 0.0 is wrong
     }
 }

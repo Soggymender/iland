@@ -147,7 +147,7 @@ public class Window {
         this.vSync = vSync;
     }
 
-    public void update() {
+    public void update(float interval) {
         glfwSwapBuffers(windowHandle);
         glfwPollEvents();
     }
