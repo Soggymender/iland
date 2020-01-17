@@ -52,11 +52,10 @@ public class Canvas extends UiElement {
     }
 
     @Override
-    public void input(Mouse mouse, float interval) {
+    public void input(Mouse mouse) {
 
         // Make sure the mouse is active.
-        super.input(mouse, interval);
-
+        super.input(mouse);
         return;
 
         // Walk to the children and work up.

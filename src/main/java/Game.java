@@ -132,12 +132,12 @@ public class Game implements IGame, SceneLoader.IEventHandler {
     }
 
     @Override
-    public void input(Window window, Mouse mouse, float interval) {
+    public void input(Window window, Mouse mouse) {
 
         avatar.input(window, mouse);
         camera.input(window, mouse);
 
-        scene.input(mouse, interval);
+        scene.input(mouse);
     }
 
     @Override

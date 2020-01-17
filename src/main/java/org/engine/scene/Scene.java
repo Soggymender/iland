@@ -87,8 +87,8 @@ public class Scene {
         this.sceneLighting = sceneLighting;
     }
 
-    public void input(Mouse mouse, float interval) {
-        root.input(mouse, interval);
+    public void input(Mouse mouse) {
+        root.input(mouse);
     }
 
     public void update(float interval) {

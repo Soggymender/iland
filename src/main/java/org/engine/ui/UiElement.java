@@ -89,7 +89,7 @@ public class UiElement extends Entity {
         }
     }
 
-    public void input(Mouse mouse, float interval) {
+    public void input(Mouse mouse) {
 
         if (!flags.forwardsInput) {
             return;
@@ -97,7 +97,7 @@ public class UiElement extends Entity {
 
         // Leafs are most user-facing so walk all the way down and work back up.
 
-        super.input(mouse, interval);
+        super.input(mouse);
     }
 
     public void update(float interval) {

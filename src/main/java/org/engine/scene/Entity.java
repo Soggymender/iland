@@ -160,14 +160,14 @@ public class Entity {
         flags.renderable = false;
     }
 
-    public void input(Mouse mouse, float interval) {
+    public void input(Mouse mouse) {
 
         if (children == null) {
             return;
         }
 
         for (Entity child : children) {
-            child.input(mouse, interval);
+            child.input(mouse);
         }
     }
 

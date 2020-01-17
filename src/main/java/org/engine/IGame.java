@@ -7,7 +7,7 @@ public interface IGame {
 
     void initialize(Window window) throws Exception;
 
-    void input(Window window, Mouse mouse, float interval);
+    void input(Window window, Mouse mouse);
 
     void update(float interval, Mouse mouse);
 
