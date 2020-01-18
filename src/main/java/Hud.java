@@ -48,6 +48,7 @@ public class Hud implements IHud {
         entities = new Entity[]{bPanel, button, button.getText(), rPanel, fpsText};
 
         scene.addEntity(canvas);
+        scene.setHud(this);
     }
 
     public void setStatusText(String statusText) {

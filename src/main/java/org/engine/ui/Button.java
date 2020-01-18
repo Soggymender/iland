@@ -82,20 +82,12 @@ public class Button extends UiElement {
         return text;
     }
 
-    public void input(Mouse mouse, float interval) {
+    public void input(Mouse mouse) {
 
         Vector2f pos = mouse.getPosition();
 
         // End pressed state?
-        if (buttonFlags.pressed) {
-            if (pressedTime >= PRESSED_TIME) {
-                pressedTime = 0.0f;
-                buttonFlags.pressed = false;
-                material.setDiffuseColor(color);
-            }
-
-            pressedTime += interval;
-        } else {
+        if (!buttonFlags.pressed) {
             if (rectTrans.pointInRect(pos)) {
 
                 if (mouse.leftButtonJustPressed()) {
@@ -115,10 +107,22 @@ public class Button extends UiElement {
             }
         }
 
-        super.input(mouse, interval);
+        super.input(mouse);
     }
 
     public void update(float interval) {
+
+        // End pressed state?
+        if (buttonFlags.pressed) {
+            if (pressedTime >= PRESSED_TIME) {
+                pressedTime = 0.0f;
+                buttonFlags.pressed = false;
+                material.setDiffuseColor(color);
+            }
+
+            pressedTime += interval;
+        }
+
         super.update(interval);
     }
 }

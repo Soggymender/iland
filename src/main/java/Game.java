@@ -11,16 +11,14 @@ import org.engine.renderer.*;
 
 import org.engine.Terrain;
 
-public class Game implements IGame, SceneLoader.IEventHandler {
-
-    private final SceneRenderer sceneRenderer;
+public class Game implements SceneLoader.IEventHandler {
 
     private final Avatar avatar;
     private final GameCamera camera;
 
     Terrain terrain;
 
-    private Scene scene;
+    private Scene scene = null;
 
     private Hud hud;
 
@@ -32,21 +30,19 @@ public class Game implements IGame, SceneLoader.IEventHandler {
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
 
-    public Game()
+    public Game(Scene scene)
     {
-        sceneRenderer = new SceneRenderer();
+        this.scene = scene;
 
         avatar = new Avatar();
         camera = new GameCamera(avatar);
 
+        scene.setCamera(camera);
+
         lightAngle = -45;
     }
 
-    @Override
     public void initialize(Window window) throws Exception {
-        sceneRenderer.initialize(window);
-
-        scene = new Scene();
 
         float reflectance = 1.0f;
 
@@ -56,45 +52,16 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         avatar.setPosition(0.0f, 0.0f, 0.0f);
 
 
-
-
-
-
-
-
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
         SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/", this);
-
-
-        /*
-        // Setup the terrain
-        Vector3f terrainScale = new Vector3f(500.0f, 100.0f, 500.0f);
-        int terrainSize = 1;//3;
-        float minY = -0.1f;//-0.1f;
-        float maxY = 0.1f;//0.1f;
-        int textInc = 40;
-
-        terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/main/resources/textures/heightmap.png", "src/main/resources/textures/terrain.png", textInc);
-
-        scene.setEntities(terrain.getEntities());
-        */
-
- //       Mesh[] mesh = StaticMeshLoader.load("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/");
-        //Texture texture = mesh[0].getMaterial().getTexture();
-        //Material material = new Material(texture, 1.0f);
-        //mesh[0].setMaterial(material);
-
-//        Entity entity = new Entity(mesh);
-//        scene.addEntities(entity);
 
         // Setup  SkyBox
         float skyboxScale = 100.0f;
         Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
         skybox.setScale(skyboxScale);
         scene.setSkybox(skybox);
-
 
         // Setup Lights
         setupLights();
@@ -119,9 +86,7 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
     }
 
-    @Override
     public void shutdown() {
-        sceneRenderer.shutdown();
 
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
@@ -131,20 +96,13 @@ public class Game implements IGame, SceneLoader.IEventHandler {
         hud.shutdown();
     }
 
-    @Override
-    public void input(Window window, Mouse mouse, float interval) {
-
+    public void input(Window window, Mouse mouse) {
         avatar.input(window, mouse);
-        camera.input(window, mouse);
-
-        scene.input(mouse, interval);
     }
 
-    @Override
     public void update(float interval, Mouse mouse) {
 
         avatar.update(interval, mouse, camera, terrain);
-        camera.update(interval, mouse);
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
@@ -183,20 +141,15 @@ public class Game implements IGame, SceneLoader.IEventHandler {
            fpsSamples = 0;
        }
 
-       scene.update(interval);
-
        float fps = 1.0f / interval;
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
     }
 
-    @Override
     public void render(Window window) {
         hud.updateSize(window);
-        sceneRenderer.render(window, camera, scene, hud);
     }
-
 
     public Entity preLoadEntityEvent(String type) throws Exception {
 
