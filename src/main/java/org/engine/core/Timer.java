@@ -4,7 +4,7 @@ public class Timer {
 
     private double lastLoopTime;
 
-    public void initialize() {
+    public Timer() {
         lastLoopTime = getTime();
     }
 

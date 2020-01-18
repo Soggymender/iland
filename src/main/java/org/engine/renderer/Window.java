@@ -27,6 +27,8 @@ public class Window {
         this.height = height;
         this.vSync = vSync;
         this.resized = false;
+
+        initialize();
     }
 
     public void initialize() {

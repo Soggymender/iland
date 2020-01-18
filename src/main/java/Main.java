@@ -12,7 +12,6 @@ public class Main {
             // Create the "services" that we need.
 
             Window window = new Window("Game", 720, 480, false);
-            window.initialize();
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);
@@ -25,9 +24,6 @@ public class Main {
             SceneRenderer sceneRenderer = new SceneRenderer();
 
             Game game = new Game(window, scene);
-
-            timer.initialize();
-            sceneRenderer.initialize(window);
 
             game.initialize();
 

@@ -2,21 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61821ac4-6dfa-40d7-a8b2-315708f9d6df" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/input/Input.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/input/Keyboard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Avatar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Avatar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/input/Mouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/input/Mouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Button.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Button.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Canvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Canvas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Game.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/core/Timer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/core/Timer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,26 +152,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577303567765" />
-    <state width="1877" height="264" key="GridCell.Tab.0.bottom" timestamp="1579379649484">
+    <state width="1877" height="264" key="GridCell.Tab.0.bottom" timestamp="1579379912211">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.bottom/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="264" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579379649484" />
-    <state width="1877" height="264" key="GridCell.Tab.0.center" timestamp="1579379649484">
+    <state width="1877" height="264" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579379912211" />
+    <state width="1877" height="264" key="GridCell.Tab.0.center" timestamp="1579379912210">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.center/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="264" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579379649484" />
-    <state width="1877" height="264" key="GridCell.Tab.0.left" timestamp="1579379649484">
+    <state width="1877" height="264" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579379912210" />
+    <state width="1877" height="264" key="GridCell.Tab.0.left" timestamp="1579379912210">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.left/0.0.1280.984@0.0.1280.984" timestamp="1579152809782" />
-    <state width="1877" height="264" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579379649484" />
-    <state width="1877" height="264" key="GridCell.Tab.0.right" timestamp="1579379649484">
+    <state width="1877" height="264" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579379912210" />
+    <state width="1877" height="264" key="GridCell.Tab.0.right" timestamp="1579379912210">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.right/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="264" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579379649484" />
+    <state width="1877" height="264" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579379912210" />
     <state width="1877" height="344" key="GridCell.Tab.1.bottom" timestamp="1579373645861">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

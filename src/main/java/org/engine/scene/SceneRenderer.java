@@ -32,9 +32,13 @@ public class SceneRenderer {
 
     private float specularPower;
 
-    public SceneRenderer() {
+    public SceneRenderer() throws Exception {
         transform = new Transform();
         specularPower = 10.0f;
+
+        initializeDefaultShader();
+        initializeSkyboxShader();
+        initializeHudShader();
     }
 
     private void initializeDefaultShader() throws Exception {
@@ -98,13 +102,6 @@ public class SceneRenderer {
         hudShader.createUniform("projModelMatrix");
         hudShader.createUniform("color");
         hudShader.createUniform("hasTexture");
-    }
-
-    public void initialize(Window window) throws Exception {
-
-        initializeDefaultShader();
-        initializeSkyboxShader();
-        initializeHudShader();
     }
 
     public void shutdown() {
