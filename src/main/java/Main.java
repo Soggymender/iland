@@ -1,5 +1,5 @@
 import org.engine.core.Timer;
-import org.engine.input.Mouse;
+import org.engine.input.*;
 import org.engine.renderer.Window;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
@@ -12,20 +12,24 @@ public class Main {
             // Create the "services" that we need.
 
             Window window = new Window("Game", 720, 480, false);
+            window.initialize();
+
+            // Create the input devices.
+            Mouse mouse = new Mouse(window);
+            Keyboard keyboard = new Keyboard(window);
+
+            Input input = new Input(mouse, keyboard);
 
             Timer timer = new Timer();
-            Mouse mouse = new Mouse();
             Scene scene = new Scene();
             SceneRenderer sceneRenderer = new SceneRenderer();
 
-            Game game = new Game(scene);
+            Game game = new Game(window, scene);
 
-            window.initialize();
-            mouse.initialize(window);
             timer.initialize();
             sceneRenderer.initialize(window);
 
-            game.initialize(window);
+            game.initialize();
 
             float elapsedTime;
 
@@ -34,12 +38,12 @@ public class Main {
                 elapsedTime = timer.getElapsedTime();
 
                 // Input
-                mouse.input(window);
-                game.input(window, mouse);
-                scene.input(mouse);
+                input.input();
+                game.input(input);
+                scene.input(input);
 
                 // Update
-                game.update(elapsedTime, mouse);
+                game.update(elapsedTime);
                 scene.update(elapsedTime);
 
                 // Render

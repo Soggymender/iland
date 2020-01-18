@@ -1,24 +1,22 @@
 import org.joml.Vector3f;
 
-import org.engine.scene.Entity;
-import org.engine.Terrain;
+import org.engine.input.*;
 
 import org.engine.renderer.Camera;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
-import org.engine.renderer.Window;
-import org.engine.input.Mouse;
+import org.engine.scene.Entity;
 import org.engine.scene.SceneLoader;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
+import org.engine.Terrain;
+
 import org.engine.core.Math;
 
 public class Avatar extends Entity {
-
-//    private Entity entity;
 
     private Vector3f moveDir;
 
@@ -40,23 +38,25 @@ public class Avatar extends Entity {
         setMeshes(avatarMesh);
     }
 
-    public void input(Window window, Mouse mouse) {
+    public void input(Input input) {
 
         moveDir.set(0, 0, 0);
 
-        if ( window.isKeyPressed(GLFW_KEY_W) ) {
+        Keyboard keyboard = input.getKeyboard();
+
+        if (keyboard.keyDown(GLFW_KEY_W) ) {
             moveDir.z = -1;
         }
 
-        if ( window.isKeyPressed(GLFW_KEY_S) ) {
+        if (keyboard.keyDown(GLFW_KEY_S) ) {
             moveDir.z = 1;
         }
 
-        if (window.isKeyPressed(GLFW_KEY_A)) {
+        if (keyboard.keyDown(GLFW_KEY_A)) {
             moveDir.x = -1;
         }
 
-        if (window.isKeyPressed(GLFW_KEY_D)) {
+        if (keyboard.keyDown(GLFW_KEY_D)) {
             moveDir.x = 1;
         }
 
@@ -65,7 +65,7 @@ public class Avatar extends Entity {
         }
     }
 
-    public void update(float interval, Mouse mouse, Camera camera, Terrain terrain) {
+    public void update(float interval, Camera camera, Terrain terrain) {
 
         // Move
 

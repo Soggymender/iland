@@ -9,6 +9,8 @@ import org.engine.renderer.Window;
 
 public class Mouse {
 
+    private Window window = null;
+
     private Vector2d previousPos;
 
     private final Vector2d currentPos;
@@ -27,7 +29,10 @@ public class Mouse {
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
 
-    public Mouse() {
+    public Mouse(Window window) {
+
+        this.window = window;
+
         isActive = false;
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
@@ -38,7 +43,7 @@ public class Mouse {
 
     }
 
-    public void initialize(Window window) {
+    public void initialize() {
 
 //        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 //        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -67,7 +72,7 @@ public class Mouse {
       //  });
     }
 
-    public void shutdown(Window window) {
+    public void shutdown() {
     //    glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     }
@@ -85,7 +90,7 @@ public class Mouse {
         return pos;
     }
 
-    public void input(Window window) {
+    public void input() {
 
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;

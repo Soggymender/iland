@@ -1,15 +1,9 @@
 package org.engine.ui;
 
-import org.engine.input.Mouse;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import org.engine.Utilities;
-import org.engine.core.Rect;
-import org.engine.renderer.Material;
-import org.engine.renderer.Mesh;
-import org.engine.renderer.Texture;
-import org.engine.scene.Entity;
+import org.engine.input.*;
 import org.engine.renderer.Window;
 
 public class Canvas extends UiElement {
@@ -52,10 +46,10 @@ public class Canvas extends UiElement {
     }
 
     @Override
-    public void input(Mouse mouse) {
+    public void input(Input input) {
 
         // Make sure the mouse is active.
-        super.input(mouse);
+        super.input(input);
         return;
 
         // Walk to the children and work up.

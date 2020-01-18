@@ -3,7 +3,7 @@ package org.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.engine.input.Mouse;
+import org.engine.input.Input;
 import org.joml.Vector3f;
 import org.engine.renderer.Mesh;
 
@@ -160,14 +160,14 @@ public class Entity {
         flags.renderable = false;
     }
 
-    public void input(Mouse mouse) {
+    public void input(Input input) {
 
         if (children == null) {
             return;
         }
 
         for (Entity child : children) {
-            child.input(mouse);
+            child.input(input);
         }
     }
 

@@ -1,6 +1,6 @@
 package org.engine.ui;
 
-import org.engine.input.Mouse;
+import org.engine.input.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -82,7 +82,10 @@ public class Button extends UiElement {
         return text;
     }
 
-    public void input(Mouse mouse) {
+    @Override
+    public void input(Input input) {
+
+        Mouse mouse = input.getMouse();
 
         Vector2f pos = mouse.getPosition();
 
@@ -107,7 +110,7 @@ public class Button extends UiElement {
             }
         }
 
-        super.input(mouse);
+        super.input(input);
     }
 
     public void update(float interval) {

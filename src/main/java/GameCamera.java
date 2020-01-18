@@ -1,7 +1,6 @@
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
-import org.engine.renderer.Window;
-import org.engine.input.Mouse;
+import org.engine.input.*;
 import org.joml.*;
 
 import org.engine.core.Math;
@@ -35,13 +34,12 @@ public class GameCamera extends Camera {
         followRotation = new Vector3f(0.0f, 0.0f, 0.0f);
     }
 
-    public void input(Window window, Mouse mouse) {
-
-    }
     private static boolean once = false;
 
     @Override
-    public void input(Mouse mouse) {
+    public void input(Input input) {
+
+        Mouse mouse = input.getMouse();
 
         rotVec = mouse.getDisplayVec();
 

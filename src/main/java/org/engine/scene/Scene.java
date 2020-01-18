@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.engine.IHud;
-import org.engine.input.Mouse;
+import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Skybox;
@@ -113,8 +113,8 @@ public class Scene {
         this.hud = hud;
     }
 
-    public void input(Mouse mouse) {
-        root.input(mouse);
+    public void input(Input input) {
+        root.input(input);
     }
 
     public void update(float interval) {

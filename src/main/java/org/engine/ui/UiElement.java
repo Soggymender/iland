@@ -1,16 +1,12 @@
 package org.engine.ui;
 
-import org.engine.input.Mouse;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
-import org.engine.Utilities;
 import org.engine.core.Rect;
+import org.engine.input.*;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
-import org.engine.renderer.Texture;
 import org.engine.scene.Entity;
-import org.engine.renderer.Window;
 
 public class UiElement extends Entity {
 
@@ -89,7 +85,8 @@ public class UiElement extends Entity {
         }
     }
 
-    public void input(Mouse mouse) {
+    @Override
+    public void input(Input input) {
 
         if (!flags.forwardsInput) {
             return;
@@ -97,9 +94,10 @@ public class UiElement extends Entity {
 
         // Leafs are most user-facing so walk all the way down and work back up.
 
-        super.input(mouse);
+        super.input(input);
     }
 
+    @Override
     public void update(float interval) {
 
         if (!flags.dirty) {
