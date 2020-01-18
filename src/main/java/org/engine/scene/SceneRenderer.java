@@ -125,7 +125,7 @@ public class SceneRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, Camera camera, Scene scene, IHud hud) {
+    public void render(Window window, Scene scene) {
         clear();
 
         if (window.isResized()) {
@@ -133,16 +133,18 @@ public class SceneRenderer {
             window.setResized(false);
         }
 
+        Camera camera = scene.getCamera();
+
         transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transform.updateViewMatrix(camera);
 
-        renderScene(window, camera, scene);
-        renderSkybox(window, camera, scene);
+        renderScene(scene);
+        renderSkybox(scene);
 
-        renderHud(window, hud);
+        renderHud(window, scene);
     }
 
-    private void renderScene(Window window, Camera camera, Scene scene) {
+    private void renderScene(Scene scene) {
 
         defaultShader.bind();
 
@@ -176,7 +178,7 @@ public class SceneRenderer {
         defaultShader.unbind();
     }
 
-    private void renderSkybox(Window window, Camera camera, Scene scene) {
+    private void renderSkybox(Scene scene) {
 
         Skybox skybox = scene.getSkybox();
         if (skybox == null) {
@@ -252,8 +254,10 @@ public class SceneRenderer {
         defaultShader.setUniform("directionalLight", currDirLight);
     }
 
-    private void renderHud(Window window, IHud hud) {
+    private void renderHud(Window window, Scene scene) {
         hudShader.bind();
+
+        IHud hud = scene.getHud();
 
         Matrix4f ortho = transform.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
         for (Entity entity : hud.getEntities()) {
