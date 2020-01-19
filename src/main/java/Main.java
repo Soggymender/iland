@@ -21,7 +21,7 @@ public class Main {
 
             Timer timer = new Timer();
             Scene scene = new Scene();
-            SceneRenderer sceneRenderer = new SceneRenderer();
+            SceneRenderer sceneRenderer = new SceneRenderer(window);
 
             Game game = new Game(window, scene);
 
@@ -43,8 +43,7 @@ public class Main {
                 scene.update(elapsedTime);
 
                 // Render
-                game.render(window);
-                sceneRenderer.render(window, scene);
+                sceneRenderer.render(scene);
                 window.update();
             }
 

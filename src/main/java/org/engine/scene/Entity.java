@@ -3,8 +3,9 @@ package org.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.engine.input.Input;
 import org.joml.Vector3f;
+
+import org.engine.input.Input;
 import org.engine.renderer.Mesh;
 
 public class Entity {
@@ -56,6 +57,7 @@ public class Entity {
             this.parent.addChild(this);
         } else {
             // If there is already a parent, adopt.
+            // Consider how this may impact the scene update.
 //            Entity oldParent = this.parent;
 //            this.parent.removeChild(this);
         }

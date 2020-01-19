@@ -142,10 +142,6 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
     }
 
-    public void render(Window window) {
-        hud.updateSize(window);
-    }
-
     public Entity preLoadEntityEvent(String type) throws Exception {
 
         if (type.compareTo("terrain") == 0) {

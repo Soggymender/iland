@@ -26,12 +26,13 @@ public class Window {
         this.width = width;
         this.height = height;
         this.vSync = vSync;
-        this.resized = false;
+        this.resized = true; // It was created so it resized from nothing.
 
         initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
+
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();

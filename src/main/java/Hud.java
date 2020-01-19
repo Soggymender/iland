@@ -59,8 +59,4 @@ public class Hud implements IHud {
     public Entity[] getEntities() {
         return entities;
     }
-
-    public void updateSize(Window window) {
-        canvas.updateSize(window);
-    }
 }

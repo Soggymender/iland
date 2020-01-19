@@ -17,6 +17,8 @@ import org.joml.Vector4f;
 
 public class SceneRenderer {
 
+    Window window = null;
+
     private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.0f;
@@ -32,7 +34,10 @@ public class SceneRenderer {
 
     private float specularPower;
 
-    public SceneRenderer() throws Exception {
+    public SceneRenderer(Window window) throws Exception {
+
+        this.window = window;
+
         transform = new Transform();
         specularPower = 10.0f;
 
@@ -122,7 +127,7 @@ public class SceneRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, Scene scene) {
+    public void render(Scene scene) {
         clear();
 
         if (window.isResized()) {

@@ -8,6 +8,8 @@ import org.engine.renderer.Window;
 
 public class Canvas extends UiElement {
 
+    Window window = null;
+
     private Vector2f referenceResolution;
     private Vector2f workingResolution;
 
@@ -18,6 +20,8 @@ public class Canvas extends UiElement {
         super();
         canvas = this;
 
+        this.window = window;
+
         this.referenceResolution = referenceResolution;
         workingResolution = new Vector2f();
 
@@ -26,11 +30,9 @@ public class Canvas extends UiElement {
         flags.forwardsInput = true;
         flags.acceptsInput = false;
         flags.buildsMesh = false;
-
-        updateSize(window);
     }
 
-    public void updateSize(Window window) {
+    public void updateSize() {
 
         // Keep the canvas at the reference resolution. Changing the window size only affects the reference scale.
         Vector2f oldWorkingResolution = new Vector2f(workingResolution);
@@ -46,14 +48,13 @@ public class Canvas extends UiElement {
     }
 
     @Override
-    public void input(Input input) {
+    public void update(float interval) {
 
-        // Make sure the mouse is active.
-        super.input(input);
-        return;
+        super.update(interval);
 
-        // Walk to the children and work up.
-        // Leafs are drawn and detected top-most.
+        if (window.isResized()) {
+            updateSize();
+        }
     }
 
     public float getReferenceScale() {

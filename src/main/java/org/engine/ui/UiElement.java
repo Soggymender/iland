@@ -54,8 +54,6 @@ public class UiElement extends Entity {
             float parentDepth = parentElem.rectTrans.getDepth();
             rectTrans.setDepth(parentDepth + 0.01f);
         }
-
-//        updateSize();
     }
 
     public void setAnchor(Rect anchor) {
