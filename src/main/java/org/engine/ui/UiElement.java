@@ -1,16 +1,15 @@
 package org.engine.ui;
 
-import org.engine.input.Mouse;
+import org.engine.renderer.ShaderCache;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
-import org.engine.Utilities;
 import org.engine.core.Rect;
+import org.engine.input.*;
 import org.engine.renderer.Material;
+import org.engine.renderer.Shader;
+import org.engine.renderer.ShaderCache;
 import org.engine.renderer.Mesh;
-import org.engine.renderer.Texture;
 import org.engine.scene.Entity;
-import org.engine.renderer.Window;
 
 public class UiElement extends Entity {
 
@@ -28,14 +27,19 @@ public class UiElement extends Entity {
 
     protected Flags flags = new Flags();
 
-    public UiElement() {
+    public UiElement() throws Exception {
         super();
 
         rectTrans = new RectTransform();
         material = new Material();
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultGuiShader = shaderCache.getShader("defaultGui");
+
+        material.setShader(defaultGuiShader);
     }
 
-    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) {
+    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
 
         super();
 
@@ -52,14 +56,17 @@ public class UiElement extends Entity {
 
         material = new Material();
 
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultGuiShader = shaderCache.getShader("defaultGui");
+
+        material.setShader(defaultGuiShader);
+
         // Automatically draw in front of the parent.
         if (parent != null) {
             UiElement parentElem = (UiElement)parent;
             float parentDepth = parentElem.rectTrans.getDepth();
             rectTrans.setDepth(parentDepth + 0.01f);
         }
-
-//        updateSize();
     }
 
     public void setAnchor(Rect anchor) {
@@ -89,7 +96,8 @@ public class UiElement extends Entity {
         }
     }
 
-    public void input(Mouse mouse) {
+    @Override
+    public void input(Input input) {
 
         if (!flags.forwardsInput) {
             return;
@@ -97,15 +105,18 @@ public class UiElement extends Entity {
 
         // Leafs are most user-facing so walk all the way down and work back up.
 
-        super.input(mouse);
+        super.input(input);
     }
 
+    @Override
     public void update(float interval) {
 
         if (!flags.dirty) {
             super.update(interval);
             return;
         }
+
+        super.update(interval);
 
         flags.dirty = false;
 
@@ -178,8 +189,6 @@ public class UiElement extends Entity {
         if (flags.buildsMesh) {
             buildMesh();
         }
-
-        super.update(interval);
     }
 
     private void buildMesh() {

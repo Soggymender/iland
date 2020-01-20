@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.engine.IHud;
-import org.engine.input.Mouse;
+import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
+import org.engine.renderer.Shader;
 import org.engine.renderer.Skybox;
 
 public class Scene {
@@ -25,17 +25,25 @@ public class Scene {
         root hierarchy in order to be added manually. */
     private Map<Mesh, List<Entity>> meshMap;
 
+    private Map<Shader, List<Mesh>> shaderMap;
+
+    /*  Store Shader on material next to texture.
+        SceneRenderer no longer infers shader.
+        Scene mesh list must sort meshes by material
+        When a new material is iterated, set up the material and shader
+        When a mesh is about to be rendered, call a shader interface that sets the uniforms.
+     */
+
     /*  TODO: These should not be treated uniquely. Instead, add them to the root hierarchy as Entity, and let the
         scene renderer cast them as needed. */
-    private Skybox skybox;
     private SceneLighting sceneLighting;
-    private IHud hud;
 
     public Scene()
     {
         root = new Entity();
 
         meshMap = new HashMap();
+        shaderMap = new HashMap();
     }
 
     public void addEntity(Entity entity) {
@@ -44,6 +52,10 @@ public class Scene {
         if (entityRoot != root) {
             entityRoot.setParent(root);
         }
+    }
+
+    public Map<Shader, List<Mesh>> getMeshShaders() {
+        return shaderMap;
     }
 
     public Map<Mesh, List<Entity>> getEntityMeshes() {
@@ -59,13 +71,25 @@ public class Scene {
 
         for (Mesh mesh : meshes) {
 
-            List<Entity> list = meshMap.get(mesh);
-            if (list == null) {
-                list = new ArrayList<>();
-                meshMap.put(mesh, list);
+            // Map the mesh to entity.
+            List<Entity> entityList = meshMap.get(mesh);
+            if (entityList == null) {
+                entityList = new ArrayList<>();
+                meshMap.put(mesh, entityList);
             }
 
-            list.add(entity);
+            entityList.add(entity);
+
+            // Map the shader to mesh.
+            Shader shader = mesh.getMaterial().getShader();
+
+            List<Mesh> meshList = shaderMap.get(shader);
+            if (meshList == null) {
+                meshList = new ArrayList<>();
+                shaderMap.put(shader, meshList);
+            }
+
+            meshList.add(mesh);
         }
     }
 
@@ -89,14 +113,6 @@ public class Scene {
         this.camera = camera;
     }
 
-    public Skybox getSkybox() {
-        return skybox;
-    }
-
-    public void setSkybox(Skybox skybox) {
-        this.skybox = skybox;
-    }
-
     public SceneLighting getSceneLighting() {
         return sceneLighting;
     }
@@ -105,19 +121,35 @@ public class Scene {
         this.sceneLighting = sceneLighting;
     };
 
-    public IHud getHud() {
-        return hud;
+    public void input(Input input) {
+        root.input(input);
     }
 
-    public void setHud(IHud hud) {
-        this.hud = hud;
-    }
-
-    public void input(Mouse mouse) {
-        root.input(mouse);
-    }
-
+    /*  The scene will walk the entity hierarchy directly so that it can check for new meshes and add them
+        directly for rendering.
+     */
     public void update(float interval) {
-        root.update(interval);
+
+        update(interval, root);
+    }
+
+    private void update(float interval, Entity entity) {
+
+        entity.update(interval);
+
+        if (entity.newMeshFlag()) {// .justRenderable()) {
+            entity.clearNewMeshFlag();
+
+            addEntityMeshes(entity);
+
+        }
+
+        if (entity.children == null) {
+            return;
+        }
+
+        for (Entity child : entity.children) {
+            update(interval, child);
+        }
     }
 }

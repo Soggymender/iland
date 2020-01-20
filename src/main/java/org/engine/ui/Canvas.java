@@ -1,28 +1,26 @@
 package org.engine.ui;
 
-import org.engine.input.Mouse;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import org.engine.Utilities;
-import org.engine.core.Rect;
-import org.engine.renderer.Material;
-import org.engine.renderer.Mesh;
-import org.engine.renderer.Texture;
-import org.engine.scene.Entity;
+import org.engine.input.*;
 import org.engine.renderer.Window;
 
 public class Canvas extends UiElement {
+
+    Window window = null;
 
     private Vector2f referenceResolution;
     private Vector2f workingResolution;
 
     private boolean useWidth = true;
 
-    public Canvas(Window window, Vector2f referenceResolution) {
+    public Canvas(Window window, Vector2f referenceResolution) throws Exception {
 
         super();
         canvas = this;
+
+        this.window = window;
 
         this.referenceResolution = referenceResolution;
         workingResolution = new Vector2f();
@@ -32,11 +30,9 @@ public class Canvas extends UiElement {
         flags.forwardsInput = true;
         flags.acceptsInput = false;
         flags.buildsMesh = false;
-
-        updateSize(window);
     }
 
-    public void updateSize(Window window) {
+    public void updateSize() {
 
         // Keep the canvas at the reference resolution. Changing the window size only affects the reference scale.
         Vector2f oldWorkingResolution = new Vector2f(workingResolution);
@@ -52,14 +48,13 @@ public class Canvas extends UiElement {
     }
 
     @Override
-    public void input(Mouse mouse) {
+    public void update(float interval) {
 
-        // Make sure the mouse is active.
-        super.input(mouse);
-        return;
+        if (window.isResized()) {
+            updateSize();
+        }
 
-        // Walk to the children and work up.
-        // Leafs are drawn and detected top-most.
+        super.update(interval);
     }
 
     public float getReferenceScale() {

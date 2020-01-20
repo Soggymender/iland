@@ -11,6 +11,7 @@ import org.lwjgl.system.MemoryStack;
 
 public class Shader {
 
+    private final String name;
     private final int programId;
 
     private int vertexShaderId;
@@ -18,12 +19,13 @@ public class Shader {
 
     private final Map<String, Integer> uniforms;
 
-    public Shader() throws Exception {
+    public Shader(String name) throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
         }
 
+        this.name = name;
         uniforms = new HashMap<>();
     }
 

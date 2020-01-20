@@ -24,13 +24,11 @@ public class Game implements SceneLoader.IEventHandler {
 
     private float lightAngle;
 
-    private static final float MOUSE_SENSITIVITY = 30.0f;
-
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
 
-    public Game(Scene scene)
+    public Game(Window window, Scene scene) throws Exception
     {
         this.scene = scene;
 
@@ -39,18 +37,17 @@ public class Game implements SceneLoader.IEventHandler {
 
         scene.setCamera(camera);
 
+        hud = new Hud(window, scene);
+
         lightAngle = -45;
     }
 
-    public void initialize(Window window) throws Exception {
-
-        float reflectance = 1.0f;
+    public void initialize() throws Exception {
 
         avatar.initialize();
         scene.addEntityMeshes(avatar);
 
         avatar.setPosition(0.0f, 0.0f, 0.0f);
-
 
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
@@ -61,7 +58,8 @@ public class Game implements SceneLoader.IEventHandler {
         float skyboxScale = 100.0f;
         Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
         skybox.setScale(skyboxScale);
-        scene.setSkybox(skybox);
+
+        scene.addEntityMeshes(skybox);
 
         // Setup Lights
         setupLights();
@@ -69,8 +67,6 @@ public class Game implements SceneLoader.IEventHandler {
         camera.getPosition().x = 0.65f;
         camera.getPosition().y = 1.15f;
         camera.getPosition().y = 4.34f;
-
-        hud = new Hud(window, scene);
     }
 
     private void setupLights() {
@@ -92,17 +88,15 @@ public class Game implements SceneLoader.IEventHandler {
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.shutdown();
         }
-
-        hud.shutdown();
     }
 
-    public void input(Window window, Mouse mouse) {
-        avatar.input(window, mouse);
+    public void input(Input input) {
+        avatar.input(input);
     }
 
-    public void update(float interval, Mouse mouse) {
+    public void update(float interval) {
 
-        avatar.update(interval, mouse, camera, terrain);
+        avatar.update(interval, camera, terrain);
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
@@ -145,10 +139,6 @@ public class Game implements SceneLoader.IEventHandler {
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
-    }
-
-    public void render(Window window) {
-        hud.updateSize(window);
     }
 
     public Entity preLoadEntityEvent(String type) throws Exception {

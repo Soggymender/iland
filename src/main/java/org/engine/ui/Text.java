@@ -6,9 +6,7 @@ import java.util.List;
 
 import org.engine.Utilities;
 import org.engine.core.Rect;
-import org.engine.renderer.FontTexture;
-import org.engine.renderer.Material;
-import org.engine.renderer.Mesh;
+import org.engine.renderer.*;
 import org.engine.renderer.FontTexture;
 import org.engine.scene.Entity;
 import org.joml.Vector2f;
@@ -48,6 +46,11 @@ public class Text extends UiElement {
 
         if (material == null) {
             material = new Material(fontTexture.getTexture());
+
+            ShaderCache shaderCache = ShaderCache.getInstance();
+            Shader defaultGuiShader = shaderCache.getShader("defaultGui");
+
+            material.setShader(defaultGuiShader);
         }
 
         List<Float> positions = new ArrayList<>();

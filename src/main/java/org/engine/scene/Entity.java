@@ -3,14 +3,25 @@ package org.engine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.engine.input.Mouse;
 import org.joml.Vector3f;
+
+import org.engine.input.Input;
 import org.engine.renderer.Mesh;
 
 public class Entity {
 
     protected class Flags {
         public boolean renderable = false;
+        public boolean newMesh = false;
+
+        protected Flags() {
+
+        }
+
+        // Copy constructor for copying flags to oldFlags.
+        protected Flags(Flags flags) {
+            this.renderable = flags.renderable;
+        }
     }
 
     private Mesh[] meshes;
@@ -20,14 +31,17 @@ public class Entity {
 
     protected Vector3f scale;
 
-    protected Entity parent;
-    protected List<Entity> children = null;
+    public Entity parent;
+    public List<Entity> children = null;
 
+    // oldFlags should be updated each frame. Differences between the two sets indicate change caused by the update.
+    public Flags oldFlags = null;
     public Flags flags = null;
 
     public Entity() {
 
         flags = new Flags();
+        oldFlags = new Flags();
 
         position = new Vector3f(0, 0, 0);
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -39,6 +53,7 @@ public class Entity {
         this.meshes = new Mesh[]{mesh};
 
         flags.renderable = true;
+        flags.newMesh = true;
     }
 
     public Entity(Mesh[] meshes) {
@@ -46,6 +61,7 @@ public class Entity {
         this.meshes = meshes;
 
         flags.renderable = true;
+        flags.newMesh = true;
     }
 
     public void setParent(Entity parent) {
@@ -56,6 +72,7 @@ public class Entity {
             this.parent.addChild(this);
         } else {
             // If there is already a parent, adopt.
+            // Consider how this may impact the scene update.
 //            Entity oldParent = this.parent;
 //            this.parent.removeChild(this);
         }
@@ -148,11 +165,13 @@ public class Entity {
         this.meshes = meshes;
 
         flags.renderable = true;
+        flags.newMesh = true;
     }
 
     public void setMesh(Mesh mesh) {
         this.meshes = new Mesh[]{ mesh };
         flags.renderable = true;
+        flags.newMesh = true;
     }
 
     public void clearMeshes() {
@@ -160,18 +179,37 @@ public class Entity {
         flags.renderable = false;
     }
 
-    public void input(Mouse mouse) {
+    public boolean justRenderable() {
+        return (flags.renderable && !oldFlags.renderable);
+    }
+
+    public boolean newMeshFlag() {
+        return flags.newMesh;
+    }
+
+    public void clearNewMeshFlag() {
+        flags.newMesh = false;
+    }
+
+    public void input(Input input) {
 
         if (children == null) {
             return;
         }
 
         for (Entity child : children) {
-            child.input(mouse);
+            child.input(input);
         }
     }
 
     public void update(float interval) {
+
+        oldFlags = new Flags(flags);
+
+
+
+        /* This was internally recursive, but is now recursed by the scene so that it can directly add and remove meshes
+        that are created or activated / deactivated during the update.
         if (children == null) {
             return;
         }
@@ -179,6 +217,7 @@ public class Entity {
         for (Entity child : children) {
             child.update(interval);
         }
+         */
     }
 
     public void Shutdown() {
