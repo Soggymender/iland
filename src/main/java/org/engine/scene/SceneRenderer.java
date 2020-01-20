@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.engine.renderer.*;
+import org.engine.renderer.shaders.*;
 import org.engine.Utilities;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -22,8 +23,8 @@ public class SceneRenderer {
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.0f;
 
-    private static final int MAX_POINT_LIGHTS = 5;
-    private static final int MAX_SPOT_LIGHTS = 5;
+    public static final int MAX_POINT_LIGHTS = 5;
+    public static final int MAX_SPOT_LIGHTS = 5;
 
     private Transform transform;
 
@@ -61,18 +62,8 @@ public class SceneRenderer {
         defaultShader.createFragmentShader(fsName);
         defaultShader.link();
 
-        defaultShader.createUniform("projectionMatrix");
-        defaultShader.createUniform("modelViewMatrix");
-        defaultShader.createUniform("texture_sampler");
-
-        defaultShader.createMaterialUniform("material");
-
-        defaultShader.createUniform("specularPower");
-        defaultShader.createUniform("ambientLight");
-
-        defaultShader.createPointLightListUniform("pointLights", MAX_POINT_LIGHTS);
-        defaultShader.createSpotLightListUniform("spotLights", MAX_SPOT_LIGHTS);
-        defaultShader.createDirectionalLightUniform("directionalLight");
+        DefaultUniformManager uniformManager = new DefaultUniformManager(defaultShader);
+        defaultShader.setUniformManager(uniformManager);
     }
 
     private void initializeSkyboxShader() throws Exception {
@@ -91,11 +82,8 @@ public class SceneRenderer {
         skyboxShader.createFragmentShader(fsName);
         skyboxShader.link();
 
-        // Create uniforms for projection matrix
-        skyboxShader.createUniform("projectionMatrix");
-        skyboxShader.createUniform("modelViewMatrix");
-        skyboxShader.createUniform("texture_sampler");
-        skyboxShader.createUniform("ambientLight");
+        SkyboxUniformManager uniformManager = new SkyboxUniformManager(skyboxShader);
+        skyboxShader.setUniformManager(uniformManager);
     }
 
     private void initializeHudShader() throws Exception {
@@ -106,10 +94,8 @@ public class SceneRenderer {
         hudShader.createFragmentShader(Utilities.load("/shaders/hud_fragment.fs"));
         hudShader.link();
 
-        // Create uniforms for Ortographic-model projection matrix and base colour
-        hudShader.createUniform("projModelMatrix");
-        hudShader.createUniform("color");
-        hudShader.createUniform("hasTexture");
+        GuiUniformManager uniformManager = new GuiUniformManager(hudShader);
+        hudShader.setUniformManager(uniformManager);
     }
 
     public void shutdown() {
@@ -141,6 +127,7 @@ public class SceneRenderer {
         Camera camera = scene.getCamera();
 
         transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        transform.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
         transform.updateViewMatrix(camera);
 
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
@@ -153,7 +140,7 @@ public class SceneRenderer {
             // custom shader. Once those exist, these three calls can be smashed into one that dynamically binds
             // the correct shader, and calls the class to load the uniforms per entity.
             if (shader == defaultShader) {
-                renderScene(scene, meshList);
+                renderScene(shader, scene, meshList);
             } else if (shader == skyboxShader) {
                 renderSkybox(scene, meshList);
             } else if (shader == hudShader) {
@@ -162,37 +149,30 @@ public class SceneRenderer {
         }
     }
 
-    private void renderScene(Scene scene, List<Mesh> meshList) {
+    private void renderScene(Shader shader, Scene scene, List<Mesh> meshList) {
 
-        defaultShader.bind();
+        shader.bind();
 
-        // Update the projection matrix.
-        Matrix4f projectionMatrix = transform.getProjectionMatrix();
-        defaultShader.setUniform("projectionMatrix", projectionMatrix);
+        IUniformManager uniformManager = shader.getUniformManager();
 
-        // Update the view matrix.
-        Matrix4f viewMatrix = transform.getViewMatrix();
+        uniformManager.setShaderUniforms(transform);
 
-        renderLights(viewMatrix, scene.getSceneLighting());
-
-        defaultShader.setUniform("texture_sampler", 0);
-
-        // This iterates through the meshes rather than the entities, because batching multiple instances
-        // of the same mesh side by side saves render state changes. So each mesh points at all of the entities
-        // that use it.
+        if (uniformManager.getUseSceneLighting()) {
+            renderLights(scene.getSceneLighting());
+        }
 
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
-        for (Mesh mesh : meshList) {//mapMeshes.keySet()) {
+        for (Mesh mesh : meshList) {
 
-            defaultShader.setUniform("material", mesh.getMaterial());
+            uniformManager.setMeshUniforms(mesh, transform);
+
             mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
-                Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
-                defaultShader.setUniform("modelViewMatrix", modelViewMatrix);
+               uniformManager.setEntityUniforms(entity, transform);
             });
         }
 
-        defaultShader.unbind();
+        shader.unbind();
     }
 
     private void renderSkybox(Scene scene, List<Mesh> meshList) {
@@ -229,7 +209,10 @@ public class SceneRenderer {
         skyboxShader.unbind();
     }
 
-    private void renderLights(Matrix4f viewMatrix, SceneLighting sceneLighting) {
+    private void renderLights(SceneLighting sceneLighting) {
+
+        // Update the view matrix.
+        Matrix4f viewMatrix = transform.getViewMatrix();
 
         defaultShader.setUniform("ambientLight", sceneLighting.getAmbientLight());
         defaultShader.setUniform("specularPower", specularPower);
@@ -280,7 +263,7 @@ public class SceneRenderer {
     private void renderHud(Window window, Scene scene, List<Mesh> meshList) {
         hudShader.bind();
 
-        Matrix4f ortho = transform.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
+        Matrix4f ortho = transform.getOrthoProjectionMatrix();
 
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 

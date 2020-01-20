@@ -63,13 +63,18 @@ public class Transform {
                 scale(entity.getScale());
 
         modelViewMatrix.set(viewMatrix);
+        modelViewMatrix.mul(modelMatrix);
 
-        return modelViewMatrix.mul(modelMatrix);
+        return modelViewMatrix;
     }
 
-    public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
+    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top) {
         orthoMatrix.identity();
         orthoMatrix.setOrtho2D(left, right, bottom, top);
+        return orthoMatrix;
+    }
+
+    public final Matrix4f getOrthoProjectionMatrix() {
         return orthoMatrix;
     }
 
