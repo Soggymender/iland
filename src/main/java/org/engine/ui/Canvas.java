@@ -15,7 +15,7 @@ public class Canvas extends UiElement {
 
     private boolean useWidth = true;
 
-    public Canvas(Window window, Vector2f referenceResolution) {
+    public Canvas(Window window, Vector2f referenceResolution) throws Exception {
 
         super();
         canvas = this;
@@ -50,11 +50,11 @@ public class Canvas extends UiElement {
     @Override
     public void update(float interval) {
 
-        super.update(interval);
-
         if (window.isResized()) {
             updateSize();
         }
+
+        super.update(interval);
     }
 
     public float getReferenceScale() {

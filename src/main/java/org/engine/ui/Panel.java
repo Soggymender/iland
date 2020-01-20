@@ -8,7 +8,7 @@ import org.engine.core.Rect;
 
 public class Panel extends UiElement {
 
-    public Panel(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) {
+    public Panel(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
 
         super(canvas, parent, rect, anchor, pivot);
 

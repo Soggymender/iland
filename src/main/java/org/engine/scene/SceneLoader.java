@@ -184,7 +184,7 @@ public class SceneLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) throws Exception {
         List<Float> vertices = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();

@@ -58,7 +58,8 @@ public class Game implements SceneLoader.IEventHandler {
         float skyboxScale = 100.0f;
         Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
         skybox.setScale(skyboxScale);
-        scene.setSkybox(skybox);
+
+        scene.addEntityMeshes(skybox);
 
         // Setup Lights
         setupLights();
@@ -87,8 +88,6 @@ public class Game implements SceneLoader.IEventHandler {
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.shutdown();
         }
-
-        hud.shutdown();
     }
 
     public void input(Input input) {

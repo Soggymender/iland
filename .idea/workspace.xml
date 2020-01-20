@@ -2,19 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61821ac4-6dfa-40d7-a8b2-315708f9d6df" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/ShaderCache.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Hud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Hud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Window.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/IHud.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Material.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Material.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Skybox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/renderer/Skybox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Button.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Button.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Canvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Canvas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Panel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Panel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/Text.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/Text.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/engine/ui/UiElement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Game.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Game.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Hud.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Hud.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Window.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Window.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/IHud.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Material.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Material.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Shader.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Shader.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/engine/renderer/Skybox.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/engine/renderer/Skybox.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,59 +157,59 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579316773628" />
-    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1579317910950">
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1579500293600">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579317910950" />
-    <state width="491" height="466" key="DebuggerActiveHint" timestamp="1579320049869">
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1579500293600" />
+    <state width="491" height="466" key="DebuggerActiveHint" timestamp="1579499203804">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="398" height="441" key="DebuggerActiveHint/0.0.1280.984@0.0.1280.984" timestamp="1579152172920" />
-    <state width="491" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1579320049869" />
+    <state width="491" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1579499203804" />
     <state x="260" y="266" key="FileChooserDialogImpl" timestamp="1577303567765">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="260" y="266" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1577303567765" />
-    <state width="1877" height="344" key="GridCell.Tab.0.bottom" timestamp="1579399726121">
+    <state width="1877" height="264" key="GridCell.Tab.0.bottom" timestamp="1579500663961">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.bottom/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="344" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726121" />
-    <state width="1877" height="344" key="GridCell.Tab.0.center" timestamp="1579399726120">
+    <state width="1877" height="264" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579500663961" />
+    <state width="1877" height="264" key="GridCell.Tab.0.center" timestamp="1579500663961">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.center/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="344" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726120" />
-    <state width="1877" height="344" key="GridCell.Tab.0.left" timestamp="1579399726120">
+    <state width="1877" height="264" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579500663961" />
+    <state width="1877" height="264" key="GridCell.Tab.0.left" timestamp="1579500663960">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.left/0.0.1280.984@0.0.1280.984" timestamp="1579152809782" />
-    <state width="1877" height="344" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726120" />
-    <state width="1877" height="344" key="GridCell.Tab.0.right" timestamp="1579399726121">
+    <state width="1877" height="264" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579500663960" />
+    <state width="1877" height="264" key="GridCell.Tab.0.right" timestamp="1579500663961">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="247" key="GridCell.Tab.0.right/0.0.1280.984@0.0.1280.984" timestamp="1579152809783" />
-    <state width="1877" height="344" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726121" />
-    <state width="1877" height="344" key="GridCell.Tab.1.bottom" timestamp="1579399726427">
+    <state width="1877" height="264" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579500663961" />
+    <state width="1877" height="270" key="GridCell.Tab.1.bottom" timestamp="1579499989166">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="322" key="GridCell.Tab.1.bottom/0.0.1280.984@0.0.1280.984" timestamp="1579152458501" />
-    <state width="1877" height="344" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726427" />
-    <state width="1877" height="344" key="GridCell.Tab.1.center" timestamp="1579399726427">
+    <state width="1877" height="270" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1579499989166" />
+    <state width="1877" height="270" key="GridCell.Tab.1.center" timestamp="1579499989166">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="322" key="GridCell.Tab.1.center/0.0.1280.984@0.0.1280.984" timestamp="1579152458501" />
-    <state width="1877" height="344" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726427" />
-    <state width="1877" height="344" key="GridCell.Tab.1.left" timestamp="1579399726427">
+    <state width="1877" height="270" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1579499989166" />
+    <state width="1877" height="270" key="GridCell.Tab.1.left" timestamp="1579499989166">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="322" key="GridCell.Tab.1.left/0.0.1280.984@0.0.1280.984" timestamp="1579152458500" />
-    <state width="1877" height="344" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726427" />
-    <state width="1877" height="344" key="GridCell.Tab.1.right" timestamp="1579399726427">
+    <state width="1877" height="270" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1579499989166" />
+    <state width="1877" height="270" key="GridCell.Tab.1.right" timestamp="1579499989166">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="322" key="GridCell.Tab.1.right/0.0.1280.984@0.0.1280.984" timestamp="1579152458501" />
-    <state width="1877" height="344" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579399726427" />
+    <state width="1877" height="270" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1579499989166" />
     <state width="1877" height="347" key="GridCell.Tab.2.bottom" timestamp="1578140589509">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -232,10 +242,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="531" y="257" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1578977846938" />
-    <state x="1046" y="177" width="801" height="804" key="find.popup" timestamp="1579399669740">
+    <state x="1046" y="177" width="801" height="804" key="find.popup" timestamp="1579500298576">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="1046" y="177" width="801" height="804" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1579399669740" />
+    <state x="1046" y="177" width="801" height="804" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1579500298576" />
     <state x="616" y="240" key="run.anything.popup" timestamp="1578139014135">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -255,19 +265,14 @@
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/engine/scene/Scene.java</url>
-          <line>120</line>
-          <option name="timeStamp" value="100" />
+          <url>file://$PROJECT_DIR$/src/main/java/org/engine/renderer/ShaderCache.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/Game.java</url>
-          <line>37</line>
-          <option name="timeStamp" value="101" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/engine/scene/SceneRenderer.java</url>
-          <line>81</line>
-          <option name="timeStamp" value="103" />
+          <url>file://$PROJECT_DIR$/src/main/java/org/engine/ui/Text.java</url>
+          <line>202</line>
+          <option name="timeStamp" value="136" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

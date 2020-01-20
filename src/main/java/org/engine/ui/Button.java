@@ -115,6 +115,8 @@ public class Button extends UiElement {
 
     public void update(float interval) {
 
+        super.update(interval);
+
         // End pressed state?
         if (buttonFlags.pressed) {
             if (pressedTime >= PRESSED_TIME) {
@@ -125,7 +127,5 @@ public class Button extends UiElement {
 
             pressedTime += interval;
         }
-
-        super.update(interval);
     }
 }

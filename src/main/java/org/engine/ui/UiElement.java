@@ -1,10 +1,13 @@
 package org.engine.ui;
 
+import org.engine.renderer.ShaderCache;
 import org.joml.Vector2f;
 
 import org.engine.core.Rect;
 import org.engine.input.*;
 import org.engine.renderer.Material;
+import org.engine.renderer.Shader;
+import org.engine.renderer.ShaderCache;
 import org.engine.renderer.Mesh;
 import org.engine.scene.Entity;
 
@@ -24,14 +27,19 @@ public class UiElement extends Entity {
 
     protected Flags flags = new Flags();
 
-    public UiElement() {
+    public UiElement() throws Exception {
         super();
 
         rectTrans = new RectTransform();
         material = new Material();
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultGuiShader = shaderCache.getShader("defaultGui");
+
+        material.setShader(defaultGuiShader);
     }
 
-    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) {
+    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
 
         super();
 
@@ -47,6 +55,11 @@ public class UiElement extends Entity {
         rectTrans.anchor.set(anchor);
 
         material = new Material();
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultGuiShader = shaderCache.getShader("defaultGui");
+
+        material.setShader(defaultGuiShader);
 
         // Automatically draw in front of the parent.
         if (parent != null) {
@@ -102,6 +115,8 @@ public class UiElement extends Entity {
             super.update(interval);
             return;
         }
+
+        super.update(interval);
 
         flags.dirty = false;
 
@@ -174,8 +189,6 @@ public class UiElement extends Entity {
         if (flags.buildsMesh) {
             buildMesh();
         }
-
-        super.update(interval);
     }
 
     private void buildMesh() {

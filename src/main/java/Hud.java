@@ -1,14 +1,11 @@
 import java.awt.Font;
 
 import org.engine.core.Rect;
-import org.engine.input.Mouse;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import org.engine.renderer.FontTexture;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
-import org.engine.IHud;
 import org.engine.ui.Button;
 import org.engine.ui.Canvas;
 import org.engine.ui.Panel;
@@ -16,7 +13,7 @@ import org.engine.ui.Text;
 
 import org.engine.renderer.Window;
 
-public class Hud implements IHud {
+public class Hud {
 
     private Canvas canvas;
     private Panel bPanel;
@@ -48,15 +45,9 @@ public class Hud implements IHud {
         entities = new Entity[]{bPanel, button, button.getText(), rPanel, fpsText};
 
         scene.addEntity(canvas);
-        scene.setHud(this);
     }
 
     public void setStatusText(String statusText) {
         fpsText.setText(statusText);
-    }
-
-    @Override
-    public Entity[] getEntities() {
-        return entities;
     }
 }

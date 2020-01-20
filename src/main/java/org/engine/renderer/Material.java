@@ -13,13 +13,19 @@ public class Material {
     private float reflectance;
 
     private Texture texture;
+    private Shader shader;
 //    private Texture normalMap;
 
-    public Material() {
+    public Material() throws Exception {
         this.ambientColor = DEFAULT_COLOR;
         this.diffuseColor = DEFAULT_COLOR;
         this.specularColor = DEFAULT_COLOR;
         this.texture = null;
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultShader = shaderCache.getShader("default");
+
+        this.shader = defaultShader;
         this.reflectance = 0;
     }
 
@@ -45,6 +51,11 @@ public class Material {
         this.specularColor = specularColor;
         this.texture = texture;
         this.reflectance = reflectance;
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultShader = shaderCache.getShader("default");
+
+        this.shader = defaultShader;
     }
 
     public Vector4f getAmbientColor() {
@@ -90,6 +101,10 @@ public class Material {
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
+
+    public Shader getShader() { return shader; }
+
+    public void setShader(Shader shader) { this.shader = shader; }
 
 //    public boolean hasNormalMap() {
 //        return this.normalMap != null;
