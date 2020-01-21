@@ -18,6 +18,7 @@ public class Shader {
     private int fragmentShaderId;
 
     private final Map<String, Integer> uniforms;
+    private IUniformManager uniformManager = null;
 
     public Shader(String name) throws Exception {
         programId = glCreateProgram();
@@ -27,6 +28,14 @@ public class Shader {
 
         this.name = name;
         uniforms = new HashMap<>();
+    }
+
+    public void setUniformManager(IUniformManager uniformManager) {
+        this.uniformManager = uniformManager;
+    }
+
+    public IUniformManager getUniformManager() {
+        return uniformManager;
     }
 
     public void createUniform(String uniformName) throws Exception {
