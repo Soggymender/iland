@@ -133,23 +133,14 @@ public class SceneRenderer {
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
 
+            // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            // TODO: Each shader should have a class to load entity instance data into the shader uniforms.
-            // The engine should provide one class per default shader, and the user should be able to provide one per
-            // custom shader. Once those exist, these three calls can be smashed into one that dynamically binds
-            // the correct shader, and calls the class to load the uniforms per entity.
-            if (shader == defaultShader) {
-                renderScene(shader, scene, meshList);
-            } else if (shader == skyboxShader) {
-                renderSkybox(scene, meshList);
-            } else if (shader == hudShader) {
-                renderHud(window, scene, meshList);
-            }
+            renderShaderMeshes(shader, scene, meshList);
         }
     }
 
-    private void renderScene(Shader shader, Scene scene, List<Mesh> meshList) {
+    private void renderShaderMeshes(Shader shader, Scene scene, List<Mesh> meshList) {
 
         shader.bind();
 
@@ -158,7 +149,7 @@ public class SceneRenderer {
         uniformManager.setShaderUniforms(transform);
 
         if (uniformManager.getUseSceneLighting()) {
-            renderLights(scene.getSceneLighting());
+            setLightingUniforms(shader, scene.getSceneLighting());
         }
 
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
@@ -168,54 +159,20 @@ public class SceneRenderer {
             uniformManager.setMeshUniforms(mesh, transform);
 
             mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
-               uniformManager.setEntityUniforms(entity, transform);
+               uniformManager.setEntityUniforms(scene, entity, transform);
             });
         }
 
         shader.unbind();
     }
 
-    private void renderSkybox(Scene scene, List<Mesh> meshList) {
-
-        skyboxShader.bind();
-        skyboxShader.setUniform("texture_sampler", 0);
-
-        // Update projection Matrix
-        Matrix4f projectionMatrix = transform.getProjectionMatrix();
-        skyboxShader.setUniform("projectionMatrix", projectionMatrix);
-
-
-        //Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
-        Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
-        viewMatrix.m30(0);
-        viewMatrix.m31(0);
-        viewMatrix.m32(0);
-
-        Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
-
-        for (Mesh mesh : meshList) {
-
-            List<Entity> entityList = mapMeshes.get(mesh);
-
-            for (Entity entity : entityList) {
-                Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
-                skyboxShader.setUniform("modelViewMatrix", modelViewMatrix);
-                skyboxShader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
-
-                mesh.render();
-            }
-        }
-
-        skyboxShader.unbind();
-    }
-
-    private void renderLights(SceneLighting sceneLighting) {
+    private void setLightingUniforms(Shader shader, SceneLighting sceneLighting) {
 
         // Update the view matrix.
         Matrix4f viewMatrix = transform.getViewMatrix();
 
-        defaultShader.setUniform("ambientLight", sceneLighting.getAmbientLight());
-        defaultShader.setUniform("specularPower", specularPower);
+        shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
+        shader.setUniform("specularPower", specularPower);
 
         // Process Point Lights
         PointLight[] pointLightList = sceneLighting.getPointLightList();
@@ -229,7 +186,7 @@ public class SceneRenderer {
             lightPos.x = aux.x;
             lightPos.y = aux.y;
             lightPos.z = aux.z;
-            defaultShader.setUniform("pointLights", currPointLight, i);
+            shader.setUniform("pointLights", currPointLight, i);
         }
 
         // Process Spot Ligths
@@ -249,7 +206,7 @@ public class SceneRenderer {
             lightPos.y = aux.y;
             lightPos.z = aux.z;
 
-            defaultShader.setUniform("spotLights", currSpotLight, i);
+            shader.setUniform("spotLights", currSpotLight, i);
         }
 
         // Get a copy of the directional light object and transform its position to view coordinates
@@ -257,33 +214,6 @@ public class SceneRenderer {
         Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
         dir.mul(viewMatrix);
         currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
-        defaultShader.setUniform("directionalLight", currDirLight);
-    }
-
-    private void renderHud(Window window, Scene scene, List<Mesh> meshList) {
-        hudShader.bind();
-
-        Matrix4f ortho = transform.getOrthoProjectionMatrix();
-
-        Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
-
-        for (Mesh mesh : meshList) {
-
-            List<Entity> entityList = mapMeshes.get(mesh);
-
-            for (Entity entity : entityList) {
-
-                // Set ortohtaphic and model matrix for this HUD item
-                Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
-                hudShader.setUniform("projModelMatrix", projModelMatrix);
-
-                hudShader.setUniform("color", mesh.getMaterial().getDiffuseColor());
-                hudShader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
-
-                mesh.render();
-            }
-        }
-
-        hudShader.unbind();
+        shader.setUniform("directionalLight", currDirLight);
     }
 }

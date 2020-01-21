@@ -5,7 +5,9 @@ import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
 import org.engine.scene.Entity;
+import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
+import org.joml.Matrix4f;
 
 public class GuiUniformManager implements IUniformManager {
 
@@ -25,11 +27,17 @@ public class GuiUniformManager implements IUniformManager {
     }
 
     public void setMeshUniforms(Mesh mesh, Transform transform) {
-
+        shader.setUniform("color", mesh.getMaterial().getDiffuseColor());
+        shader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
     }
 
-    public void setEntityUniforms(Entity entity, Transform transform) {
+    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
 
+        Matrix4f ortho = transform.getOrthoProjectionMatrix();
+
+        // Set ortohtaphic and model matrix for this HUD item
+        Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
+        shader.setUniform("projModelMatrix", projModelMatrix);
     }
 
     public boolean getUseSceneLighting() {

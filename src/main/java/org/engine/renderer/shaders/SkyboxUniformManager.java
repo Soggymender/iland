@@ -5,7 +5,9 @@ import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
 import org.engine.scene.Entity;
+import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
+import org.joml.Matrix4f;
 
 public class SkyboxUniformManager implements IUniformManager {
 
@@ -23,13 +25,27 @@ public class SkyboxUniformManager implements IUniformManager {
 
     public void setShaderUniforms(Transform transform) {
 
+        // Update projection Matrix
+        Matrix4f projectionMatrix = transform.getProjectionMatrix();
+        shader.setUniform("projectionMatrix", projectionMatrix);
+
+        shader.setUniform("texture_sampler", 0);
     }
 
     public void setMeshUniforms(Mesh mesh, Transform transform) {
 
     }
 
-    public void setEntityUniforms(Entity entity, Transform transform) {
+    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
+        //Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
+        Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
+        viewMatrix.m30(0);
+        viewMatrix.m31(0);
+        viewMatrix.m32(0);
+
+        Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
+        shader.setUniform("modelViewMatrix", modelViewMatrix);
+        shader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
 
     }
 

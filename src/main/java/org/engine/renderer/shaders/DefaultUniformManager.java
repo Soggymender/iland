@@ -5,6 +5,7 @@ import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
 import org.engine.scene.Entity;
+import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
 import org.joml.Matrix4f;
 
@@ -43,7 +44,7 @@ public class DefaultUniformManager implements IUniformManager {
         shader.setUniform("material", mesh.getMaterial());
     }
 
-    public void setEntityUniforms(Entity entity, Transform transform) {
+    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
 
         Matrix4f viewMatrix = transform.getViewMatrix();
 
