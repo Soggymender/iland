@@ -11,8 +11,10 @@ import org.engine.renderer.Mesh;
 public class Entity {
 
     protected class Flags {
-        public boolean renderable = false;
         public boolean newMesh = false;
+        public boolean renderable = false;
+        public boolean visible = true;
+        public boolean parentVisible = true;
 
         protected Flags() {
 
@@ -20,7 +22,10 @@ public class Entity {
 
         // Copy constructor for copying flags to oldFlags.
         protected Flags(Flags flags) {
+            this.newMesh = flags.newMesh;
             this.renderable = flags.renderable;
+            this.visible = flags.visible;
+            this.parentVisible = flags.parentVisible;
         }
     }
 
@@ -183,12 +188,28 @@ public class Entity {
         return (flags.renderable && !oldFlags.renderable);
     }
 
-    public boolean newMeshFlag() {
+    public boolean getNewMeshFlag() {
         return flags.newMesh;
     }
 
-    public void clearNewMeshFlag() {
-        flags.newMesh = false;
+    public void setNewMeshFlag(boolean value) {
+        flags.newMesh = value;
+    }
+
+    public boolean getVisible() {
+        return flags.visible;
+    }
+
+    public void setVisible(boolean value) {
+        flags.visible = value;
+    }
+
+    public boolean getParentVisible() {
+        return flags.parentVisible;
+    }
+
+    public void setParentVisible(boolean value) {
+        flags.parentVisible = value;
     }
 
     public void input(Input input) {
@@ -204,9 +225,16 @@ public class Entity {
 
     public void update(float interval) {
 
+        // NOTE: Some things need to be updated whether dirty or not because ancestors affect some state data.
+
         oldFlags = new Flags(flags);
 
-
+        // If parent or grandparent is not visible, set not visible.
+        if (parent == null) {
+            setParentVisible(true);
+        } else {
+            setParentVisible(parent.getVisible() && parent.getParentVisible());
+        }
 
         /* This was internally recursive, but is now recursed by the scene so that it can directly add and remove meshes
         that are created or activated / deactivated during the update.

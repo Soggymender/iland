@@ -137,8 +137,8 @@ public class Scene {
 
         entity.update(interval);
 
-        if (entity.newMeshFlag()) {// .justRenderable()) {
-            entity.clearNewMeshFlag();
+        if (entity.getNewMeshFlag()) {// .justRenderable()) {
+            entity.setNewMeshFlag(false);
 
             addEntityMeshes(entity);
 

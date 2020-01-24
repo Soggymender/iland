@@ -41,6 +41,11 @@ public class GameCamera extends Camera {
 
         Mouse mouse = input.getMouse();
 
+        if (input.getMouse().getShowCursor()) {
+            rotVec.zero();
+            return;
+        }
+
         rotVec = mouse.getDisplayVec();
 
         rotVec.x *= MOUSE_SENSITIVITY;

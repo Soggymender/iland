@@ -10,7 +10,6 @@ import org.engine.scene.Entity;
 import org.engine.scene.SceneLoader;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 import org.engine.Terrain;
 

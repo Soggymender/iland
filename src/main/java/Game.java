@@ -52,11 +52,11 @@ public class Game implements SceneLoader.IEventHandler {
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
-        SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/models/", this);
+        SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/textures/", this);
 
         // Setup  SkyBox
         float skyboxScale = 100.0f;
-        Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/models/");
+        Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/textures/");
         skybox.setScale(skyboxScale);
 
         scene.addEntityMeshes(skybox);
@@ -91,7 +91,13 @@ public class Game implements SceneLoader.IEventHandler {
     }
 
     public void input(Input input) {
-        avatar.input(input);
+        if (!input.getMouse().getShowCursor()){
+
+        
+            avatar.input(input);
+        }
+       
+        hud.input(input);
     }
 
     public void update(float interval) {

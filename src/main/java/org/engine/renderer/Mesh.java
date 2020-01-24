@@ -167,16 +167,19 @@ public class Mesh {
 
         // Draw the vertices
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-
         endRender();
     }
 
     public void renderList(List<Entity> entities, Consumer<Entity> consumer) {
+    
         beginRender();
 
         for (Entity entity : entities) {
-            consumer.accept(entity);
-            glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+    
+            if (entity.getVisible() && entity.getParentVisible()) {
+                consumer.accept(entity);
+                glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+            }   
         }
 
         endRender();

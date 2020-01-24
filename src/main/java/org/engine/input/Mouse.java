@@ -20,6 +20,8 @@ public class Mouse {
     DoubleBuffer x;
     DoubleBuffer y;
 
+    private boolean show;
+
     private boolean isActive = false;
     private boolean inWindow = false;
 
@@ -45,10 +47,12 @@ public class Mouse {
 
     public void initialize() {
 
-//        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-//        glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        showCursor(false);
 
-//        glfwSetInputMode(window.getWindowHandle(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+       // glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+       // glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        glfwSetInputMode(window.getWindowHandle(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
 
@@ -133,6 +137,25 @@ public class Mouse {
 
         leftButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_1) != 0;
         rightButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_2) != 0;
+    }
+
+    public void showCursor(boolean show) {
+      
+        this.show = show;
+
+        if (show) {
+            
+            glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+
+    }
+
+    public boolean getShowCursor() {
+        return show;
     }
 
     public boolean leftButtonPressed() {

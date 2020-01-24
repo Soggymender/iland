@@ -26,6 +26,4 @@ public class Input {
         mouse.input();
         keyboard.input();
     }
-
-
 }

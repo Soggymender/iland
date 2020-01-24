@@ -159,7 +159,12 @@ public class SceneRenderer {
             uniformManager.setMeshUniforms(mesh, transform);
 
             mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
-               uniformManager.setEntityUniforms(scene, entity, transform);
+
+                // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
+                // inner loop.
+                if (entity.getVisible() && entity.getParentVisible()) {
+                    uniformManager.setEntityUniforms(scene, entity, transform);
+                }
             });
         }
 
