@@ -112,10 +112,10 @@ public class HeightMapMesh {
 
         this.mesh = mesh;
 
-        Texture texture = new Texture(textureFilename);
+  //      Texture texture = new Texture(textureFilename);
 
-        Material material = new Material(texture, 0.0f);
-        mesh.setMaterial(material);
+ //       Material material = new Material(texture, 0.0f);
+       // mesh.setMaterial(material);
     }
 
     public Mesh getMesh() {

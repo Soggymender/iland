@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Utilities {
 
-    public static String load(String fileName) throws Exception {
+        public static String load(String fileName) throws Exception {
         String result;
         try (InputStream in = Class.forName(Utilities.class.getName()).getResourceAsStream(fileName);
              Scanner scanner = new Scanner(in, "UTF-8")) {

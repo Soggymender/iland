@@ -1,8 +1,12 @@
 import java.awt.Font;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import org.engine.core.Rect;
+import org.engine.input.Input.*;
 import org.joml.Vector2f;
 
+import org.engine.input.*;
 import org.engine.renderer.FontTexture;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
@@ -44,10 +48,24 @@ public class Hud {
 
         entities = new Entity[]{bPanel, button, button.getText(), rPanel, fpsText};
 
+        bPanel.setVisible(false);
+
         scene.addEntity(canvas);
     }
 
     public void setStatusText(String statusText) {
         fpsText.setText(statusText);
+    }
+
+    public void input(Input input) {
+
+        Keyboard keyboard = input.getKeyboard();
+
+        if (keyboard.keyJustDown(GLFW_KEY_TAB)) {
+            
+            boolean hidden = bPanel.getVisible();
+            bPanel.setVisible(!hidden);
+            input.getMouse().showCursor(!hidden);
+        }
     }
 }

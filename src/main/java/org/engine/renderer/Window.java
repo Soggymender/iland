@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.engine.input.Input.*;
+
 public class Window {
 
     private final String title;
@@ -64,11 +66,11 @@ public class Window {
         });
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-            }
-        });
+//        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
+//            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+//                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+//            }
+//        });
 
         // Get the resolution of the primary monitor
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());

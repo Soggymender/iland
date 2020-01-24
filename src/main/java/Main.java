@@ -1,3 +1,5 @@
+import static org.lwjgl.glfw.GLFW.*;
+
 import org.engine.core.Timer;
 import org.engine.input.*;
 import org.engine.renderer.Window;
@@ -35,6 +37,11 @@ public class Main {
 
                 // Input
                 input.input();
+
+                if (input.getKeyboard().keyJustDown(GLFW_KEY_ESCAPE)) {
+                    glfwSetWindowShouldClose(window.getWindowHandle(), true);
+                }
+
                 game.input(input);
                 scene.input(input);
 
