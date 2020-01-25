@@ -1,3 +1,4 @@
+# Common Compiled Files
 *.com
 *.class
 *.dll
@@ -5,7 +6,13 @@
 *.o
 *.so
 *.iml
+
+# IDE Files
 .idea
-target
+.vscode
+.settings
 .classpath
+
+# Build Diretories
+target
 bin
