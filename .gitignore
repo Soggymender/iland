@@ -4,8 +4,8 @@
 *.exe
 *.o
 *.so
-.idea/workspace.xml
-.idea/misc.xml
 *.iml
-.idea/workspace.xml
-*.class
+.idea
+target
+.classpath
+bin
