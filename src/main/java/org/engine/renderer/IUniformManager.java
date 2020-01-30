@@ -14,4 +14,5 @@ public interface IUniformManager {
 
     public boolean getUseSceneLighting();
     public boolean getUseModelViewMatrix();
+    public boolean getUseDepthTest();
 }

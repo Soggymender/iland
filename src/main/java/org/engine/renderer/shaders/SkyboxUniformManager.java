@@ -56,4 +56,8 @@ public class SkyboxUniformManager implements IUniformManager {
     public boolean getUseModelViewMatrix() {
         return false;
     }
+
+    public boolean getUseDepthTest() {
+        return true;
+    }
 }

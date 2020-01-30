@@ -34,12 +34,12 @@ public class SketchElement extends Entity {
         
         lines = new ArrayList<Float>();
 
-        material = new Material();
+//        material = new Material();
 
-        ShaderCache shaderCache = ShaderCache.getInstance();
-        Shader defaultShader = shaderCache.getShader("sketchShader");
+//        ShaderCache shaderCache = ShaderCache.getInstance();
+//        Shader defaultShader = shaderCache.getShader("sketchShader");
 
-        material.setShader(defaultShader);
+//        material.setShader(defaultShader);
     }
 
     public void clear() {
@@ -49,6 +49,11 @@ public class SketchElement extends Entity {
     public void addLines(Material material, Float ...coords) {
 
         this.material = material;
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        Shader defaultShader = shaderCache.getShader("sketchShader");
+
+        this.material.setShader(defaultShader);
 
         for (float coord : coords ) {
             lines.add(coord);

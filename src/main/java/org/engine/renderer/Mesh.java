@@ -66,7 +66,7 @@ public class Mesh {
     }
 
     public void set(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
-  
+  System.out.println("slowdown");
         // TODO: bbox is not being auto-sized.
 
         FloatBuffer posBuffer = null;

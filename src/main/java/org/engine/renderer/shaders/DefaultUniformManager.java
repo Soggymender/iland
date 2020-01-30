@@ -59,4 +59,8 @@ public class DefaultUniformManager implements IUniformManager {
     public boolean getUseModelViewMatrix() {
         return true;
     }
+
+    public boolean getUseDepthTest() {
+        return true;
+    }
 }

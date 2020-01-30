@@ -152,6 +152,12 @@ public class SceneRenderer {
             setLightingUniforms(shader, scene.getSceneLighting());
         }
 
+        if (uniformManager.getUseDepthTest()) {
+            glEnable(GL_DEPTH_TEST);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
+
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
         for (Mesh mesh : meshList) {

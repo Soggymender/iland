@@ -5,6 +5,7 @@ import org.engine.input.*;
 import org.engine.renderer.Window;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
+import org.engine.sketch.Sketch;
 
 public class Main {
 
@@ -24,6 +25,8 @@ public class Main {
             Timer timer = new Timer();
             Scene scene = new Scene();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
+
+            Sketch sketch = new Sketch();
 
             Game game = new Game(window, scene);
 

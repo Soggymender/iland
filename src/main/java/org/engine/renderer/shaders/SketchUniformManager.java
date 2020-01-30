@@ -57,10 +57,14 @@ public class SketchUniformManager implements IUniformManager {
     }
 
     public boolean getUseSceneLighting() {
-        return false;
+        return true;
     }
 
     public boolean getUseModelViewMatrix() {
         return true;
+    }
+
+    public boolean getUseDepthTest() {
+        return false;
     }
 }
