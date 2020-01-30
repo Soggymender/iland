@@ -32,7 +32,7 @@ public class Game implements SceneLoader.IEventHandler {
     {
         this.scene = scene;
 
-        avatar = new Avatar();
+        avatar = new Avatar(scene);
         camera = new GameCamera(avatar);
 
         scene.setCamera(camera);
@@ -129,17 +129,20 @@ public class Game implements SceneLoader.IEventHandler {
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);
 
-       if (accumulator >= 1.0f) {
+        if (accumulator >= 1.0f) {
 
-           float fps = fpsTotal / fpsSamples;
+            float fps = 0;
+            if (fpsSamples > 0) {
+                fps = fpsTotal / fpsSamples;
+            }
 
-           String fpsString = String.format("%.2f", fps);
-           hud.setStatusText(fpsString);
+            String fpsString = String.format("%.2f", fps);
+            hud.setStatusText(fpsString);
 
-           accumulator = 0.0f;
-           fpsTotal = 0.0f;
-           fpsSamples = 0;
-       }
+            accumulator = 0.0f;
+            fpsTotal = 0.0f;
+            fpsSamples = 0;
+        }
 
        float fps = 1.0f / interval;
        accumulator += interval;

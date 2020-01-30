@@ -1,4 +1,5 @@
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import org.engine.input.*;
 
@@ -7,7 +8,9 @@ import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.scene.Entity;
+import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
+import org.engine.sketch.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -21,9 +24,17 @@ public class Avatar extends Entity {
 
     private float speed = 3.5f;
 
-    public Avatar() {
+    private Material sketchMaterial;
+    private SketchElement moveDirSketch;
+
+    public Avatar(Scene scene) throws Exception {
 
         moveDir = new Vector3f(0.0f, 0.0f, 0.0f);
+
+        moveDirSketch = new SketchElement(null);
+        sketchMaterial = new Material(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+        scene.addEntity(moveDirSketch);
+
     }
 
     public void initialize() throws Exception {
@@ -121,6 +132,15 @@ public class Avatar extends Entity {
         float angY = -forward.angleSigned(moveDir, Math.up);
 
         rotation.y = rotation.y + angY;
+ 
+ 
+ 
+ 
+         moveDirSketch.clear();
+        moveDirSketch.addLines(sketchMaterial, position.x, position.y, position.z, position.x + forward.x, position.y, position.z + forward.z);
+
+ 
+ 
     }
 
     public Entity getEntity() {
