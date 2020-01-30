@@ -4,14 +4,12 @@ c:\development\java\iland\src\main\java\org\engine\input\Keyboard.java
 c:\development\java\iland\src\main\java\org\engine\core\Rect.java
 c:\development\java\iland\src\main\java\org\engine\renderer\DirectionalLight.java
 c:\development\java\iland\src\main\java\org\engine\scene\SceneLighting.java
-c:\development\java\iland\src\main\java\org\engine\sketch\Sketch.java
 c:\development\java\iland\src\main\java\org\engine\ui\Canvas.java
 c:\development\java\iland\src\main\java\Game.java
 c:\development\java\iland\src\main\java\org\engine\renderer\Shader.java
 c:\development\java\iland\src\main\java\org\engine\ui\Panel.java
 c:\development\java\iland\src\main\java\org\engine\input\Input.java
 c:\development\java\iland\src\main\java\org\engine\input\Mouse.java
-c:\development\java\iland\src\main\java\org\engine\renderer\shaders\SketchUniformManager.java
 c:\development\java\iland\src\main\java\org\engine\Utilities.java
 c:\development\java\iland\src\main\java\Avatar.java
 c:\development\java\iland\src\main\java\org\engine\scene\SceneLoader.java
@@ -22,7 +20,6 @@ c:\development\java\iland\src\main\java\org\engine\renderer\Mesh.java
 c:\development\java\iland\src\main\java\org\engine\scene\SceneRenderer.java
 c:\development\java\iland\src\main\java\org\engine\renderer\shaders\DefaultUniformManager.java
 c:\development\java\iland\src\main\java\Hud.java
-c:\development\java\iland\src\main\java\org\engine\sketch\SketchElement.java
 c:\development\java\iland\src\main\java\org\engine\renderer\Material.java
 c:\development\java\iland\src\main\java\org\engine\renderer\TextureCache.java
 c:\development\java\iland\src\main\java\org\engine\ui\Button.java
