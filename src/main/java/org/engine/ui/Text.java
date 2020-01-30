@@ -40,7 +40,6 @@ public class Text extends UiElement {
         Mesh mesh = getMesh();
         Material material = null;
         if (mesh != null) {
-            mesh.deleteBuffers();
             material = mesh.getMaterial();
         }
 
@@ -200,9 +199,14 @@ public class Text extends UiElement {
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
 
-        mesh = new Mesh(posArr, textCoordsArr, normals, indicesArr);
-        mesh.setMaterial(material);
-
+        if (mesh == null) {
+            mesh = new Mesh(Mesh.TRIANGLES, posArr, textCoordsArr, normals, indicesArr);
+            setMesh(mesh);
+            mesh.setMaterial(material);
+        } else {
+            mesh.set(Mesh.TRIANGLES,posArr, textCoordsArr, normals, indicesArr);
+        }
+        
         return mesh;
     }
 
@@ -234,11 +238,11 @@ public class Text extends UiElement {
         super.update(interval);
 
         // Build the mesh but only add verts that fit.
-        if (getMesh() != null) {
-            getMesh().deleteBuffers();
-        }
+     //   if (getMesh() != null) {
+     //       getMesh().deleteBuffers();
+     //   }
 
-        setMesh(buildMesh());
+        buildMesh();
         getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
     }
 }

@@ -246,7 +246,7 @@ public class UiElement extends Entity {
 
         float[] normals = new float[0];
 
-        mesh = new Mesh(positions, texCoords, normals, indices);
+        mesh = new Mesh(Mesh.TRIANGLES, positions, texCoords, normals, indices);
         mesh.setMaterial(material);
 
         setMesh(mesh);

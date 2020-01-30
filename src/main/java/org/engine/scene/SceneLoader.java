@@ -197,7 +197,7 @@ public class SceneLoader {
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh = new Mesh(Utilities.listToArray(vertices),
+        Mesh mesh = new Mesh(Mesh.TRIANGLES, Utilities.listToArray(vertices),
                 Utilities.listToArray(textures),
                 Utilities.listToArray(normals),
                 Utilities.listIntToArray(indices),
