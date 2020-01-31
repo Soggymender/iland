@@ -1,11 +1,18 @@
+# Common Compiled Files
 *.com
 *.class
 *.dll
 *.exe
 *.o
 *.so
-.idea/workspace.xml
-.idea/misc.xml
 *.iml
-.idea/workspace.xml
-*.class
+
+# IDE Files
+.idea
+.vscode
+.settings
+.classpath
+
+# Build Diretories
+target
+bin
