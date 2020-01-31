@@ -6,7 +6,6 @@ import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
-import org.engine.scene.SceneRenderer;
 import org.joml.Matrix4f;
 
 public class SkyboxUniformManager implements IUniformManager {

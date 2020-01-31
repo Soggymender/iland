@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.engine.core.BoundingBox;
-import org.joml.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
@@ -57,8 +56,6 @@ public class Mesh {
         if (bbox == null) {
             if (this.bbox == null) {
                 bbox = new BoundingBox();
-            } else {
-                bbox = this.bbox;
             }
         }
 
@@ -66,7 +63,9 @@ public class Mesh {
     }
 
     public void set(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
-  System.out.println("slowdown");
+        
+        //System.out.println("slowdown");
+        
         // TODO: bbox is not being auto-sized.
 
         FloatBuffer posBuffer = null;

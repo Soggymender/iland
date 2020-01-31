@@ -26,7 +26,7 @@ public class Main {
             Scene scene = new Scene();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
 
-            Sketch sketch = new Sketch();
+            new Sketch();
 
             Game game = new Game(window, scene);
 

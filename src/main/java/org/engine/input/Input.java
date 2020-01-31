@@ -1,7 +1,5 @@
 package org.engine.input;
 
-import org.engine.renderer.Window;
-
 public class Input {
 
     private Mouse mouse = null;

@@ -9,7 +9,6 @@ import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
-import org.engine.renderer.Skybox;
 
 public class Scene {
 
@@ -42,8 +41,8 @@ public class Scene {
     {
         root = new Entity();
 
-        meshMap = new HashMap();
-        shaderMap = new HashMap();
+        meshMap = new HashMap<>();
+        shaderMap = new HashMap<>();
     }
 
     public void addEntity(Entity entity) {

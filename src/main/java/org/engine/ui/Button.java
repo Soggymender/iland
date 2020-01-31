@@ -2,7 +2,6 @@ package org.engine.ui;
 
 import org.engine.input.*;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import org.engine.renderer.FontTexture;
@@ -27,7 +26,7 @@ public class Button extends UiElement {
     private float pressedTime = 0.0f;
 
     private Text text = null;
-    private FontTexture fontTexture = null;
+    //private FontTexture fontTexture = null;
 
     private Flags buttonFlags = new Flags();
 
@@ -48,7 +47,7 @@ public class Button extends UiElement {
         material.setDiffuseColor(color);
 
         if (textString != null) {
-            this.fontTexture = fontTexture;
+            //this.fontTexture = fontTexture;
 
             text = new Text(canvas, this, new Rect(0, 0, 0, 0, true), new Rect(0, 0, 1, 1, true), pivot, textString, fontTexture);
         }

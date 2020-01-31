@@ -22,7 +22,7 @@ public class Terrain extends Entity{
     private int verticesPerCol = 0;
     private int verticesPerRow = 0;
 
-    private boolean fromMesh = false;
+    //private boolean fromMesh = false;
     private HeightMapMesh heightMapMesh = null;
 
     private Box2D[][] boundingBoxes = null;
@@ -86,7 +86,7 @@ public class Terrain extends Entity{
     //
     public void createFromMesh(Mesh mesh, String textureFilename) throws Exception {
 
-        fromMesh = true;
+        //fromMesh = true;
         BoundingBox bbox = mesh.getBbox();
 
         this.terrainSize = 1;
@@ -142,8 +142,6 @@ public class Terrain extends Entity{
         // If we have found a terrain block that contains the position we need
         // to calculate the height of the terrain on that position
         if (found) {
-
-            Vector3f scale = terrainBlock.getScale();
             Vector3f[] triangle = getTriangle(position, boundingBox, terrainBlock);
             result = interpolateHeight(triangle[0], triangle[1], triangle[2], position.x, position.z);
         }

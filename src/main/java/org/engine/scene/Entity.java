@@ -86,7 +86,7 @@ public class Entity {
     public void addChild(Entity child) {
 
         if (children == null) {
-            children = new ArrayList();
+            children = new ArrayList<>();
         }
 
         children.add(child);

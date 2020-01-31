@@ -1,6 +1,5 @@
 package org.engine.ui;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.engine.renderer.*;
 import org.engine.renderer.FontTexture;
 import org.engine.scene.Entity;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class Text extends UiElement {

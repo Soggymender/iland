@@ -27,6 +27,7 @@ public class Shader {
         }
 
         this.name = name;
+
         uniforms = new HashMap<>();
     }
 
