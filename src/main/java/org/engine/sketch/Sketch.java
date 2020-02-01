@@ -13,8 +13,8 @@ public class Sketch {
         ShaderCache shaderCache = ShaderCache.getInstance();
         sketchShader = shaderCache.addShader("sketchShader");
 
-        String vsName = Utilities.load("/shaders/default_vertex.vs");
-        String fsName = Utilities.load("/shaders/default_fragment.fs");
+        String vsName = Utilities.load("/shaders/line.vs");
+        String fsName = Utilities.load("/shaders/line.fs");
 
         if (vsName.isEmpty() || fsName.isEmpty()) {
             return;

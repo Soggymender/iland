@@ -48,7 +48,7 @@ public class SketchElement extends Entity {
 
     public void addLines(Vector4f color, Float ...coords) {
 
-        material.setDiffuseColor(color);
+        material.setAmbientColor(color);
     
         for (float coord : coords ) {
             lines.add(coord);

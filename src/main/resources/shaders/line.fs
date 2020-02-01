@@ -1,18 +1,48 @@
 #version 330
 
-uniform float uLineWidth;
-uniform vec4 uColor;
-uniform float uBlendFactor; //1.5..2.5
-varying vec2 vLineCenter;
+in vec2 outTexCoord;
+in vec3 mvVertexNormal;
+in vec3 mvVertexPos;
 
-void main(void)
+out vec4 fragColor;
+
+struct Material
 {
-      vec4 col = uColor;        
-      double d = length(vLineCenter-gl_FragCoord.xy);
-      double w = uLineWidth;
-      if (d>w)
-        col.w = 0;
-      else
-        col.w *= pow(float((w-d)/w), uBlendFactor);
-      gl_FragColor = col;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    int hasTexture;
+    float reflectance;
 };
+
+uniform sampler2D texture_sampler;
+uniform vec3 ambientLight;
+uniform float specularPower;
+uniform Material material;
+
+vec4 ambientC;
+vec4 diffuseC;
+vec4 specularC;
+
+void setupColors(Material material, vec2 textCoord)
+{
+    if (material.hasTexture == 1)
+    {
+        ambientC = texture(texture_sampler, textCoord);
+        diffuseC = ambientC;
+        specularC = ambientC;
+    }
+    else
+    {
+        ambientC = material.ambient;
+        diffuseC = material.diffuse;
+        specularC = material.specular;
+    }
+}
+
+void main()
+{
+    setupColors(material, outTexCoord);
+
+    fragColor = ambientC;
+}
