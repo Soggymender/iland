@@ -1,3 +1,5 @@
+package org.iland;
+
 import org.joml.Vector3f;
 
 import org.engine.input.*;
@@ -139,6 +141,6 @@ public class Avatar extends Entity {
 
     public Entity getEntity() {
 
-        return this;//entity;
+        return this;
     }
 }

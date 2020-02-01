@@ -1,3 +1,5 @@
+package org.iland;
+
 import java.awt.Font;
 
 import static org.lwjgl.glfw.GLFW.*;

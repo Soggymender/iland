@@ -1,3 +1,5 @@
+package org.iland;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.core.Timer;

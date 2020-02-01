@@ -1,3 +1,5 @@
+package org.iland;
+
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
 import org.engine.input.*;
