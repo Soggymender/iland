@@ -39,7 +39,7 @@ public class Avatar extends Entity {
     public void initialize() throws Exception {
 
         // Avatar placeholder.
-        Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/models/human01.fbx", "src/main/resources/models/");
+        Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/iland/models/human01.fbx", "src/main/resources/iland/models/");
         Texture texture = avatarMesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
         avatarMesh[0].setMaterial(material);

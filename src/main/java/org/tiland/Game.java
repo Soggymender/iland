@@ -1,4 +1,4 @@
-package org.iland;
+package org.tiland;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.engine.Terrain;
 
 public class Game implements SceneLoader.IEventHandler {
 
-    private final Avatar avatar;
+//    private final Avatar avatar;
     private final GameCamera camera;
 
     Terrain terrain;
@@ -32,8 +32,8 @@ public class Game implements SceneLoader.IEventHandler {
     {
         this.scene = scene;
 
-        avatar = new Avatar(scene);
-        camera = new GameCamera(avatar);
+ //       avatar = new Avatar(scene);
+        camera = new GameCamera(null);
 
         scene.setCamera(camera);
 
@@ -44,22 +44,22 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void initialize() throws Exception {
 
-        avatar.initialize();
-        scene.addEntityMeshes(avatar);
+  //      avatar.initialize();
+    //    scene.addEntityMeshes(avatar);
 
-        avatar.setPosition(0.0f, 0.0f, 0.0f);
+      //  avatar.setPosition(0.0f, 0.0f, 0.0f);
 
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
-        SceneLoader.loadEntities("src/main/resources/iland/models/terrain_mesh_test.fbx", "src/main/resources/iland/textures/", this);
+   //     SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/textures/", this);
 
         // Setup  SkyBox
-        float skyboxScale = 100.0f;
-        Skybox skybox = new Skybox("src/main/resources/iland/models/default_skybox.fbx", "src/main/resources/iland/textures/");
-        skybox.setScale(skyboxScale);
+    //    float skyboxScale = 100.0f;
+   //     Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/textures/");
+   //     skybox.setScale(skyboxScale);
 
-        scene.addEntityMeshes(skybox);
+   //     scene.addEntityMeshes(skybox);
 
         // Setup Lights
         setupLights();
@@ -94,7 +94,7 @@ public class Game implements SceneLoader.IEventHandler {
         if (!input.getMouse().getShowCursor()){
 
         
-            avatar.input(input);
+     //       avatar.input(input);
         }
        
         hud.input(input);
@@ -102,7 +102,7 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void update(float interval) {
 
-        avatar.update(interval, camera, terrain);
+ //       avatar.update(interval, camera, terrain);
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
@@ -152,31 +152,10 @@ public class Game implements SceneLoader.IEventHandler {
 
     public Entity preLoadEntityEvent(String type) throws Exception {
 
-        if (type.compareTo("terrain") == 0) {
-
-            // Create a terrain entity.
-            terrain = new Terrain();
-            return terrain;
-        }
-
         return null;
    }
 
     public void postLoadEntityEvent(Entity entity) throws Exception {
 
-        if (entity instanceof Terrain) {
-
-            Terrain terrainEntity = (Terrain)entity;
-
-            Mesh mesh = terrainEntity.getMesh();
-            terrainEntity.clearMeshes();
-
-            // Specify the textures since they can't be specified in the scene FBX. Yuck.
-            terrainEntity.createFromMesh(mesh, "src/main/resources/iland/textures/terrain.png");
-            scene.addEntitiesMeshes(terrainEntity.getEntities());
-        }
-
-        // Add these entities to the scene.
-        scene.addEntityMeshes(entity);
     }
 }
