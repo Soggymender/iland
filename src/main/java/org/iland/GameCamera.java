@@ -1,3 +1,5 @@
+package org.iland;
+
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
 import org.engine.input.*;
@@ -9,24 +11,18 @@ public class GameCamera extends Camera {
 
     private Vector2f rotVec;
 
-    private Vector3f cameraMoveDir;
-
     private Vector3f followPivot;
     private Vector3f followOffset;
     private Vector3f followRotation;
 
     private Entity target;
 
-    private static final float IDEAL_FOLLOW_DISTANCE = 5.0f;
-
     private static final float MOUSE_SENSITIVITY = 3.5f;
-    private static final float CAMERA_POS_STEP = 1.84f;
 
     public GameCamera(Entity target) {
 
         rotVec = new Vector2f();
 
-        cameraMoveDir = new Vector3f(0, 0, 0);
         this.target = target;
 
         followPivot = new Vector3f(0.0f, 2.0f, 0.0f);

@@ -1,10 +1,27 @@
-uniform vec2 uViewPort; //Width and Height of the viewport
-varying vec2 vLineCenter;
+#version 330
 
-void main(void)
+layout (location =0) in vec3 position;
+layout (location =1) in vec2 texCoord;
+layout (location =2) in vec3 vertexNormal;
+
+out vec2 outTexCoord;
+out vec3 mvVertexNormal;
+out vec3 mvVertexPos;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+void main()
 {
-  vec4 pp = gl_ModelViewProjectionMatrix * gl_Vertex;
-  gl_Position = pp;
-  vec2 vp = uViewPort;
-  vLineCenter = 0.5*(pp.xy + vec2(1, 1))*vp;
-};
+    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mvPos;
+    
+    // Draw over everything. Snap to near z plane.
+    gl_Position /= gl_Position.w;
+    gl_Position.z = 0;
+    
+    outTexCoord = texCoord;
+    mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
+    mvVertexPos = mvPos.xyz;
+
+}

@@ -23,7 +23,6 @@ public class Mouse {
     private boolean show;
 
     private boolean isActive = false;
-    private boolean inWindow = false;
 
     private boolean prevLeftButtonPressed = false;
     private boolean prevRightButtonPressed = false;
@@ -68,7 +67,7 @@ public class Mouse {
             //}
         });
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
-            inWindow = entered;
+
         });
     //    glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
 //            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;

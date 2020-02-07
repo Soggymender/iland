@@ -151,7 +151,7 @@ public class SceneRenderer {
         if (uniformManager.getUseSceneLighting()) {
             setLightingUniforms(shader, scene.getSceneLighting());
         }
-
+        
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
         for (Mesh mesh : meshList) {

@@ -6,7 +6,6 @@ import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
-import org.engine.scene.SceneRenderer;
 import org.joml.Matrix4f;
 
 public class SketchUniformManager implements IUniformManager {
@@ -22,14 +21,6 @@ public class SketchUniformManager implements IUniformManager {
         shader.createUniform("texture_sampler");
 
         shader.createMaterialUniform("material");
-
-        shader.createUniform("specularPower");
-        shader.createUniform("ambientLight");
-
-        shader.createPointLightListUniform("pointLights", SceneRenderer.MAX_POINT_LIGHTS);
-        shader.createSpotLightListUniform("spotLights", SceneRenderer.MAX_SPOT_LIGHTS);
-        shader.createDirectionalLightUniform("directionalLight");
-
     }
 
     public void setShaderUniforms(Transform transform) {
@@ -62,5 +53,9 @@ public class SketchUniformManager implements IUniformManager {
 
     public boolean getUseModelViewMatrix() {
         return true;
+    }
+
+    public boolean getUseDepthTest() {
+        return false;
     }
 }

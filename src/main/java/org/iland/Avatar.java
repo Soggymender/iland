@@ -1,9 +1,11 @@
+package org.iland;
+
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import org.engine.input.*;
 
 import org.engine.renderer.Camera;
+import org.engine.renderer.Color;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
@@ -24,7 +26,6 @@ public class Avatar extends Entity {
 
     private float speed = 3.5f;
 
-    private Material sketchMaterial;
     private SketchElement moveDirSketch;
 
     public Avatar(Scene scene) throws Exception {
@@ -32,15 +33,13 @@ public class Avatar extends Entity {
         moveDir = new Vector3f(0.0f, 0.0f, 0.0f);
 
         moveDirSketch = new SketchElement(null);
-        sketchMaterial = new Material(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
         scene.addEntity(moveDirSketch);
-
     }
 
     public void initialize() throws Exception {
 
         // Avatar placeholder.
-        Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/models/human01.fbx", "src/main/resources/models/");
+        Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/iland/models/human01.fbx", "src/main/resources/iland/models/");
         Texture texture = avatarMesh[0].getMaterial().getTexture();
         Material material = new Material(texture, 1.0f);
         avatarMesh[0].setMaterial(material);
@@ -80,7 +79,7 @@ public class Avatar extends Entity {
         // Move
 
         float offsetX = moveDir.x * speed * interval;
-     //   float offsetY = moveDir.y * speed * interval;
+    //   float offsetY = moveDir.y * speed * interval;
         float offsetZ = moveDir.z * speed * interval;
 
         Vector3f cameraRotation = camera.getRotation();
@@ -136,15 +135,12 @@ public class Avatar extends Entity {
  
  
  
-         moveDirSketch.clear();
-        moveDirSketch.addLines(sketchMaterial, position.x, position.y, position.z, position.x + forward.x, position.y, position.z + forward.z);
-
- 
- 
+        moveDirSketch.clear();
+        moveDirSketch.addLines(Color.BLACK, position.x, position.y, position.z, position.x + forward.x, position.y, position.z + forward.z);
     }
 
     public Entity getEntity() {
 
-        return this;//entity;
+        return this;
     }
 }

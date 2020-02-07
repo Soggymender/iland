@@ -1,3 +1,5 @@
+package org.tiland;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.core.Timer;
@@ -5,8 +7,9 @@ import org.engine.input.*;
 import org.engine.renderer.Window;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
+import org.engine.sketch.Sketch;
 
-public class Main {
+public class TiMain {
 
     public static void main(String[] args) {
         try {
@@ -24,6 +27,8 @@ public class Main {
             Timer timer = new Timer();
             Scene scene = new Scene();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
+
+            new Sketch();
 
             Game game = new Game(window, scene);
 

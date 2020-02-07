@@ -1,6 +1,5 @@
 package org.engine.renderer;
 
-import org.engine.renderer.Shader;
 import org.engine.renderer.Mesh;
 import org.engine.core.Transform;
 import org.engine.scene.Entity;
@@ -14,4 +13,5 @@ public interface IUniformManager {
 
     public boolean getUseSceneLighting();
     public boolean getUseModelViewMatrix();
+    public boolean getUseDepthTest();
 }

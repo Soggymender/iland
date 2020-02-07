@@ -1,4 +1,4 @@
-import org.engine.*;
+package org.iland;
 
 import java.util.List;
 import java.util.Map;
@@ -52,11 +52,11 @@ public class Game implements SceneLoader.IEventHandler {
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
-        SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/textures/", this);
+        SceneLoader.loadEntities("src/main/resources/iland/models/terrain_mesh_test.fbx", "src/main/resources/iland/textures/", this);
 
         // Setup  SkyBox
         float skyboxScale = 100.0f;
-        Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/textures/");
+        Skybox skybox = new Skybox("src/main/resources/iland/models/default_skybox.fbx", "src/main/resources/iland/textures/");
         skybox.setScale(skyboxScale);
 
         scene.addEntityMeshes(skybox);
@@ -172,7 +172,7 @@ public class Game implements SceneLoader.IEventHandler {
             terrainEntity.clearMeshes();
 
             // Specify the textures since they can't be specified in the scene FBX. Yuck.
-            terrainEntity.createFromMesh(mesh, "src/main/resources/textures/terrain.png");
+            terrainEntity.createFromMesh(mesh, "src/main/resources/iland/textures/terrain.png");
             scene.addEntitiesMeshes(terrainEntity.getEntities());
         }
 

@@ -1,6 +1,5 @@
 package org.engine.core;
 
-import java.lang.Math.*;
 import org.joml.Vector3f;
 
 public class Math {

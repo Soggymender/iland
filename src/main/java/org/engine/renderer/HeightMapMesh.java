@@ -1,8 +1,5 @@
 package org.engine.renderer;
 
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,8 +91,6 @@ public class HeightMapMesh {
 
         int width  = (int)(bbox.max.x - bbox.min.x) + 1;
         int height = (int)(bbox.max.z - bbox.min.z) + 1;
-
-        int textInc;
 
         this.minY = mesh.getBbox().min.y;
         this.maxY = mesh.getBbox().max.y;

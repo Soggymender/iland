@@ -3,7 +3,6 @@ package org.engine.ui;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import org.engine.input.*;
 import org.engine.renderer.Window;
 
 public class Canvas extends UiElement {

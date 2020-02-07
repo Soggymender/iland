@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.engine.renderer.ShaderCache;
-import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-import org.engine.input.*;
+import org.engine.renderer.Color;
 import org.engine.renderer.Material;
 import org.engine.renderer.Shader;
-import org.engine.renderer.ShaderCache;
 import org.engine.renderer.Mesh;
 import org.engine.scene.Entity;
 
@@ -34,7 +33,8 @@ public class SketchElement extends Entity {
         
         lines = new ArrayList<Float>();
 
-        material = new Material();
+        // Use a new material instance so the color can be modified.
+        material = new Material(Color.BLACK, 1.0f);
 
         ShaderCache shaderCache = ShaderCache.getInstance();
         Shader defaultShader = shaderCache.getShader("sketchShader");
@@ -46,10 +46,10 @@ public class SketchElement extends Entity {
         lines.clear();
     }
 
-    public void addLines(Material material, Float ...coords) {
+    public void addLines(Vector4f color, Float ...coords) {
 
-        this.material = material;
-
+        material.setAmbientColor(color);
+    
         for (float coord : coords ) {
             lines.add(coord);
         }
