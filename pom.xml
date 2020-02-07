@@ -8,6 +8,7 @@
     <groupId>org.example</groupId>
     <artifactId>iland</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <joml.version>1.9.19</joml.version>
@@ -17,6 +18,8 @@
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+
+        <jupiter.junit.version>5.4.2</jupiter.junit.version>
     </properties>
 
     <profiles>
@@ -44,6 +47,16 @@
         </profile>
 
     </profiles>
+
+    <build>
+        <plugins>
+		    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -177,6 +190,25 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-stb</artifactId>
             <classifier>${lwjgl.natives}</classifier>
+        </dependency>
+
+        <dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter-engine</artifactId>
+	        <version>${jupiter.junit.version}</version>
+	        <scope>test</scope>
+        </dependency>
+        <dependency>
+	        <groupId>org.junit.platform</groupId>
+	        <artifactId>junit-platform-runner</artifactId>
+	        <version>1.2.0</version>
+	        <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${jupiter.junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
