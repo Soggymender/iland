@@ -9,64 +9,43 @@ import org.joml.Vector3f;
 import org.engine.input.*;
 import org.engine.renderer.*;
 
-import org.engine.Terrain;
+import org.tiland.TileMap;
 
-public class Game implements SceneLoader.IEventHandler {
+public class Game {
 
-//    private final Avatar avatar;
     private final GameCamera camera;
-
-    Terrain terrain;
+    private Entity cameraTarget;
 
     private Scene scene = null;
 
     private Hud hud;
 
-    private float lightAngle;
-
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
+
+    private TileMap tileMap = null;
 
     public Game(Window window, Scene scene) throws Exception
     {
         this.scene = scene;
 
- //       avatar = new Avatar(scene);
-        camera = new GameCamera(null);
-
+        cameraTarget = new Entity();
+        cameraTarget.setPosition(0, 0,0);
+    
+        camera = new GameCamera(cameraTarget);
+     
         scene.setCamera(camera);
 
         hud = new Hud(window, scene);
 
-        lightAngle = -45;
+        tileMap = new TileMap(scene);
     }
 
     public void initialize() throws Exception {
 
-  //      avatar.initialize();
-    //    scene.addEntityMeshes(avatar);
-
-      //  avatar.setPosition(0.0f, 0.0f, 0.0f);
-
-        // Load entities from FBX - their types specified via Blender custom properties.
-        // Manually add each to the scene.
-        // Afterward, programatically add other entities to the scene.
-   //     SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/textures/", this);
-
-        // Setup  SkyBox
-    //    float skyboxScale = 100.0f;
-   //     Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/textures/");
-   //     skybox.setScale(skyboxScale);
-
-   //     scene.addEntityMeshes(skybox);
-
         // Setup Lights
         setupLights();
-
-        camera.getPosition().x = 0.65f;
-        camera.getPosition().y = 1.15f;
-        camera.getPosition().y = 4.34f;
     }
 
     private void setupLights() {
@@ -84,6 +63,7 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void shutdown() {
 
+        // TODO: Let the scene system handle this.
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.shutdown();
@@ -93,41 +73,12 @@ public class Game implements SceneLoader.IEventHandler {
     public void input(Input input) {
         if (!input.getMouse().getShowCursor()){
 
-        
-     //       avatar.input(input);
         }
        
         hud.input(input);
     }
 
     public void update(float interval) {
-
- //       avatar.update(interval, camera, terrain);
-
-        SceneLighting sceneLighting = scene.getSceneLighting();
-        DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
-
-        // Update directional light direction, intensity and colour
-        //lightAngle += 3f * interval;
-        if (lightAngle > 90) {
-            directionalLight.setIntensity(0);
-            if (lightAngle >= 360) {
-                lightAngle = -90;
-            }
-        } else if (lightAngle <= -80 || lightAngle >= 80) {
-            float factor = 1 - (float) (Math.abs(lightAngle) - 80) / 10.0f;
-            directionalLight.setIntensity(factor);
-            directionalLight.getColor().y = Math.max(factor, 0.9f);
-            directionalLight.getColor().z = Math.max(factor, 0.5f);
-        } else {
-            directionalLight.setIntensity(1);
-            directionalLight.getColor().x = 1;
-            directionalLight.getColor().y = 1;
-            directionalLight.getColor().z = 1;
-        }
-        double angRad = Math.toRadians(lightAngle);
-        directionalLight.getDirection().x = (float) Math.sin(angRad);
-        directionalLight.getDirection().y = (float) Math.cos(angRad);
 
         if (accumulator >= 1.0f) {
 
@@ -148,14 +99,5 @@ public class Game implements SceneLoader.IEventHandler {
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
-    }
-
-    public Entity preLoadEntityEvent(String type) throws Exception {
-
-        return null;
-   }
-
-    public void postLoadEntityEvent(Entity entity) throws Exception {
-
     }
 }

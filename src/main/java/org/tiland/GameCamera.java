@@ -5,29 +5,27 @@ import org.engine.renderer.Camera;
 import org.engine.input.*;
 import org.joml.*;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import org.engine.core.Math;
 
 public class GameCamera extends Camera {
 
-    private Vector2f rotVec;
-
-    private Vector3f followPivot;
-    private Vector3f followOffset;
-    private Vector3f followRotation;
-
-    private Entity target;
-
     private static final float MOUSE_SENSITIVITY = 3.5f;
+    private static final float PAN_SPEED = 5.0f;
+    private static final float ZOOM_SPEED = 1.0f;
+
+    Vector2f panVec;
+
+    Vector2f panSpeed;
+    float panDrag = 16.0f;
 
     public GameCamera(Entity target) {
 
-        rotVec = new Vector2f();
+        setPosition(0.0f, 0.0f, 5.0f);
 
-        this.target = target;
-
-        followPivot = new Vector3f(0.0f, 2.0f, 0.0f);
-        followOffset = new Vector3f(0.0f, 0.0f, 5.0f);
-        followRotation = new Vector3f(0.0f, 0.0f, 0.0f);
+        panVec = new Vector2f();
+        panSpeed = new Vector2f();
     }
 
     private static boolean once = false;
@@ -37,49 +35,60 @@ public class GameCamera extends Camera {
 
         Mouse mouse = input.getMouse();
 
+        Keyboard keyboard = input.getKeyboard();
+
+        panVec.zero();
+
+        if (keyboard.keyDown(GLFW_KEY_A)){
+            panVec.x = -1;
+        } 
+
+        if (keyboard.keyDown(GLFW_KEY_D)) {
+            panVec.x = 1.0f;
+        }
+
+        if (keyboard.keyDown(GLFW_KEY_W)){
+            panVec.y = 1;
+        } 
+
+        if (keyboard.keyDown(GLFW_KEY_S)) {
+            panVec.y = -1.0f;
+        }
+
+        if (panVec.length() > 0.0f) {
+            panVec.normalize();
+        }
+
         if (input.getMouse().getShowCursor()) {
-            rotVec.zero();
             return;
         }
 
-        rotVec = mouse.getDisplayVec();
-
-        rotVec.x *= MOUSE_SENSITIVITY;
-        rotVec.y *= MOUSE_SENSITIVITY;
     }
 
     @Override
     public void update(float interval) {
 
-        followRotation.x += rotVec.x * interval;
-        followRotation.y += rotVec.y * interval;
+        float panLength = panSpeed.length();
+        if (panLength > 0.0f) {
+            panLength -= panDrag * interval;
+            if (panLength < 0.0f) {
+                panLength = 0.0f;
+            }
 
-        // Cap look up & down.
-        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-45.0f));
-        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(45.0f));
-
-        if (!once) {
-            follow(interval);
-        }
-    }
-
-    private void follow(float interval) {
-
-        if (target == null) {
-            return;
+            panSpeed.normalize();
+            panSpeed.mul(panLength);
         }
 
-        position.set(followOffset);
-        position.rotateX(-followRotation.x);
-        position.rotateY(-followRotation.y);
+        if (panVec.length() > 0.0f) {
+            panSpeed.x = panVec.x * PAN_SPEED;
+            panSpeed.y = panVec.y * PAN_SPEED;
+        }
 
-        Vector3f targetPos = new Vector3f(target.getPosition());
+        Vector3f pos = getPosition();
+        pos.add(panSpeed.x * interval, panSpeed.y * interval, 0.0f);
 
-        position.add(followPivot);
-        position.add(targetPos);
+        setPosition(pos);
 
-        // Look at the target.
-        rotation.x = followRotation.x;
-        rotation.y = followRotation.y;
+
     }
 }
