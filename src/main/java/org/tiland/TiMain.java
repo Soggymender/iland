@@ -20,6 +20,8 @@ public class TiMain {
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);
+            mouse.showCursor(true);
+
             Keyboard keyboard = new Keyboard(window);
 
             Input input = new Input(mouse, keyboard);

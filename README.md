@@ -1,23 +1,33 @@
 # iland
-java lwjgl 3 engine and open world
-
+java lwjgl 3 engine and test "games"
 
 
 GENERAL
-The top level project folders are an open world called "game" utilizing a lower level folder structure called "engine".
+The project currently consists of three packages: engine, iland, and tiland.
 
-Engine subsystems each go in their own folder and ideally a one way dependency hierarchy will be maintained among those subsystems.
+engine is light weight 3d game engine.
 
-The main animation system should go in a "animation" subsystem folder. If you want to create one entirely from scratch you can create a second animation subsystem in some other subfolder.
+iland is a 3d 3rd person "open world"
 
-The open world is a single world for testing engine features and should be a "playground". It's okay to load other worlds for testing specific features, or creating labeled "portals" to load them.
+tiland is a 2.5d side scroller
 
+Engine subsystems each go in their own package and ideally a one way dependency hierarchy will be maintained among those subsystems.
+
+The iland open world is a single world for testing engine features and should be a "playground". It's okay to load other worlds for testing specific features, or creating labeled "portals" to load them.
+
+tiland is for verifying that 2.5d methodologies cooperate well with the engine.
+
+There are hidden test GUIs behind the Tab key.
 
 REFERENCES
-The core engine framework is heavily based off of this free online book, with some deviations where it suites my tastes.
+The core engine framework is heavily based off of this free online book, with some deviations where it suites my tastes. It is slowly evolving quite a bit away from that foundation, especially the scene, shader, and UI systems.
 https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/
 
 I've implemented through chapter 7, then skipped to chapter 27ish and adapted ASSIMP FBX static mesh loading. We will use FBX animation assets, NOT MD5 as described in the book. Now I'm looping back to chapter 8 to continue with lighting etc.
+
+For short term purposes it may be suitable to load MD5 only if through ASSIMP, since swapping MD5 out for FBX should be "plug and play".
+
+iland Game.java includes an FBX scene loading technique whereby a scene FBX is loaded, custom properties allow the engine scene loader to callback to game.java to instantiate the scene entities as custom game types. Terrain is the only current example.
 
 
 
@@ -31,27 +41,27 @@ Java 13 JDK - language
 lwjgl 3 - hardware and OS access
 JOML - 3d math
 ASSIMP - asset importing
+GLFW - input devices
 
 
 
 3D ASSETS & RESOURCES
-Blender 2.79b (or newer compatible)
 
-Save .blend files to subfolders of src/main/assets.
+I started with Blender 2.79b but there were a lot of hoops and problems with their old outdated FBX support. Blender 2.8+ solves all of them, so I'm doing a big update on this section.
+
+Use Blender 2.8 (or newer compatible)
+
+Save .blend files to subfolders of src/main/assets and copy or process them to src/main/resources. Resources subfolders for iland and tiland specific files exist, push stuff down there. I haven't made a similar subfolder structure for /assets yet.
+
 Export FBX to subfolders of src/main/assets next to sibling .blend files.
-  export as text 6.1, not binary
-  selected only
+  selected only for individual assets, or whole scene for scene loading.
   Z up, Y forward (orientation doesn't seem to make a difference)
 
-Download autodesk FBX converter:
-http://images.autodesk.com/adsk/files/fbx20133_converter_win_x64.exe
-
-Convert Blender's FBX 6.1 Text to FBX 2013 Text.
-Conversion destination should be subfolders of src/main/resources.
-
-This conversion is necessary because Blender only supports 6.1, while the engine uses ASSIMP which only supports 2013. Eventually a custom FBX importer will be written, but for now the conversion time is less than the coding time. Also, the official FBX SDK only natively supports Python and C++. Haven't found a reasonable Java binding.
-
 All resource paths and filenames must be all lower case to maintain Linux compatibility. FBX will bake mixed-case file references, but the code will toLowerCase() filenames - at least for textures where it has been a problem. All code paths and filenames must be lower case only.
+
+Blender allows "custom properties" to be specified on objects. These are the main method for shuttling metadata into the game scene. We can use these to give a scene object a data type, name, etc, and the scene loader can instantiate the correct type of game object to represent it. 
+
+It's also import to make sure instance of the same mesh are actually being instanced. The scene does not necessarily have to be used for the mesh data that it contains - just as visual references and metadata.
 
 
 
@@ -66,10 +76,12 @@ Allow normally facetted indestructable props to be placed anywhere in the world.
 
 Else: As for Blender, I've previously created a custom exporter that rips the scene down to object positions and asset references, along with an engine loader that rebuilds the scene approximation in-game. I liked the workflow and I'll consider that direction if I pass on voxels.
 
+update* I've implemented a very early framework for this, you can see it in iland/game.java's scene loading callbacks. Terrain is the only supported type.
+
 
 
 CRUNCH
-There is no existing crunch process. For now load all Blender assets via FBX Text 2013. I'm considering an automated pre-crunch step that checks for FBX resources before crunched resources, crunches them, and then loads the crunched versions and deletes the FBX (the one in resource subfolder, not assets).
+There is no existing crunch process. For now load all Blender assets via FBX. I'm considering an automated pre-crunch step that checks for FBX resources before crunched resources, crunches them, and then loads the crunched versions and deletes the FBX (the one in resource subfolder, not assets).
 This will simplify engine usage.
 
 

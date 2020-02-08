@@ -5,6 +5,9 @@ import org.joml.Vector2d;
 import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWScrollCallback;
+
 import org.engine.renderer.Window;
 
 public class Mouse {
@@ -12,10 +15,12 @@ public class Mouse {
     private Window window = null;
 
     private Vector2d previousPos;
-
     private final Vector2d currentPos;
 
     private final Vector2f displVec;
+
+    private Vector2f pendingScroll;
+    private Vector2f scroll;
 
     DoubleBuffer x;
     DoubleBuffer y;
@@ -30,6 +35,8 @@ public class Mouse {
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
 
+    GLFWScrollCallback scrollCallback;
+
     public Mouse(Window window) {
 
         this.window = window;
@@ -39,46 +46,59 @@ public class Mouse {
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();
 
+        pendingScroll = new Vector2f();
+        scroll = new Vector2f();
+
         x = org.lwjgl.BufferUtils.createDoubleBuffer(1);
         y = org.lwjgl.BufferUtils.createDoubleBuffer(1);
 
+        initialize();
+
     }
+
+    /*public void glfwScrollCallback(long window, double xoffset, double yoffset) {
+
+    }
+    */
 
     public void initialize() {
 
         showCursor(false);
 
-       // glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-       // glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
         glfwSetInputMode(window.getWindowHandle(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+        /*
+        Turns out that while GLFW lets you poll much of the input, but there is critical data that is not
+        available by polling, so no matter what, callbacks are necessary.
+
+        In the callbacks below I'll attempt to accumulate any input that comes in but not give the game direct
+        access to it. Instead, during this::input, the accumulated callback input will be pushed to game-exposed
+        variables for polling by the game, and the accumulated values cleared out.
+
+        This is necessary because the callbacks occur outside of the preferred engine sequencing.
+        */
 
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
 
-
-
-
-  //          currentPos.x = xpos;
-    //        currentPos.y = ypos;
-
-           // if (!isActive) {
-               // previousPos = currentPos;
-             //   isActive = true;
-            //}
         });
+
         glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
 
         });
-    //    glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
-//            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-  //          rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
-      //  });
+
+        glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, xOffset, yOffset) -> {
+
+            pendingScroll.x += (float)xOffset;
+            pendingScroll.y += (float)yOffset;
+        });
     }
 
     public void shutdown() {
     //    glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     }
+
+
 
     public Vector2f getDisplayVec() {
         return displVec;
@@ -91,6 +111,10 @@ public class Mouse {
         pos.y = (float)currentPos.y;
 
         return pos;
+    }
+
+    public Vector2f getScroll(){
+        return scroll;
     }
 
     public void input() {
@@ -109,9 +133,13 @@ public class Mouse {
         currentPos.x = x.get();
         currentPos.y = y.get();
 
+        scroll.x = pendingScroll.x;
+        scroll.y = pendingScroll.y;
+
+        pendingScroll.zero();    
+
         if (!isActive) {
             isActive = true;
-            System.out.println("crap");
             return;
         }
 
@@ -145,7 +173,6 @@ public class Mouse {
         if (show) {
             
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             glfwSetInputMode(window.getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -165,6 +192,12 @@ public class Mouse {
         return rightButtonPressed;
     }
 
-    public boolean leftButtonJustPressed() { return leftButtonPressed && !prevLeftButtonPressed; }
-    public boolean rightButtonJustPressed() { return rightButtonPressed && !prevRightButtonPressed; }
+    public boolean leftButtonJustPressed() {
+        
+        return leftButtonPressed && !prevLeftButtonPressed;
+     }
+
+    public boolean rightButtonJustPressed() {
+         return rightButtonPressed && !prevRightButtonPressed;
+     }
 }

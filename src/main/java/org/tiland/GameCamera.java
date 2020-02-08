@@ -13,12 +13,16 @@ public class GameCamera extends Camera {
 
     private static final float MOUSE_SENSITIVITY = 3.5f;
     private static final float PAN_SPEED = 5.0f;
-    private static final float ZOOM_SPEED = 1.0f;
+    private static final float ZOOM_SPEED = 5.0f;
 
     Vector2f panVec;
+    Vector2f scrollVec;
 
     Vector2f panSpeed;
     float panDrag = 16.0f;
+
+    float zoomSpeed;
+    float zoomDrag = 8.0f;
 
     public GameCamera(Entity target) {
 
@@ -26,6 +30,8 @@ public class GameCamera extends Camera {
 
         panVec = new Vector2f();
         panSpeed = new Vector2f();
+
+        scrollVec = new Vector2f();
     }
 
     private static boolean once = false;
@@ -59,6 +65,17 @@ public class GameCamera extends Camera {
             panVec.normalize();
         }
 
+        scrollVec.x = 0;
+        scrollVec.y = mouse.getScroll().y;
+        if (scrollVec.y < 0) {
+            scrollVec.y = -1;
+        }
+
+        if (scrollVec.y > 0) {
+            scrollVec.y = 1;
+        }
+        
+
         if (input.getMouse().getShowCursor()) {
             return;
         }
@@ -84,9 +101,29 @@ public class GameCamera extends Camera {
             panSpeed.y = panVec.y * PAN_SPEED;
         }
 
+        if (zoomSpeed != 0.0f) {
+            zoomSpeed *= 1.0f - zoomDrag * interval;
+            
+        }
+
+        if (scrollVec.length() > 0.0f) {
+            zoomSpeed = -scrollVec.y * ZOOM_SPEED;
+        }
+
         Vector3f pos = getPosition();
+        
+        // Apply panning.
         pos.add(panSpeed.x * interval, panSpeed.y * interval, 0.0f);
 
+        // Apply zoom.
+        pos.z += zoomSpeed * interval;
+        if (pos.z < 5.0f) {
+            pos.z = 5.0f;
+        } else if (pos.z > 15.0f) {
+            pos.z = 15.0f;
+        }
+
+      //  System.out.println(pos.z);
         setPosition(pos);
 
 

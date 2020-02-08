@@ -16,7 +16,7 @@ public class Main {
 
             // Create the "services" that we need.
 
-            Window window = new Window("Game", 720, 480, false);
+            Window window = new Window("Game", 720, 480, true);
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);
