@@ -3,14 +3,25 @@ package org.engine.renderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import org.engine.core.Transform;
 import org.engine.scene.Entity;
+import org.engine.renderer.Viewport;
 
 public class Camera extends Entity {
 
-    Matrix4f viewMatrix;
+    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.0f;
 
-    public Camera() {
+    Matrix4f viewMatrix;
+    Viewport viewport;
+
+    Window window;
+
+    public Camera(Window window) {
+
+        this.window = window;
+
+        viewport = new Viewport();
 
         viewMatrix = new Matrix4f();
 
@@ -21,6 +32,10 @@ public class Camera extends Entity {
     public Camera(Vector3f position, Vector3f rotation) {
         this.position = position;
         this.rotation = rotation;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
     }
 
     public Matrix4f getViewMatrix() {
@@ -81,6 +96,8 @@ public class Camera extends Entity {
     public void update(float interval) {
 
         updateViewMatrix();
-        System.out.println("cam update");
+
+        viewport.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        viewport.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
     }
 }

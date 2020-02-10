@@ -7,7 +7,7 @@ import org.engine.scene.Scene;
 
 public interface IUniformManager {
 
-    public void setShaderUniforms(Transform transform);
+    public void setShaderUniforms(Transform transform, Viewport viewport);
     public void setMeshUniforms(Mesh mesh, Transform transform);
     public void setEntityUniforms(Scene scene, Entity entity, Transform transform);
 

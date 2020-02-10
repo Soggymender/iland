@@ -33,7 +33,7 @@ public class Game implements SceneLoader.IEventHandler {
         this.scene = scene;
 
         avatar = new Avatar(scene);
-        camera = new GameCamera(avatar);
+        camera = new GameCamera(window, avatar);
 
         scene.setCamera(camera);
 

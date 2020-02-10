@@ -35,7 +35,7 @@ public class Game {
         cameraTarget = new Entity();
         cameraTarget.setPosition(0, 0,0);
     
-        camera = new GameCamera(cameraTarget);
+        camera = new GameCamera(window, cameraTarget);
      
         scene.setCamera(camera);
 

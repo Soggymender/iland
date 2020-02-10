@@ -19,10 +19,6 @@ public class SceneRenderer {
 
     Window window = null;
 
-    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
-    private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 1000.0f;
-
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
 
@@ -123,9 +119,6 @@ public class SceneRenderer {
             glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResized(false);
         }
-
-        transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        transform.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
  
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
@@ -143,7 +136,7 @@ public class SceneRenderer {
 
         IUniformManager uniformManager = shader.getUniformManager();
 
-        uniformManager.setShaderUniforms(transform);
+        uniformManager.setShaderUniforms(transform, scene.getCamera().getViewport());
 
         if (uniformManager.getUseSceneLighting()) {
             setLightingUniforms(shader, scene);

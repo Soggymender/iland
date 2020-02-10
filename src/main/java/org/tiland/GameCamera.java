@@ -2,6 +2,7 @@ package org.tiland;
 
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
+import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
 
@@ -24,7 +25,9 @@ public class GameCamera extends Camera {
     float zoomSpeed;
     float zoomDrag = 8.0f;
 
-    public GameCamera(Entity target) {
+    public GameCamera(Window window, Entity target) {
+
+        super(window);
 
         setPosition(0.0f, 0.0f, 5.0f);
 
@@ -126,6 +129,6 @@ public class GameCamera extends Camera {
       //  System.out.println(pos.z);
         setPosition(pos);
 
-        this.update(interval);
+        super.update(interval);
     }
 }

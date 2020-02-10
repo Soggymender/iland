@@ -2,6 +2,7 @@ package org.iland;
 
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
+import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
 
@@ -19,7 +20,9 @@ public class GameCamera extends Camera {
 
     private static final float MOUSE_SENSITIVITY = 3.5f;
 
-    public GameCamera(Entity target) {
+    public GameCamera(Window window, Entity target) {
+
+        super(window);
 
         rotVec = new Vector2f();
 

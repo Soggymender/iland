@@ -4,6 +4,7 @@ import org.engine.core.Transform;
 import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
+import org.engine.renderer.Viewport;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.joml.Matrix4f;
@@ -21,7 +22,7 @@ public class GuiUniformManager implements IUniformManager {
         shader.createUniform("hasTexture");
     }
 
-    public void setShaderUniforms(Transform transform) {
+    public void setShaderUniforms(Transform transform, Viewport viewport) {
 
     }
 
@@ -32,7 +33,7 @@ public class GuiUniformManager implements IUniformManager {
 
     public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
 
-        Matrix4f ortho = transform.getOrthoProjectionMatrix();
+        Matrix4f ortho = scene.getCamera().getViewport().getOrthoProjectionMatrix();
 
         // Set ortohtaphic and model matrix for this HUD item
         Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
