@@ -6,19 +6,12 @@ import org.joml.Vector3f;
 
 public class Transform {
 
-    private Matrix4f modelMatrix;
-    private Matrix4f modelViewMatrix;
+    private static Matrix4f modelMatrix = new Matrix4f();
+    private static Matrix4f modelViewMatrix = new Matrix4f();
 
-    private Matrix4f orthoModelMatrix;
+    private static Matrix4f orthoModelMatrix = new Matrix4f();
 
-    public Transform() {
-        modelMatrix = new Matrix4f();
-        modelViewMatrix = new Matrix4f();
-
-        orthoModelMatrix = new Matrix4f();
-    }
-
-    public Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
@@ -33,7 +26,7 @@ public class Transform {
         return modelViewMatrix;
     }
 
-    public Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
+    public static Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
@@ -48,7 +41,7 @@ public class Transform {
         return orthoModelMatrix;
     }
 
-    public Vector3f unproject(Vector3f point) {
+    public static Vector3f unproject(Vector3f point) {
 
         Vector3f result = new Vector3f();
 

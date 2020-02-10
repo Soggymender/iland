@@ -22,21 +22,21 @@ public class GuiUniformManager implements IUniformManager {
         shader.createUniform("hasTexture");
     }
 
-    public void setShaderUniforms(Transform transform, Viewport viewport) {
+    public void setShaderUniforms(Viewport viewport) {
 
     }
 
-    public void setMeshUniforms(Mesh mesh, Transform transform) {
+    public void setMeshUniforms(Mesh mesh) {
         shader.setUniform("color", mesh.getMaterial().getDiffuseColor());
         shader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
+    public void setEntityUniforms(Scene scene, Entity entity) {
 
         Matrix4f ortho = scene.getCamera().getViewport().getOrthoProjectionMatrix();
 
         // Set ortohtaphic and model matrix for this HUD item
-        Matrix4f projModelMatrix = transform.buildOrthoProjectionModelMatrix(entity, ortho);
+        Matrix4f projModelMatrix = Transform.buildOrthoProjectionModelMatrix(entity, ortho);
         shader.setUniform("projModelMatrix", projModelMatrix);
     }
 

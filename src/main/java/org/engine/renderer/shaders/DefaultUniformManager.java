@@ -31,7 +31,7 @@ public class DefaultUniformManager implements IUniformManager {
         shader.createDirectionalLightUniform("directionalLight");
     }
 
-    public void setShaderUniforms(Transform transform, Viewport viewport) {
+    public void setShaderUniforms(Viewport viewport) {
 
         // Update the projection matrix.
         Matrix4f projectionMatrix = viewport.getProjectionMatrix();
@@ -40,16 +40,16 @@ public class DefaultUniformManager implements IUniformManager {
         shader.setUniform("texture_sampler", 0);
     }
 
-    public void setMeshUniforms(Mesh mesh, Transform transform) {
+    public void setMeshUniforms(Mesh mesh) {
 
         shader.setUniform("material", mesh.getMaterial());
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
+    public void setEntityUniforms(Scene scene, Entity entity) {
 
         Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
 
-        Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
     }
 

@@ -136,7 +136,7 @@ public class SceneRenderer {
 
         IUniformManager uniformManager = shader.getUniformManager();
 
-        uniformManager.setShaderUniforms(transform, scene.getCamera().getViewport());
+        uniformManager.setShaderUniforms(scene.getCamera().getViewport());
 
         if (uniformManager.getUseSceneLighting()) {
             setLightingUniforms(shader, scene);
@@ -146,14 +146,14 @@ public class SceneRenderer {
 
         for (Mesh mesh : meshList) {
 
-            uniformManager.setMeshUniforms(mesh, transform);
+            uniformManager.setMeshUniforms(mesh);
 
             mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
 
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
                 if (entity.getVisible() && entity.getParentVisible()) {
-                    uniformManager.setEntityUniforms(scene, entity, transform);
+                    uniformManager.setEntityUniforms(scene, entity);
                 }
             });
         }
