@@ -36,8 +36,7 @@ public class SkyboxUniformManager implements IUniformManager {
     }
 
     public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
-        //Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
-        Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
+        Matrix4f viewMatrix = new Matrix4f(scene.getCamera().getViewMatrix());
         viewMatrix.m30(0);
         viewMatrix.m31(0);
         viewMatrix.m32(0);

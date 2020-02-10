@@ -20,6 +20,8 @@ public class Game {
 
     private Hud hud;
 
+    private Cursor cursor;
+
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
@@ -38,6 +40,9 @@ public class Game {
         scene.setCamera(camera);
 
         hud = new Hud(window, scene);
+
+        cursor = new Cursor();
+        scene.addEntity(cursor);
 
         tileMap = new TileMap(scene);
     }

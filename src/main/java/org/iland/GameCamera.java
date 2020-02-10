@@ -61,6 +61,8 @@ public class GameCamera extends Camera {
         if (!once) {
             follow(interval);
         }
+
+        super.update(interval);
     }
 
     private void follow(float interval) {

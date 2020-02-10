@@ -40,7 +40,7 @@ public class SketchUniformManager implements IUniformManager {
 
     public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
 
-        Matrix4f viewMatrix = transform.getViewMatrix();
+        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
 
         Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
         shader.setUniform("modelViewMatrix", modelViewMatrix);

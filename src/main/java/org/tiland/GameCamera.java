@@ -126,6 +126,6 @@ public class GameCamera extends Camera {
       //  System.out.println(pos.z);
         setPosition(pos);
 
-
+        this.update(interval);
     }
 }

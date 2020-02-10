@@ -1,12 +1,19 @@
 package org.engine.renderer;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import org.engine.core.Transform;
 import org.engine.scene.Entity;
 
 public class Camera extends Entity {
 
+    Matrix4f viewMatrix;
+
     public Camera() {
+
+        viewMatrix = new Matrix4f();
+
         position = new Vector3f(0, 0, 0);
         rotation = new Vector3f(0, 0, 0);
     }
@@ -14,6 +21,18 @@ public class Camera extends Entity {
     public Camera(Vector3f position, Vector3f rotation) {
         this.position = position;
         this.rotation = rotation;
+    }
+
+    public Matrix4f getViewMatrix() {
+        return viewMatrix;
+    }
+
+    public void updateViewMatrix() {
+
+        viewMatrix.identity();
+
+        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
+        viewMatrix.translate(-position.x, -position.y, -position.z);
     }
 
     public Vector3f getPosition() {
@@ -56,5 +75,12 @@ public class Camera extends Entity {
         rotation.x += offsetX;
         rotation.y += offsetY;
         rotation.z += offsetZ;
+    }
+
+    @Override
+    public void update(float interval) {
+
+        updateViewMatrix();
+        System.out.println("cam update");
     }
 }

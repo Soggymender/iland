@@ -11,7 +11,6 @@ public class Transform {
     private Matrix4f modelMatrix;
     private Matrix4f modelViewMatrix;
 
-    private Matrix4f viewMatrix;
     private Matrix4f orthoMatrix;
     private Matrix4f orthoModelMatrix;
 
@@ -20,7 +19,6 @@ public class Transform {
         modelMatrix = new Matrix4f();
         modelViewMatrix = new Matrix4f();
 
-        viewMatrix = new Matrix4f();
         orthoMatrix = new Matrix4f();
         orthoModelMatrix = new Matrix4f();
     }
@@ -34,23 +32,6 @@ public class Transform {
         projectionMatrix.identity();
         projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
         return projectionMatrix;
-    }
-
-    public Matrix4f getViewMatrix() {
-        return viewMatrix;
-    }
-
-    public Matrix4f updateViewMatrix(Camera camera) {
-
-        Vector3f cameraPos = camera.getPosition();
-        Vector3f rotation = camera.getRotation();
-
-        viewMatrix.identity();
-
-        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
-        viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-
-        return viewMatrix;
     }
 
     public Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
@@ -91,5 +72,12 @@ public class Transform {
         orthoModelMatrix.mul(modelMatrix);
 
         return orthoModelMatrix;
+    }
+
+    public Vector3f unproject(Vector3f point) {
+
+        Vector3f result = new Vector3f();
+
+        return result;
     }
 }

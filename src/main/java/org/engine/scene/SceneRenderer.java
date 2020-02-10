@@ -124,12 +124,9 @@ public class SceneRenderer {
             window.setResized(false);
         }
 
-        Camera camera = scene.getCamera();
-
         transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transform.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
-        transform.updateViewMatrix(camera);
-
+ 
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
 
@@ -149,7 +146,7 @@ public class SceneRenderer {
         uniformManager.setShaderUniforms(transform);
 
         if (uniformManager.getUseSceneLighting()) {
-            setLightingUniforms(shader, scene.getSceneLighting());
+            setLightingUniforms(shader, scene);
         }
         
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
@@ -171,10 +168,12 @@ public class SceneRenderer {
         shader.unbind();
     }
 
-    private void setLightingUniforms(Shader shader, SceneLighting sceneLighting) {
+    private void setLightingUniforms(Shader shader, Scene scene) {
+
+        SceneLighting sceneLighting = scene.getSceneLighting();
 
         // Update the view matrix.
-        Matrix4f viewMatrix = transform.getViewMatrix();
+        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
 
         shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
         shader.setUniform("specularPower", specularPower);
