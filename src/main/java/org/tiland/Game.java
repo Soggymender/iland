@@ -41,8 +41,7 @@ public class Game {
 
         hud = new Hud(window, scene);
 
-        cursor = new Cursor();
-        scene.addEntity(cursor);
+        cursor = new Cursor(scene);
 
         tileMap = new TileMap(scene);
     }

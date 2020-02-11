@@ -114,11 +114,9 @@ public class SceneRenderer {
 
     public void render(Scene scene) {
         clear();
-
-        if (window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResized(false);
-        }
+        
+        // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
+        window.setResized(false);
  
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {

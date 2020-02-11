@@ -97,7 +97,11 @@ public class Camera extends Entity {
 
         updateViewMatrix();
 
-        viewport.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        viewport.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
+        if (window.isResized()) {
+
+            viewport.set(0, 0, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR, FOV);
+
+          //  window.setResized(false);
+        }
     }
 }
