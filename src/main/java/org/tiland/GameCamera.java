@@ -123,17 +123,6 @@ public class GameCamera extends Camera {
   
         pos.x = target.getPosition().x;
 
-        // Apply panning.
-        pos.add(panSpeed.x * interval, panSpeed.y * interval, 0.0f);
-
-        // Apply zoom.
-        pos.z += zoomSpeed * interval;
-        if (pos.z < 5.0f) {
-            pos.z = 5.0f;
-        } else if (pos.z > 15.0f) {
-            pos.z = 15.0f;
-        }
-
       //  System.out.println(pos.z);
         setPosition(pos);
 

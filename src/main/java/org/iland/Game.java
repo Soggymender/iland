@@ -153,7 +153,7 @@ public class Game implements SceneLoader.IEventHandler {
     public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
 
         String type = properties.get("p_type");
-        if (type != null && type == "terrain") {
+        if (type != null && type.equals("terrain")) {
 
             // Create a terrain entity.
             terrain = new Terrain();

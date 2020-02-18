@@ -76,13 +76,19 @@ public class Avatar extends Sprite {
 
         if (jump && crouch) {
 
-            // Crouch fall through floor.
-            float yVel = getVelocity().y;
-            if (java.lang.Math.abs(yVel) < 0.1f) {
-                // Nudge the position down below the standing surface.
-                position.y -= 0.1f;
-                jump = false;
+            // Crouch fall through floor, but only if its a platform, not a box.
+            if (support != null) {
+                if (support.flags.platform_collision) { 
+
+                    float yVel = getVelocity().y;
+                    if (java.lang.Math.abs(yVel) < 0.1f) {
+                        // Nudge the position down below the standing surface.
+                        position.y -= 0.1f;
+                    }
+                }
             }
+
+            jump = false;
         }
 
         if (crouch) {

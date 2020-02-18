@@ -15,6 +15,7 @@ import org.engine.renderer.Shader;
 
 public class Scene {
 
+    int count = 0;
     Camera camera = null;
 
     /*  This is the scene root. All entities or entity hierarchies in the scene have this as their root ancestor.
@@ -113,7 +114,7 @@ public class Scene {
     public void setCamera(Camera camera) {
 
         // Add the camera to the scene so it can update automatically.
-        addEntity(camera);
+        //addEntity(camera);
 
         // Reference the active camera directly for various view related processes.
         this.camera = camera;
@@ -141,6 +142,9 @@ public class Scene {
         update(interval, root);
 
         collide();
+
+        // The camera has to go first or last, because collision may cause a 2nd position update on the target.
+        camera.update(interval);
     }
 
     private void update(float interval, Entity entity) {
@@ -210,29 +214,53 @@ public class Scene {
                         bVel.z = -bVel.z;
                         bPrevPos.add(bVel);          
                     }
-        
-                    // Not colliding previously.
-                    if ((aPrevPos.x + aBox.min.x <= bPrevPos.x + bBox.max.x && aPrevPos.x + aBox.max.x >= bPrevPos.x + bBox.min.x) &&
-                        !(aPrevPos.y + aBox.min.y < bPrevPos.y + bBox.max.y && aPrevPos.y + aBox.max.y > bPrevPos.y + bBox.min.y)) {
+
+                    if (a.flags.platform_collision || b.flags.platform_collision) {
+                                    
+                        // Not colliding previously.
+                        if ((aPrevPos.x + aBox.min.x <= bPrevPos.x + bBox.max.x && aPrevPos.x + aBox.max.x >= bPrevPos.x + bBox.min.x) &&
+                            !(aPrevPos.y + aBox.min.y < bPrevPos.y + bBox.max.y && aPrevPos.y + aBox.max.y > bPrevPos.y + bBox.min.y)) {
 
 
-                        // TODO: bbox specifies 2D or 3D, and auto check 3D if applicable.
-                        
-                        // TODO: if both are dynamic, use some weight factor to figure out how far each resolution vector is scaled.
-                        if (a.flags.dynamic) {
+                            // TODO: bbox specifies 2D or 3D, and auto check 3D if applicable.
+                            
+                            // TODO: if both are dynamic, use some weight factor to figure out how far each resolution vector is scaled.
+                            if (a.flags.dynamic) {
+
+                                Vector3f aVel = a.frameVelocity;
+                                Vector3f aRes = new Vector3f();
+
+                                if (aVel.y < 0) {
+                                    aRes.y = (bPos.y + bBox.max.y) - (aPos.y + aBox.min.y);
+                                }
+
+                                a.onCollide(b, aRes);
+                            }
+                        }
+                    } else if (a.flags.box_collision || b.flags.box_collision) {
+
+                          // TODO: if both are dynamic, use some weight factor to figure out how far each resolution vector is scaled.
+                          if (a.flags.dynamic) {
+
+                            boolean fromLeft  = aPrevPos.x + aBox.max.x <= bPrevPos.x + bBox.min.x;
+                            boolean fromRight = aPrevPos.x + aBox.min.x >= bPrevPos.x + bBox.max.x; 
+                            
+                            boolean fromTop = aPrevPos.y + aBox.min.y >= bPrevPos.y + bBox.max.y;
+                            boolean fromBottom = aPrevPos.y + aBox.max.y <= bPrevPos.y + bBox.min.y;
 
                             Vector3f aVel = a.frameVelocity;
                             Vector3f aRes = new Vector3f();
 
-                //         if (aVel.x > 0) {
-                    //           aRes.x =  (bPos.x + bBox.min.x) - (aPos.x + aBox.max.x);
-                    //     }
+                            if (fromLeft) {
+                                aRes.x = (bPos.x + bBox.min.x) - (aPos.x + aBox.max.x);
+                                count++;
+                            }
 
-                        //   if (aVel.x < 0) {
-                        //     aRes.x = (bPos.x + bBox.max.x) - (aPos.x + aBox.min.x);
-                            //}
+                            if (fromRight) {
+                                aRes.x = (bPos.x + bBox.max.x) - (aPos.x + aBox.min.x);
+                            }
 
-                            if (aVel.y < 0) {
+                            if (fromTop) {
                                 aRes.y = (bPos.y + bBox.max.y) - (aPos.y + aBox.min.y);
                             }
 

@@ -51,6 +51,8 @@ public class Entity {
     public Entity parent;
     public List<Entity> children = null;
 
+    public Entity support = null;
+
     // oldFlags should be updated each frame. Differences between the two sets indicate change caused by the update.
     public Flags oldFlags = null;
     public Flags flags = null;
@@ -315,6 +317,8 @@ public class Entity {
             child.update(interval);
         }
          */
+
+        support = null;
     }
 
     public void Shutdown() {
@@ -325,7 +329,7 @@ public class Entity {
     }
 
     public void onCollide(Entity other, Vector3f resolutionVec) {
-        
+
         position.add(resolutionVec);
 
         if (resolutionVec.x != 0) {
@@ -334,6 +338,11 @@ public class Entity {
 
         if (resolutionVec.y != 0) {
             velocity.y = 0;
+
+            if (resolutionVec.y > 0) {
+                // Resolving upward so this is a supporting surface.
+                support = other;
+            }
         }
     }
 }

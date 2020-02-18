@@ -161,9 +161,9 @@ public class Game implements SceneLoader.IEventHandler {
         if (collision != null) {
             entity.flags.collidable = true;
 
-            if (collision == "platform") {
+            if (collision.equals("platform")) {
                 entity.flags.platform_collision = true;
-            } else if (collision == "box") {
+            } else if (collision.equals("box")) {
                 entity.flags.box_collision = true;
             }
         }
