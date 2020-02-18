@@ -16,7 +16,7 @@ public class TiMain {
 
             // Create the "services" that we need.
 
-            Window window = new Window("Game", 720, 480, true);
+            Window window = new Window("Game", 1280, 720, true);
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);

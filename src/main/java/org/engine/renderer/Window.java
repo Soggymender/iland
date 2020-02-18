@@ -92,7 +92,7 @@ public class Window {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.25f, 0.0f);
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -102,7 +102,7 @@ public class Window {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+     //   glPolygFonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
     public long getWindowHandle() {

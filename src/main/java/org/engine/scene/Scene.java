@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Vector3f;
+
+import org.engine.core.BoundingBox;
 import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
@@ -37,12 +40,16 @@ public class Scene {
         scene renderer cast them as needed. */
     private SceneLighting sceneLighting;
 
+    private List<Entity> frameEntities;
+
     public Scene()
     {
         root = new Entity();
 
         meshMap = new HashMap<>();
         shaderMap = new HashMap<>();
+
+        frameEntities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {
@@ -129,12 +136,18 @@ public class Scene {
      */
     public void update(float interval) {
 
+        frameEntities.clear();
+
         update(interval, root);
+
+        collide();
     }
 
     private void update(float interval, Entity entity) {
 
         entity.update(interval);
+
+        frameEntities.add(entity);
 
         if (entity.getNewMeshFlag()) {// .justRenderable()) {
             entity.setNewMeshFlag(false);
@@ -149,6 +162,85 @@ public class Scene {
 
         for (Entity child : entity.children) {
             update(interval, child);
+        }
+    }
+
+    private void collide() {
+
+        for (int i = 0; i < frameEntities.size(); i++) {
+
+            Entity a = frameEntities.get(i);
+            Vector3f aPos = a.getPosition();
+            BoundingBox aBox = a.getBBox();
+            
+
+            for (int j = i + 1; j < frameEntities.size(); j++) {
+
+                Entity b = frameEntities.get(j);
+                Vector3f bPos = b.getPosition();
+                BoundingBox bBox = b.getBBox();
+                
+                if (!a.flags.collidable ||!a.flags.visible || !b.flags.collidable || !b.flags.visible) {
+                    continue;
+                }
+
+                if (!a.flags.dynamic && !b.flags.dynamic) {
+                    // Nothing is dynamic, nothing to do.
+                    continue;
+                }
+
+                // Colliding now.
+                if ((aPos.x + aBox.min.x <= bPos.x + bBox.max.x && aPos.x + aBox.max.x >= bPos.x + bBox.min.x) &&
+                    (aPos.y + aBox.min.y <= bPos.y + bBox.max.y && aPos.y + aBox.max.y >= bPos.y + bBox.min.y)) {
+              
+                    Vector3f aPrevPos = new Vector3f(aPos);
+                    if (a.flags.dynamic) {
+                        Vector3f aVel = new Vector3f(a.frameVelocity);
+                        aVel.x = -aVel.x;
+                        aVel.y = -aVel.y;
+                        aVel.z = -aVel.z;
+                        aPrevPos.add(aVel);          
+                    }
+                    
+                    Vector3f bPrevPos = new Vector3f(bPos);
+                    if (b.flags.dynamic) {
+                        Vector3f bVel = new Vector3f(b.frameVelocity);
+                        bVel.x = -bVel.x;
+                        bVel.y = -bVel.y;
+                        bVel.z = -bVel.z;
+                        bPrevPos.add(bVel);          
+                    }
+        
+                    // Not colliding previously.
+                    if ((aPrevPos.x + aBox.min.x <= bPrevPos.x + bBox.max.x && aPrevPos.x + aBox.max.x >= bPrevPos.x + bBox.min.x) &&
+                        !(aPrevPos.y + aBox.min.y < bPrevPos.y + bBox.max.y && aPrevPos.y + aBox.max.y > bPrevPos.y + bBox.min.y)) {
+
+
+                        // TODO: bbox specifies 2D or 3D, and auto check 3D if applicable.
+                        
+                        // TODO: if both are dynamic, use some weight factor to figure out how far each resolution vector is scaled.
+                        if (a.flags.dynamic) {
+
+                            Vector3f aVel = a.frameVelocity;
+                            Vector3f aRes = new Vector3f();
+
+                //         if (aVel.x > 0) {
+                    //           aRes.x =  (bPos.x + bBox.min.x) - (aPos.x + aBox.max.x);
+                    //     }
+
+                        //   if (aVel.x < 0) {
+                        //     aRes.x = (bPos.x + bBox.max.x) - (aPos.x + aBox.min.x);
+                            //}
+
+                            if (aVel.y < 0) {
+                                aRes.y = (bPos.y + bBox.max.y) - (aPos.y + aBox.min.y);
+                            }
+
+                            a.onCollide(b, aRes);
+                        }
+                    }
+                }
+            }
         }
     }
 }

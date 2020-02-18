@@ -3,9 +3,12 @@ package org.engine.scene;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.engine.core.BoundingBox;
 import org.engine.Utilities;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -22,8 +25,8 @@ public class SceneLoader {
 
     public interface IEventHandler {
 
-        public Entity preLoadEntityEvent(String type) throws Exception;
-        public void postLoadEntityEvent(Entity entity) throws Exception;
+        public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception;
+        public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception;
     }
 
     public static void loadEntities(String resourcePath, String texturesDir, IEventHandler eventHandler) throws Exception {
@@ -49,38 +52,76 @@ public class SceneLoader {
 
         if (aiNode.mMetadata() != null) {
 
+            Map<String, String> properties = new HashMap<>();
+
+            // Load all of the "p_*" properties into a map.
             for (int i = 0; i < aiNode.mMetadata().mNumProperties(); i++) {
 
-                AIString blah = (aiNode.mMetadata().mKeys().get(i));
+                AIString key = (aiNode.mMetadata().mKeys().get(i));
 
-                if (blah.dataString().equalsIgnoreCase("p_type")) {
-
-                    System.out.println(blah.dataString());
+                String propName = key.dataString();
+                if (propName.contains("p_")) {
 
                     // Get the value.
-                    AIMetaDataEntry entry = (aiNode.mMetadata().mValues().get(i));
+                    AIMetaDataEntry value = (aiNode.mMetadata().mValues().get(i));
 
-                    if  (entry.mType() == AI_AISTRING) {
-
-                        int capacity = entry.sizeof();
-                        java.nio.ByteBuffer buffer = entry.mData(capacity);
-
+                    if  (value.mType() == AI_AISTRING) {
+      
+                        int capacity = value.sizeof();
+                        java.nio.ByteBuffer buffer = value.mData(capacity);
+      
                         // I don't know the correct way to use ASSIMP to cast this data to appropriate types, but this works for now.
-                        String valueString = MemoryUtil.memASCII(buffer);
-
+                        String propValue = MemoryUtil.memASCII(buffer);
+      
                         // Theres a bunch of nasty whitespace leading the valid text. I'm assuming it's some sort of type header data.
-                        valueString = valueString.trim();
+                        propValue = propValue.trim();
 
-                        if (valueString.compareTo("terrain") == 0) {
+                        properties.put(propName, propValue);
+                    } else if (value.mType() == AI_FLOAT) {
 
-                            Entity entity = eventHandler.preLoadEntityEvent(valueString);
+                        int capacity = value.sizeof();
+                        java.nio.ByteBuffer buffer = value.mData(capacity);
+      
+                        float propValue = MemoryUtil.memGetFloat(MemoryUtil.memAddress(buffer));//     .memASCII(buffer);
 
-                            Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
-                            entity.setMeshes(meshes);
-
-                            eventHandler.postLoadEntityEvent(entity);
-                        }
+                        // TODO: Kind of dumb. Storing this float as a string so I don't have to deal with mapping to multiple types.
+                        properties.put(propName, String.valueOf(propValue));
                     }
+                }
+            }
+
+            String p_type = properties.get("p_type");
+            if (p_type != null && p_type == "terrain") {
+
+                Entity entity = eventHandler.preLoadEntityEvent(properties);
+
+                Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                entity.setMeshes(meshes);
+
+                eventHandler.postLoadEntityEvent(entity, properties);
+            } else {
+
+                if (aiNode.mNumMeshes() > 0) {
+                    Entity entity = eventHandler.preLoadEntityEvent(properties);
+
+                    Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                    entity.setMeshes(meshes);
+
+                    AIMatrix4x4 transform = aiNode.mTransformation();
+                    Vector3f position = new Vector3f();
+                    position.x = transform.d1();
+                    position.y = transform.d2();
+                    position.z = transform.d3();
+
+                    entity.setPosition(position);
+
+                    eventHandler.postLoadEntityEvent(entity, properties); 
+                } else {
+                    AIMatrix4x4 transform = aiNode.mTransformation();
+                    Vector3f position = new Vector3f();
+                    position.x = transform.d1();
+                    position.y = transform.d2();
+                    position.z = transform.d3();
                 }
             }
         }

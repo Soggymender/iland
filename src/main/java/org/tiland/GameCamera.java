@@ -25,11 +25,15 @@ public class GameCamera extends Camera {
     float zoomSpeed;
     float zoomDrag = 8.0f;
 
+    Entity target = null;
+
     public GameCamera(Window window, Entity target) {
 
         super(window);
 
-        setPosition(0.0f, 0.0f, 5.0f);
+        this.target = target;
+
+        setPosition(0.0f, 3.75f, 6.5f);
 
         panVec = new Vector2f();
         panSpeed = new Vector2f();
@@ -48,14 +52,14 @@ public class GameCamera extends Camera {
 
         panVec.zero();
 
-        if (keyboard.keyDown(GLFW_KEY_A)){
-            panVec.x = -1;
-        } 
+     //   if (keyboard.keyDown(GLFW_KEY_A)){
+       //     panVec.x = -1;
+     //   } 
 
-        if (keyboard.keyDown(GLFW_KEY_D)) {
-            panVec.x = 1.0f;
-        }
-
+   //     if (keyboard.keyDown(GLFW_KEY_D)) {
+     //       panVec.x = 1.0f;
+       // }
+/*
         if (keyboard.keyDown(GLFW_KEY_W)){
             panVec.y = 1;
         } 
@@ -63,12 +67,13 @@ public class GameCamera extends Camera {
         if (keyboard.keyDown(GLFW_KEY_S)) {
             panVec.y = -1.0f;
         }
-
+*/
         if (panVec.length() > 0.0f) {
             panVec.normalize();
         }
 
         scrollVec.x = 0;
+/*
         scrollVec.y = mouse.getScroll().y;
         if (scrollVec.y < 0) {
             scrollVec.y = -1;
@@ -77,7 +82,7 @@ public class GameCamera extends Camera {
         if (scrollVec.y > 0) {
             scrollVec.y = 1;
         }
-        
+*/        
 
         if (input.getMouse().getShowCursor()) {
             return;
@@ -88,6 +93,7 @@ public class GameCamera extends Camera {
     @Override
     public void update(float interval) {
 
+        /*
         float panLength = panSpeed.length();
         if (panLength > 0.0f) {
             panLength -= panDrag * interval;
@@ -112,9 +118,11 @@ public class GameCamera extends Camera {
         if (scrollVec.length() > 0.0f) {
             zoomSpeed = -scrollVec.y * ZOOM_SPEED;
         }
-
+*/
         Vector3f pos = getPosition();
-        
+  
+        pos.x = target.getPosition().x;
+
         // Apply panning.
         pos.add(panSpeed.x * interval, panSpeed.y * interval, 0.0f);
 

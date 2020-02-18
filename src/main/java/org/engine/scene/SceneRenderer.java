@@ -166,7 +166,10 @@ public class SceneRenderer {
         // Update the view matrix.
         Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
 
-        shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
+        if (sceneLighting.getAmbientLight() != null) {
+            shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
+        }
+        
         shader.setUniform("specularPower", specularPower);
 
         // Process Point Lights
@@ -205,10 +208,13 @@ public class SceneRenderer {
         }
 
         // Get a copy of the directional light object and transform its position to view coordinates
-        DirectionalLight currDirLight = new DirectionalLight(sceneLighting.getDirectionalLight());
-        Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-        dir.mul(viewMatrix);
-        currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
-        shader.setUniform("directionalLight", currDirLight);
+        if (sceneLighting.getDirectionalLight() != null) {
+            DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
+
+            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
+            dir.mul(viewMatrix);
+            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            shader.setUniform("directionalLight", currDirLight);
+        }
     }
 }

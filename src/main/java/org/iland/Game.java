@@ -150,9 +150,10 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
     }
 
-    public Entity preLoadEntityEvent(String type) throws Exception {
+    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
 
-        if (type.compareTo("terrain") == 0) {
+        String type = properties.get("p_type");
+        if (type != null && type == "terrain") {
 
             // Create a terrain entity.
             terrain = new Terrain();
@@ -162,7 +163,7 @@ public class Game implements SceneLoader.IEventHandler {
         return null;
    }
 
-    public void postLoadEntityEvent(Entity entity) throws Exception {
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
 
         if (entity instanceof Terrain) {
 

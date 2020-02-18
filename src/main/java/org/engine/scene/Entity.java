@@ -7,10 +7,17 @@ import org.joml.Vector3f;
 
 import org.engine.input.Input;
 import org.engine.renderer.Mesh;
+import org.engine.core.BoundingBox;
 
 public class Entity {
 
-    protected class Flags {
+    public class Flags {
+        public boolean dynamic = false;
+        public boolean collidable = false;
+        public boolean platform_collision = false;
+        public boolean box_collision = false;
+        public boolean hasBoundingBox = false;
+
         public boolean newMesh = false;
         public boolean renderable = false;
         public boolean visible = true;
@@ -36,6 +43,11 @@ public class Entity {
 
     protected Vector3f scale;
 
+    protected Vector3f velocity;
+    public Vector3f frameVelocity;
+
+    protected BoundingBox bBox;
+
     public Entity parent;
     public List<Entity> children = null;
 
@@ -51,6 +63,11 @@ public class Entity {
         position = new Vector3f(0, 0, 0);
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
         rotation = new Vector3f(0, 0, 0);
+
+        velocity = new Vector3f();
+        frameVelocity = new Vector3f(0, 0, 0);
+
+        bBox = new BoundingBox();
     }
 
     public Entity(Mesh mesh) {
@@ -67,6 +84,8 @@ public class Entity {
 
         flags.renderable = true;
         flags.newMesh = true;
+
+        calculateBoundingBox();
     }
 
     public void setParent(Entity parent) {
@@ -153,6 +172,16 @@ public class Entity {
         this.rotation.set(rotation);
     }
 
+    public void setVelocity(float x, float y, float z) {
+        velocity.x = x;
+        velocity.y = y;
+        velocity.z = z;
+    }
+
+    public Vector3f getVelocity() {
+        return velocity;
+    }
+
     public Mesh getMesh() {
 
         if (meshes == null) {
@@ -171,17 +200,50 @@ public class Entity {
 
         flags.renderable = true;
         flags.newMesh = true;
+
+        calculateBoundingBox();
     }
 
     public void setMesh(Mesh mesh) {
         this.meshes = new Mesh[]{ mesh };
         flags.renderable = true;
         flags.newMesh = true;
+
+        calculateBoundingBox();
     }
 
     public void clearMeshes() {
         this.meshes = null;
         flags.renderable = false;
+    }
+
+    private void calculateBoundingBox() {
+
+        for (Mesh mesh : meshes) {
+
+            BoundingBox meshBBox = mesh.getBbox();
+            if (meshBBox.min.x < bBox.min.x) {
+                bBox.min.x = meshBBox.min.x;
+            }
+
+            if (meshBBox.min.y < bBox.min.y) {
+                bBox.min.y = meshBBox.min.y;
+            }
+        
+            if (meshBBox.max.x > bBox.max.x) {
+                bBox.max.x = meshBBox.max.x;
+            }
+
+            if (meshBBox.max.y > bBox.max.y) {
+                bBox.max.y = meshBBox.max.y;
+            }
+
+            flags.hasBoundingBox = true;
+        }
+    }
+
+    public BoundingBox getBBox() {
+        return bBox;
     }
 
     public boolean justRenderable() {
@@ -227,6 +289,13 @@ public class Entity {
 
         // NOTE: Some things need to be updated whether dirty or not because ancestors affect some state data.
 
+        frameVelocity.x = velocity.x * interval;
+        frameVelocity.y = velocity.y * interval;
+        frameVelocity.z = velocity.z * interval; 
+
+        // Apply velocity to position.
+        position.add(frameVelocity);
+        
         oldFlags = new Flags(flags);
 
         // If parent or grandparent is not visible, set not visible.
@@ -252,6 +321,19 @@ public class Entity {
         int numMeshes = this.meshes != null ? this.meshes.length : 0;
         for (int i = 0; i < numMeshes; i++) {
             this.meshes[i].shutdown();
+        }
+    }
+
+    public void onCollide(Entity other, Vector3f resolutionVec) {
+        
+        position.add(resolutionVec);
+
+        if (resolutionVec.x != 0) {
+            velocity.x = 0;
+        }
+
+        if (resolutionVec.y != 0) {
+            velocity.y = 0;
         }
     }
 }
