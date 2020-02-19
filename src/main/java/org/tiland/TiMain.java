@@ -6,6 +6,7 @@ import org.engine.core.Timer;
 import org.engine.input.*;
 import org.engine.renderer.Window;
 import org.engine.scene.Scene;
+import org.engine.scene.ScenePhysics;
 import org.engine.scene.SceneRenderer;
 import org.engine.sketch.Sketch;
 
@@ -27,6 +28,7 @@ public class TiMain {
             Input input = new Input(mouse, keyboard);
 
             Scene scene = new Scene();
+            ScenePhysics  scenePhysics  = new ScenePhysics();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
 
             new Sketch();
@@ -59,8 +61,14 @@ boolean first = true;
                 scene.input(input);
 
                 // Update
-                game.update(elapsedTime);
+                game.update(elapsedTime);                
                 scene.update(elapsedTime);
+
+                // Physics
+                scenePhysics.update(scene, elapsedTime);
+
+                // Update the camera last so that the targets transform is up to date and already simulated.
+                scene.getCamera().update(elapsedTime);
 
                 // Render
                 sceneRenderer.render(scene);
