@@ -15,6 +15,8 @@ import org.tiland.TileUniformManager;
 
 public class Game implements SceneLoader.IEventHandler {
 
+    private Zone zone;
+
     private Avatar avatar;
     private final GameCamera camera;
 
@@ -34,9 +36,11 @@ public class Game implements SceneLoader.IEventHandler {
     {
         this.scene = scene;
 
-        avatar = new Avatar(scene);
+        zone = new Zone();
 
-        camera = new GameCamera(window, avatar);
+        avatar = new Avatar(scene, zone);
+
+        camera = new GameCamera(window, avatar, zone);
      
         scene.setCamera(camera);
 
@@ -83,7 +87,7 @@ public class Game implements SceneLoader.IEventHandler {
      //   sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
 
         // Directional Light
-        float lightIntensity = 0.5f;
+        float lightIntensity = 0.75f;
         Vector3f lightPosition = new Vector3f(0.0f, 0, 1);
         sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
 
@@ -156,6 +160,7 @@ public class Game implements SceneLoader.IEventHandler {
         }
 
         scene.addEntity(entity);
+        zone.addEntity(entity);
 
         String collision = properties.get("p_collision");
         if (collision != null) {

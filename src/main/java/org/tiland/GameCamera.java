@@ -1,5 +1,6 @@
 package org.tiland;
 
+import org.engine.core.BoundingBox;
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Window;
@@ -16,6 +17,8 @@ public class GameCamera extends Camera {
     private static final float PAN_SPEED = 5.0f;
     private static final float ZOOM_SPEED = 5.0f;
 
+    Zone zone = null;
+
     Vector2f panVec;
     Vector2f scrollVec;
 
@@ -26,19 +29,27 @@ public class GameCamera extends Camera {
     float zoomDrag = 8.0f;
 
     Entity target = null;
+    BoundingBox bounds;
 
-    public GameCamera(Window window, Entity target) {
+    public GameCamera(Window window, Entity target, Zone zone) {
 
         super(window);
 
         this.target = target;
 
-        setPosition(0.0f, 3.75f, 6.5f);
+        this.zone = zone;
+
+        setPosition(0.0f, 2.45f, 4.25f);
 
         panVec = new Vector2f();
         panSpeed = new Vector2f();
 
         scrollVec = new Vector2f();
+
+        bounds = new BoundingBox();
+
+        bounds.min.x = -5;
+        bounds.max.x =  5;
     }
 
     private static boolean once = false;
@@ -123,7 +134,31 @@ public class GameCamera extends Camera {
   
         pos.x = target.getPosition().x;
 
-      //  System.out.println(pos.z);
+
+
+        BoundingBox bounds = zone.getCameraBounds();
+
+        // TODO: There's a bug here because frameVelocity will show a larger value than what was effectively applied.
+        // But it should only matter if a collision happens that needs to be resolved while trying to pass the boundary.
+        if (pos.x < bounds.min.x -0.1f) {
+            pos.x = bounds.min.x -0.1f;
+        }
+
+        if (pos.x > bounds.max.x + 0.1f) {
+            position.x = bounds.max.x + 0.1f;
+        }
+
+
+
+       // if (pos.x < bounds.min.x) {
+       //     pos.x = bounds.min.x;
+       // }
+
+       // if (pos.x > bounds.max.x) {
+       //     pos.x = bounds.max.x;
+       // }
+
+     //   System.out.println(pos.x);
         setPosition(pos);
 
         super.update(interval);

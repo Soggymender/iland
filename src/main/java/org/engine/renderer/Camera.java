@@ -92,6 +92,10 @@ public class Camera extends Entity {
         rotation.z += offsetZ;
     }
 
+    public float getFov() {
+        return FOV;
+    }
+
     @Override
     public void update(float interval) {
 

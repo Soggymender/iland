@@ -1,5 +1,6 @@
 package org.tiland;
 
+import org.engine.core.BoundingBox;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
@@ -12,15 +13,19 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Avatar extends Sprite {
 
-    private static final float CROUCH_JUMP_IMPULSE = -5.0f;
+    private static final float CROUCH_JUMP_IMPULSE = -4.0f;
+
+    private Zone zone = null;
 
     public boolean crouch = false;
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    public Avatar(Scene scene) throws Exception {
+    public Avatar(Scene scene, Zone zone) throws Exception {
 
         super(scene);
+
+        this.zone = zone;
 
         moveVec = new Vector2f();
 
@@ -29,7 +34,7 @@ public class Avatar extends Sprite {
 
     public void initialize(Scene scene) throws Exception {
 
-        setPosition(-7.5f, 0, 0.01f);
+        setPosition(-0.1f, 1.0f, 0.01f);
 
         // Avatar placeholder.
         Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/tiland/models/avatar.fbx", "src/main/resources/tiland/textures/");
@@ -73,6 +78,7 @@ public class Avatar extends Sprite {
     @Override
     public void update(float interval) {
 
+        System.out.println(interval);
 
         if (jump && crouch) {
 
@@ -106,5 +112,17 @@ public class Avatar extends Sprite {
         }
 
         super.update(interval);
+
+        BoundingBox bounds = zone.getAvatarBounds();
+
+        // TODO: There's a bug here because frameVelocity will show a larger value than what was effectively applied.
+        // But it should only matter if a collision happens that needs to be resolved while trying to pass the boundary.
+        if (position.x + bBox.min.x < bounds.min.x) {
+            position.x = bounds.min.x - bBox.min.x;
+        }
+
+        if (position.x +bBox.max.x > bounds.max.x) {
+            position.x = bounds.max.x - bBox.max.x;
+        }
     }
 }

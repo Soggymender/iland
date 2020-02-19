@@ -8,8 +8,8 @@ import org.engine.core.Math;
 
 public class Sprite extends Entity {
 
-    private static final float MOVE_SPEED = 5.0f;
-    private static final float JUMP_IMPULSE = 5.0f;
+    private static final float MOVE_SPEED = 4.0f;
+    private static final float JUMP_IMPULSE = 4.0f;
 
     Scene scene = null;
 

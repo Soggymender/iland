@@ -6,6 +6,9 @@ public class Timer {
 
     public Timer() {
         lastLoopTime = getTime();
+        
+        // Flush the timer.
+        getElapsedTime();
     }
 
     public double getTime() {

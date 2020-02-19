@@ -92,7 +92,7 @@ public class Window {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.25f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.15f, 0.0f);
 
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);

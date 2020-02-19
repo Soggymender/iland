@@ -26,7 +26,6 @@ public class TiMain {
 
             Input input = new Input(mouse, keyboard);
 
-            Timer timer = new Timer();
             Scene scene = new Scene();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
 
@@ -36,11 +35,18 @@ public class TiMain {
 
             game.initialize();
 
+            Timer timer = new Timer();
+            
             float elapsedTime;
-
+boolean first = true;
             while (!window.windowShouldClose()) {
 
                 elapsedTime = timer.getElapsedTime();
+
+                if (first) {
+                    System.out.println(elapsedTime);
+                    first = false;
+                }
 
                 // Input
                 input.input();
