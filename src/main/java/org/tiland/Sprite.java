@@ -9,7 +9,7 @@ import org.engine.core.Math;
 public class Sprite extends Entity {
 
     private static final float MOVE_SPEED = 4.0f;
-    private static final float JUMP_IMPULSE = 4.0f;
+    private static final float JUMP_IMPULSE = 5.0f;
 
     Scene scene = null;
 
@@ -52,7 +52,6 @@ public class Sprite extends Entity {
             if (java.lang.Math.abs(moveSpeed.y) < 0.1f) {
                 // Jump just crushes y velocity.
                 moveSpeed.y = JUMP_IMPULSE;
-                System.out.println("jump");
                 
             }
             else {

@@ -40,15 +40,10 @@ public class TiMain {
             Timer timer = new Timer();
             
             float elapsedTime;
-boolean first = true;
+
             while (!window.windowShouldClose()) {
 
                 elapsedTime = timer.getElapsedTime();
-
-                if (first) {
-                    System.out.println(elapsedTime);
-                    first = false;
-                }
 
                 // Input
                 input.input();

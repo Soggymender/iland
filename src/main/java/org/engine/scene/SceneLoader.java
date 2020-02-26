@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.Object;
 
 import org.engine.core.BoundingBox;
 import org.engine.Utilities;
@@ -53,6 +54,7 @@ public class SceneLoader {
         if (aiNode.mMetadata() != null) {
 
             Map<String, String> properties = new HashMap<>();
+            properties.clear();
 
             // Load all of the "p_*" properties into a map.
             for (int i = 0; i < aiNode.mMetadata().mNumProperties(); i++) {
@@ -66,17 +68,13 @@ public class SceneLoader {
                     AIMetaDataEntry value = (aiNode.mMetadata().mValues().get(i));
 
                     if  (value.mType() == AI_AISTRING) {
-      
+              
                         int capacity = value.sizeof();
                         java.nio.ByteBuffer buffer = value.mData(capacity);
-      
-                        // I don't know the correct way to use ASSIMP to cast this data to appropriate types, but this works for now.
-                        String propValue = MemoryUtil.memASCII(buffer);
-      
-                        // Theres a bunch of nasty whitespace leading the valid text. I'm assuming it's some sort of type header data.
-                        propValue = propValue.trim();
-
-                        properties.put(propName, propValue);
+     
+                        AIString aiString = AIString.create(MemoryUtil.memAddress(buffer));
+                        
+                        properties.put(propName, aiString.dataString());
                     } else if (value.mType() == AI_FLOAT) {
 
                         int capacity = value.sizeof();

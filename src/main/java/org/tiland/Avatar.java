@@ -78,8 +78,6 @@ public class Avatar extends Sprite {
     @Override
     public void update(float interval) {
 
-        System.out.println(interval);
-
         if (jump && crouch) {
 
             // Crouch fall through floor, but only if its a platform, not a box.

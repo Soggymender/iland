@@ -45,6 +45,8 @@ public class Entity {
 
     protected Vector3f velocity;
     public Vector3f frameVelocity;
+    public Vector3f resolutionVec;
+    public int numCollisions;
 
     protected BoundingBox bBox;
 
@@ -68,6 +70,7 @@ public class Entity {
 
         velocity = new Vector3f();
         frameVelocity = new Vector3f(0, 0, 0);
+        resolutionVec = new Vector3f(0, 0, 0);
 
         bBox = new BoundingBox();
     }
@@ -291,12 +294,15 @@ public class Entity {
 
         // NOTE: Some things need to be updated whether dirty or not because ancestors affect some state data.
 
+        numCollisions = 0;
+        resolutionVec.zero();
+
         frameVelocity.x = velocity.x * interval;
         frameVelocity.y = velocity.y * interval;
         frameVelocity.z = velocity.z * interval; 
 
         // Apply velocity to position.
-        position.add(frameVelocity);
+        //position.add(frameVelocity);
         
         oldFlags = new Flags(flags);
 
@@ -306,17 +312,6 @@ public class Entity {
         } else {
             setParentVisible(parent.getVisible() && parent.getParentVisible());
         }
-
-        /* This was internally recursive, but is now recursed by the scene so that it can directly add and remove meshes
-        that are created or activated / deactivated during the update.
-        if (children == null) {
-            return;
-        }
-
-        for (Entity child : children) {
-            child.update(interval);
-        }
-         */
 
         support = null;
     }
@@ -330,14 +325,20 @@ public class Entity {
 
     public void onCollide(Entity other, Vector3f resolutionVec) {
 
-        position.add(resolutionVec);
+        this.resolutionVec.add(resolutionVec);
+        numCollisions++;
+
+        /*
+        frameVelocity.add(resolutionVec);
+
+        //position.add(resolutionVec);
 
         if (resolutionVec.x != 0) {
             velocity.x = 0;
         }
-
+*/
         if (resolutionVec.y != 0) {
-            velocity.y = 0;
+  //          velocity.y = 0;
 
             if (resolutionVec.y > 0) {
                 // Resolving upward so this is a supporting surface.

@@ -6,6 +6,8 @@ import org.engine.scene.Entity;
 
 public class Zone {
 
+    Vector3f avatarStart
+    
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
 
