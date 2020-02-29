@@ -49,10 +49,14 @@ public class Main {
 
                 game.input(input);
                 scene.input(input);
+                scene.getCamera().input(input);
 
                 // Update
                 game.update(elapsedTime);
                 scene.update(elapsedTime);
+
+                // Update the camera last so that the targets transform is up to date and already simulated.
+                scene.getCamera().update(elapsedTime);
 
                 // Render
                 sceneRenderer.render(scene);

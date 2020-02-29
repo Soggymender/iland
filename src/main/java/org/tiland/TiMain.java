@@ -6,6 +6,7 @@ import org.engine.core.Timer;
 import org.engine.input.*;
 import org.engine.renderer.Window;
 import org.engine.scene.Scene;
+import org.engine.scene.ScenePhysics;
 import org.engine.scene.SceneRenderer;
 import org.engine.sketch.Sketch;
 
@@ -16,16 +17,18 @@ public class TiMain {
 
             // Create the "services" that we need.
 
-            Window window = new Window("Game", 720, 480, false);
+            Window window = new Window("Game", 1280, 720, true);
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);
+            mouse.showCursor(true);
+
             Keyboard keyboard = new Keyboard(window);
 
             Input input = new Input(mouse, keyboard);
 
-            Timer timer = new Timer();
             Scene scene = new Scene();
+            ScenePhysics  scenePhysics  = new ScenePhysics();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
 
             new Sketch();
@@ -34,6 +37,8 @@ public class TiMain {
 
             game.initialize();
 
+            Timer timer = new Timer();
+            
             float elapsedTime;
 
             while (!window.windowShouldClose()) {
@@ -51,8 +56,14 @@ public class TiMain {
                 scene.input(input);
 
                 // Update
-                game.update(elapsedTime);
+                game.update(elapsedTime);                
                 scene.update(elapsedTime);
+
+                // Physics
+                scenePhysics.update(scene, elapsedTime);
+
+                // Update the camera last so that the targets transform is up to date and already simulated.
+                scene.getCamera().update(elapsedTime);
 
                 // Render
                 sceneRenderer.render(scene);

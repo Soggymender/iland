@@ -4,6 +4,7 @@ import org.engine.core.Transform;
 import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
+import org.engine.renderer.Viewport;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.joml.Matrix4f;
@@ -22,27 +23,26 @@ public class SkyboxUniformManager implements IUniformManager {
         shader.createUniform("ambientLight");
     }
 
-    public void setShaderUniforms(Transform transform) {
+    public void setShaderUniforms(Viewport viewport) {
 
         // Update projection Matrix
-        Matrix4f projectionMatrix = transform.getProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);
     }
 
-    public void setMeshUniforms(Mesh mesh, Transform transform) {
+    public void setMeshUniforms(Mesh mesh) {
 
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity, Transform transform) {
-        //Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
-        Matrix4f viewMatrix = new Matrix4f(transform.getViewMatrix());
+    public void setEntityUniforms(Scene scene, Entity entity) {
+        Matrix4f viewMatrix = new Matrix4f(scene.getCamera().getViewMatrix());
         viewMatrix.m30(0);
         viewMatrix.m31(0);
         viewMatrix.m32(0);
 
-        Matrix4f modelViewMatrix = transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
         shader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
 

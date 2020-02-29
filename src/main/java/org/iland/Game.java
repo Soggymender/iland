@@ -33,7 +33,7 @@ public class Game implements SceneLoader.IEventHandler {
         this.scene = scene;
 
         avatar = new Avatar(scene);
-        camera = new GameCamera(avatar);
+        camera = new GameCamera(window, avatar);
 
         scene.setCamera(camera);
 
@@ -149,10 +149,11 @@ public class Game implements SceneLoader.IEventHandler {
        fpsTotal += fps;
        fpsSamples++;
     }
+  
+    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
 
-    public Entity preLoadEntityEvent(String type) throws Exception {
-
-        if (type.compareTo("terrain") == 0) {
+        String type = properties.get("p_type");
+        if (type != null && type.equals("terrain")) {
 
             // Create a terrain entity.
             terrain = new Terrain();
@@ -162,7 +163,7 @@ public class Game implements SceneLoader.IEventHandler {
         return null;
    }
 
-    public void postLoadEntityEvent(Entity entity) throws Exception {
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
 
         if (entity instanceof Terrain) {
 

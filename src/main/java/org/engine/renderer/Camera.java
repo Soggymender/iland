@@ -1,12 +1,30 @@
 package org.engine.renderer;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import org.engine.scene.Entity;
+import org.engine.renderer.Viewport;
 
 public class Camera extends Entity {
 
-    public Camera() {
+    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.0f;
+
+    Matrix4f viewMatrix;
+    Viewport viewport;
+
+    Window window;
+
+    public Camera(Window window) {
+
+        this.window = window;
+
+        viewport = new Viewport();
+
+        viewMatrix = new Matrix4f();
+
         position = new Vector3f(0, 0, 0);
         rotation = new Vector3f(0, 0, 0);
     }
@@ -14,6 +32,22 @@ public class Camera extends Entity {
     public Camera(Vector3f position, Vector3f rotation) {
         this.position = position;
         this.rotation = rotation;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
+    }
+
+    public Matrix4f getViewMatrix() {
+        return viewMatrix;
+    }
+
+    public void updateViewMatrix() {
+
+        viewMatrix.identity();
+
+        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
+        viewMatrix.translate(-position.x, -position.y, -position.z);
     }
 
     public Vector3f getPosition() {
@@ -56,5 +90,22 @@ public class Camera extends Entity {
         rotation.x += offsetX;
         rotation.y += offsetY;
         rotation.z += offsetZ;
+    }
+
+    public float getFov() {
+        return FOV;
+    }
+
+    @Override
+    public void update(float interval) {
+
+        updateViewMatrix();
+
+        if (window.isResized()) {
+
+            viewport.set(0, 0, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR, FOV);
+
+          //  window.setResized(false);
+        }
     }
 }

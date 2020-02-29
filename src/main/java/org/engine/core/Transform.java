@@ -1,59 +1,26 @@
 package org.engine.core;
 
+import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.*;
 import org.engine.scene.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import org.engine.renderer.Camera;
+import org.engine.renderer.Viewport;
 
 public class Transform {
 
-    private Matrix4f projectionMatrix;
-    private Matrix4f modelMatrix;
-    private Matrix4f modelViewMatrix;
+    private static Matrix4f modelMatrix = new Matrix4f();
+    private static Matrix4f modelViewMatrix = new Matrix4f();
 
-    private Matrix4f viewMatrix;
-    private Matrix4f orthoMatrix;
-    private Matrix4f orthoModelMatrix;
+    private static Matrix4f orthoModelMatrix = new Matrix4f();
 
-    public Transform() {
-        projectionMatrix = new Matrix4f();
-        modelMatrix = new Matrix4f();
-        modelViewMatrix = new Matrix4f();
-
-        viewMatrix = new Matrix4f();
-        orthoMatrix = new Matrix4f();
-        orthoModelMatrix = new Matrix4f();
-    }
-
-    public Matrix4f getProjectionMatrix() {
-        return projectionMatrix;
-    }
-
-    public final Matrix4f updateProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
-        float aspectRatio = width / height;
-        projectionMatrix.identity();
-        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
-        return projectionMatrix;
-    }
-
-    public Matrix4f getViewMatrix() {
-        return viewMatrix;
-    }
-
-    public Matrix4f updateViewMatrix(Camera camera) {
-
-        Vector3f cameraPos = camera.getPosition();
-        Vector3f rotation = camera.getRotation();
-
-        viewMatrix.identity();
-
-        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
-        viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-
-        return viewMatrix;
-    }
-
-    public Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
@@ -68,17 +35,7 @@ public class Transform {
         return modelViewMatrix;
     }
 
-    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top) {
-        orthoMatrix.identity();
-        orthoMatrix.setOrtho2D(left, right, bottom, top);
-        return orthoMatrix;
-    }
-
-    public final Matrix4f getOrthoProjectionMatrix() {
-        return orthoMatrix;
-    }
-
-    public Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
+    public static Matrix4f buildOrthoProjectionModelMatrix(Entity entity, Matrix4f orthoMatrix) {
         Vector3f rotation = entity.getRotation();
 
         modelMatrix.identity().translate(entity.getPosition()).
@@ -92,4 +49,114 @@ public class Transform {
 
         return orthoModelMatrix;
     }
+
+    public static Vector3f unproject(Vector3f point, Camera camera) {
+
+        Vector3f result = new Vector3f();
+
+        Viewport viewport = camera.getViewport();
+
+        Matrix4f model = new Matrix4f();
+        Matrix4f projection = viewport.getProjectionMatrix();
+
+        Matrix4f temp = new Matrix4f(model);
+        temp = temp.mul(projection);
+        temp = temp.invert();
+
+        Vector4f vec = new Vector4f();
+
+        vec.x = point.x;
+        vec.y = point.y;
+        vec.z = point.z;
+        vec.w = 1.0f;
+
+
+		vec.x = (vec.x - viewport.x) / viewport.width;
+		vec.y = (vec.y - viewport.y) / viewport.height;
+
+		vec.x = vec.x * 2 - 1;
+		vec.y = vec.y * 2 - 1;
+		vec.z = vec.z * 2 - 1;
+
+        vec = vec.mul(temp);
+
+        vec.w = 1.0f / vec.w;
+
+        result.x = vec.x * vec.w;
+        result.y = vec.y * vec.w;
+        result.z = vec.z * vec.w;
+
+        return result;
+    }
+
+    public static boolean unprojectInternal(float winx, float winy, float winz, FloatBuffer modelMatrix, FloatBuffer projMatrix, IntBuffer viewport, Vector3f obj_pos) {
+
+//		float[] in = Project.in;
+//		float[] out = Project.out;
+/*
+        
+
+		__gluMultMatricesf(modelMatrix, projMatrix, finalMatrix);
+
+
+
+		if (!__gluInvertMatrixf(finalMatrix, finalMatrix))
+
+			return false;
+
+
+
+		in[0] = winx;
+
+		in[1] = winy;
+
+		in[2] = winz;
+
+		in[3] = 1.0f;
+
+
+
+		// Map x and y from window coordinates
+
+		in[0] = (in[0] - viewport.get(viewport.position() + 0)) / viewport.get(viewport.position() + 2);
+
+		in[1] = (in[1] - viewport.get(viewport.position() + 1)) / viewport.get(viewport.position() + 3);
+
+
+
+		// Map to range -1 to 1
+
+		in[0] = in[0] * 2 - 1;
+
+		in[1] = in[1] * 2 - 1;
+
+		in[2] = in[2] * 2 - 1;
+
+
+
+		__gluMultMatrixVecf(finalMatrix, in, out);
+
+
+
+		if (out[3] == 0.0)
+
+			return false;
+
+
+
+		out[3] = 1.0f / out[3];
+
+
+
+		obj_pos.put(obj_pos.position() + 0, out[0] * out[3]);
+
+		obj_pos.put(obj_pos.position() + 1, out[1] * out[3]);
+
+		obj_pos.put(obj_pos.position() + 2, out[2] * out[3]);
+
+
+*/
+		return true;
+
+	}
 }

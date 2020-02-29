@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Vector3f;
+
+import org.engine.core.BoundingBox;
 import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
@@ -12,6 +15,7 @@ import org.engine.renderer.Shader;
 
 public class Scene {
 
+    int count = 0;
     Camera camera = null;
 
     /*  This is the scene root. All entities or entity hierarchies in the scene have this as their root ancestor.
@@ -37,12 +41,15 @@ public class Scene {
         scene renderer cast them as needed. */
     private SceneLighting sceneLighting;
 
+    private List<Entity> frameEntities;
+
     public Scene()
     {
         root = new Entity();
 
         meshMap = new HashMap<>();
         shaderMap = new HashMap<>();
+        frameEntities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {
@@ -106,7 +113,7 @@ public class Scene {
     public void setCamera(Camera camera) {
 
         // Add the camera to the scene so it can update automatically.
-        addEntity(camera);
+        //addEntity(camera);
 
         // Reference the active camera directly for various view related processes.
         this.camera = camera;
@@ -120,6 +127,10 @@ public class Scene {
         this.sceneLighting = sceneLighting;
     };
 
+    public List<Entity> getFrameEntities() {
+        return frameEntities;
+    }
+
     public void input(Input input) {
         root.input(input);
     }
@@ -129,12 +140,16 @@ public class Scene {
      */
     public void update(float interval) {
 
+        frameEntities.clear();
+
         update(interval, root);
     }
 
     private void update(float interval, Entity entity) {
 
         entity.update(interval);
+
+        frameEntities.add(entity);
 
         if (entity.getNewMeshFlag()) {// .justRenderable()) {
             entity.setNewMeshFlag(false);

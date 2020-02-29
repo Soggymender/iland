@@ -56,6 +56,8 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform DirectionalLight directionalLight;
 
+uniform float depth;
+
 vec4 ambientC;
 vec4 diffuseC;
 vec4 specularC;
@@ -128,7 +130,9 @@ vec4 calcSpotLight(SpotLight light, vec3 position, vec3 normal)
 
 vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 worldPos, vec3 normal)
 {
-    return calcLightColor(light.color, light.intensity, position, normalize(light.direction), normal);
+    vec4 lightColor = calcLightColor(light.color, light.intensity, position, normalize(light.direction), normal);
+
+   return lightColor * (1 - (20 * depth));
 }
 
 void main()

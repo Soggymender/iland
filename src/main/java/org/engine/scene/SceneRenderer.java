@@ -19,10 +19,6 @@ public class SceneRenderer {
 
     Window window = null;
 
-    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
-    private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 1000.0f;
-
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
 
@@ -118,18 +114,10 @@ public class SceneRenderer {
 
     public void render(Scene scene) {
         clear();
-
-        if (window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResized(false);
-        }
-
-        Camera camera = scene.getCamera();
-
-        transform.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        transform.updateOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
-        transform.updateViewMatrix(camera);
-
+        
+        // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
+        window.setResized(false);
+ 
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
 
@@ -146,24 +134,24 @@ public class SceneRenderer {
 
         IUniformManager uniformManager = shader.getUniformManager();
 
-        uniformManager.setShaderUniforms(transform);
+        uniformManager.setShaderUniforms(scene.getCamera().getViewport());
 
         if (uniformManager.getUseSceneLighting()) {
-            setLightingUniforms(shader, scene.getSceneLighting());
+            setLightingUniforms(shader, scene);
         }
         
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
         for (Mesh mesh : meshList) {
 
-            uniformManager.setMeshUniforms(mesh, transform);
+            uniformManager.setMeshUniforms(mesh);
 
             mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
 
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
                 if (entity.getVisible() && entity.getParentVisible()) {
-                    uniformManager.setEntityUniforms(scene, entity, transform);
+                    uniformManager.setEntityUniforms(scene, entity);
                 }
             });
         }
@@ -171,12 +159,17 @@ public class SceneRenderer {
         shader.unbind();
     }
 
-    private void setLightingUniforms(Shader shader, SceneLighting sceneLighting) {
+    private void setLightingUniforms(Shader shader, Scene scene) {
+
+        SceneLighting sceneLighting = scene.getSceneLighting();
 
         // Update the view matrix.
-        Matrix4f viewMatrix = transform.getViewMatrix();
+        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
 
-        shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
+        if (sceneLighting.getAmbientLight() != null) {
+            shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
+        }
+        
         shader.setUniform("specularPower", specularPower);
 
         // Process Point Lights
@@ -215,10 +208,13 @@ public class SceneRenderer {
         }
 
         // Get a copy of the directional light object and transform its position to view coordinates
-        DirectionalLight currDirLight = new DirectionalLight(sceneLighting.getDirectionalLight());
-        Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-        dir.mul(viewMatrix);
-        currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
-        shader.setUniform("directionalLight", currDirLight);
+        if (sceneLighting.getDirectionalLight() != null) {
+            DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
+
+            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
+            dir.mul(viewMatrix);
+            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            shader.setUniform("directionalLight", currDirLight);
+        }
     }
 }

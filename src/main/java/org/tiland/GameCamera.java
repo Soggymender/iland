@@ -1,33 +1,55 @@
 package org.tiland;
 
+import org.engine.core.BoundingBox;
 import org.engine.scene.Entity;
 import org.engine.renderer.Camera;
+import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.core.Math;
 
 public class GameCamera extends Camera {
 
-    private Vector2f rotVec;
-
-    private Vector3f followPivot;
-    private Vector3f followOffset;
-    private Vector3f followRotation;
-
-    private Entity target;
-
     private static final float MOUSE_SENSITIVITY = 3.5f;
+    private static final float PAN_SPEED = 5.0f;
+    private static final float ZOOM_SPEED = 5.0f;
 
-    public GameCamera(Entity target) {
+    Zone zone = null;
 
-        rotVec = new Vector2f();
+    Vector2f panVec;
+    Vector2f scrollVec;
+
+    Vector2f panSpeed;
+    float panDrag = 16.0f;
+
+    float zoomSpeed;
+    float zoomDrag = 8.0f;
+
+    Entity target = null;
+    BoundingBox bounds;
+
+    public GameCamera(Window window, Entity target, Zone zone) {
+
+        super(window);
 
         this.target = target;
 
-        followPivot = new Vector3f(0.0f, 2.0f, 0.0f);
-        followOffset = new Vector3f(0.0f, 0.0f, 5.0f);
-        followRotation = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.zone = zone;
+
+        setPosition(0.0f, 2.45f, 4.25f);
+
+        panVec = new Vector2f();
+        panSpeed = new Vector2f();
+
+        scrollVec = new Vector2f();
+
+        bounds = new BoundingBox();
+
+        bounds.min.x = -5;
+        bounds.max.x =  5;
     }
 
     private static boolean once = false;
@@ -37,49 +59,108 @@ public class GameCamera extends Camera {
 
         Mouse mouse = input.getMouse();
 
+        Keyboard keyboard = input.getKeyboard();
+
+        panVec.zero();
+
+     //   if (keyboard.keyDown(GLFW_KEY_A)){
+       //     panVec.x = -1;
+     //   } 
+
+   //     if (keyboard.keyDown(GLFW_KEY_D)) {
+     //       panVec.x = 1.0f;
+       // }
+/*
+        if (keyboard.keyDown(GLFW_KEY_W)){
+            panVec.y = 1;
+        } 
+
+        if (keyboard.keyDown(GLFW_KEY_S)) {
+            panVec.y = -1.0f;
+        }
+*/
+        if (panVec.length() > 0.0f) {
+            panVec.normalize();
+        }
+
+        scrollVec.x = 0;
+/*
+        scrollVec.y = mouse.getScroll().y;
+        if (scrollVec.y < 0) {
+            scrollVec.y = -1;
+        }
+
+        if (scrollVec.y > 0) {
+            scrollVec.y = 1;
+        }
+*/        
+
         if (input.getMouse().getShowCursor()) {
-            rotVec.zero();
             return;
         }
 
-        rotVec = mouse.getDisplayVec();
-
-        rotVec.x *= MOUSE_SENSITIVITY;
-        rotVec.y *= MOUSE_SENSITIVITY;
     }
 
     @Override
     public void update(float interval) {
 
-        followRotation.x += rotVec.x * interval;
-        followRotation.y += rotVec.y * interval;
+        /*
+        float panLength = panSpeed.length();
+        if (panLength > 0.0f) {
+            panLength -= panDrag * interval;
+            if (panLength < 0.0f) {
+                panLength = 0.0f;
+            }
 
-        // Cap look up & down.
-        followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-45.0f));
-        followRotation.x = java.lang.Math.min(followRotation.x, Math.toRadians(45.0f));
-
-        if (!once) {
-            follow(interval);
-        }
-    }
-
-    private void follow(float interval) {
-
-        if (target == null) {
-            return;
+            panSpeed.normalize();
+            panSpeed.mul(panLength);
         }
 
-        position.set(followOffset);
-        position.rotateX(-followRotation.x);
-        position.rotateY(-followRotation.y);
+        if (panVec.length() > 0.0f) {
+            panSpeed.x = panVec.x * PAN_SPEED;
+            panSpeed.y = panVec.y * PAN_SPEED;
+        }
 
-        Vector3f targetPos = new Vector3f(target.getPosition());
+        if (zoomSpeed != 0.0f) {
+            zoomSpeed *= 1.0f - zoomDrag * interval;
+            
+        }
 
-        position.add(followPivot);
-        position.add(targetPos);
+        if (scrollVec.length() > 0.0f) {
+            zoomSpeed = -scrollVec.y * ZOOM_SPEED;
+        }
+*/
+        Vector3f pos = getPosition();
+  
+        pos.x = target.getPosition().x;
 
-        // Look at the target.
-        rotation.x = followRotation.x;
-        rotation.y = followRotation.y;
+
+
+        BoundingBox bounds = zone.getCameraBounds();
+
+        // TODO: There's a bug here because frameVelocity will show a larger value than what was effectively applied.
+        // But it should only matter if a collision happens that needs to be resolved while trying to pass the boundary.
+        if (pos.x < bounds.min.x -0.1f) {
+            pos.x = bounds.min.x -0.1f;
+        }
+
+        if (pos.x > bounds.max.x + 0.1f) {
+            position.x = bounds.max.x + 0.1f;
+        }
+
+
+
+       // if (pos.x < bounds.min.x) {
+       //     pos.x = bounds.min.x;
+       // }
+
+       // if (pos.x > bounds.max.x) {
+       //     pos.x = bounds.max.x;
+       // }
+
+     //   System.out.println(pos.x);
+        setPosition(pos);
+
+        super.update(interval);
     }
 }

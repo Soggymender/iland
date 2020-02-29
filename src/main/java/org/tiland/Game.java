@@ -8,65 +8,75 @@ import org.joml.Vector3f;
 
 import org.engine.input.*;
 import org.engine.renderer.*;
+import org.engine.Utilities;
 
-import org.engine.Terrain;
+import org.tiland.Tile;
+import org.tiland.TileUniformManager;
 
 public class Game implements SceneLoader.IEventHandler {
 
-//    private final Avatar avatar;
-    private final GameCamera camera;
+    private Zone zone;
 
-    Terrain terrain;
+    private Avatar avatar;
+    private final GameCamera camera;
 
     private Scene scene = null;
 
     private Hud hud;
 
-    private float lightAngle;
-
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
+
+    Shader tileShader = null;
+
+    //private TileMap tileMap = null;
 
     public Game(Window window, Scene scene) throws Exception
     {
         this.scene = scene;
 
- //       avatar = new Avatar(scene);
-        camera = new GameCamera(null);
+        zone = new Zone();
 
+        avatar = new Avatar(scene, zone);
+
+        camera = new GameCamera(window, avatar, zone);
+     
         scene.setCamera(camera);
 
         hud = new Hud(window, scene);
-
-        lightAngle = -45;
     }
 
     public void initialize() throws Exception {
 
-  //      avatar.initialize();
-    //    scene.addEntityMeshes(avatar);
+        initializeTileShader();
 
-      //  avatar.setPosition(0.0f, 0.0f, 0.0f);
-
-        // Load entities from FBX - their types specified via Blender custom properties.
-        // Manually add each to the scene.
-        // Afterward, programatically add other entities to the scene.
-   //     SceneLoader.loadEntities("src/main/resources/models/terrain_mesh_test.fbx", "src/main/resources/textures/", this);
-
-        // Setup  SkyBox
-    //    float skyboxScale = 100.0f;
-   //     Skybox skybox = new Skybox("src/main/resources/models/default_skybox.fbx", "src/main/resources/textures/");
-   //     skybox.setScale(skyboxScale);
-
-   //     scene.addEntityMeshes(skybox);
+        SceneLoader.loadEntities("src/main/resources/tiland/models/temple.fbx", "src/main/resources/tiland/textures/", this);
 
         // Setup Lights
         setupLights();
 
-        camera.getPosition().x = 0.65f;
-        camera.getPosition().y = 1.15f;
-        camera.getPosition().y = 4.34f;
+       
+    }
+
+    private void initializeTileShader() throws Exception {
+
+        ShaderCache shaderCache = ShaderCache.getInstance();
+        tileShader = shaderCache.addShader("tile");
+
+        String vsName = Utilities.load("/shaders/tile_vertex.vs");
+        String fsName = Utilities.load("/shaders/tile_fragment.fs");
+
+        if (vsName.isEmpty() || fsName.isEmpty()) {
+            return;
+        }
+
+        tileShader.createVertexShader(vsName);
+        tileShader.createFragmentShader(fsName);
+        tileShader.link();
+
+        TileUniformManager uniformManager = new TileUniformManager(tileShader);
+        tileShader.setUniformManager(uniformManager);
     }
 
     private void setupLights() {
@@ -74,16 +84,20 @@ public class Game implements SceneLoader.IEventHandler {
         scene.setSceneLighting(sceneLighting);
 
         // Ambient Light
-        sceneLighting.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
+     //   sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
 
         // Directional Light
-        float lightIntensity = 1.0f;
-        Vector3f lightPosition = new Vector3f(-1, 0, 0);
+        float lightIntensity = 0.75f;
+        Vector3f lightPosition = new Vector3f(0.0f, 0, 1);
         sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
+
+
+
     }
 
     public void shutdown() {
 
+        // TODO: Let the scene system handle this.
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.shutdown();
@@ -93,41 +107,12 @@ public class Game implements SceneLoader.IEventHandler {
     public void input(Input input) {
         if (!input.getMouse().getShowCursor()){
 
-        
-     //       avatar.input(input);
         }
        
         hud.input(input);
     }
 
     public void update(float interval) {
-
- //       avatar.update(interval, camera, terrain);
-
-        SceneLighting sceneLighting = scene.getSceneLighting();
-        DirectionalLight directionalLight = sceneLighting.getDirectionalLight();
-
-        // Update directional light direction, intensity and colour
-        //lightAngle += 3f * interval;
-        if (lightAngle > 90) {
-            directionalLight.setIntensity(0);
-            if (lightAngle >= 360) {
-                lightAngle = -90;
-            }
-        } else if (lightAngle <= -80 || lightAngle >= 80) {
-            float factor = 1 - (float) (Math.abs(lightAngle) - 80) / 10.0f;
-            directionalLight.setIntensity(factor);
-            directionalLight.getColor().y = Math.max(factor, 0.9f);
-            directionalLight.getColor().z = Math.max(factor, 0.5f);
-        } else {
-            directionalLight.setIntensity(1);
-            directionalLight.getColor().x = 1;
-            directionalLight.getColor().y = 1;
-            directionalLight.getColor().z = 1;
-        }
-        double angRad = Math.toRadians(lightAngle);
-        directionalLight.getDirection().x = (float) Math.sin(angRad);
-        directionalLight.getDirection().y = (float) Math.cos(angRad);
 
         if (accumulator >= 1.0f) {
 
@@ -150,12 +135,52 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
     }
 
-    public Entity preLoadEntityEvent(String type) throws Exception {
+    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
 
-        return null;
-   }
+        String collision = properties.get("p_collision");
+        if (collision != null) {
+            if (collision.equals("platform")) {
 
-    public void postLoadEntityEvent(Entity entity) throws Exception {
+            } else if (collision.equals("box")) {
+                System.out.println("pre box collision");
+            }
+        }
 
+        String depth = properties.get("p_depth");
+        if (depth != null) {
+            Tile tile = new Tile();
+            tile.depth = Float.parseFloat(depth);
+
+            return tile;
+        } 
+        
+        return new Entity();
+
+    }
+
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
+
+        Mesh mesh = entity.getMesh();
+        if (mesh != null) {
+            Material material = mesh.getMaterial();
+            if (material != null) {
+                material.setShader(tileShader);
+            }
+        }
+
+        scene.addEntity(entity);
+        zone.addEntity(entity);
+
+        String collision = properties.get("p_collision");
+        if (collision != null) {
+            entity.flags.collidable = true;
+
+            if (collision.equals("platform")) {
+                entity.flags.platform_collision = true;
+            } else if (collision.equals("box")) {
+                entity.flags.box_collision = true;
+                System.out.println("box collision");
+            }
+        }
     }
 }
