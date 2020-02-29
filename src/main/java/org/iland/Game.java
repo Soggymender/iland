@@ -149,7 +149,7 @@ public class Game implements SceneLoader.IEventHandler {
        fpsTotal += fps;
        fpsSamples++;
     }
-
+  
     public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
 
         String type = properties.get("p_type");

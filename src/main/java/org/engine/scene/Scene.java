@@ -49,7 +49,6 @@ public class Scene {
 
         meshMap = new HashMap<>();
         shaderMap = new HashMap<>();
-
         frameEntities = new ArrayList<>();
     }
 

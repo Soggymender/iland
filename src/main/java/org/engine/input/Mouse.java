@@ -90,6 +90,7 @@ public class Mouse {
 
             pendingScroll.x += (float)xOffset;
             pendingScroll.y += (float)yOffset;
+
         });
     }
 
