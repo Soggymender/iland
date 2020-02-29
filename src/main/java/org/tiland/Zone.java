@@ -1,20 +1,26 @@
 package org.tiland;
 
 import org.joml.Vector3f;
+
 import org.engine.core.BoundingBox;
 import org.engine.scene.Entity;
 
 public class Zone {
 
-    Vector3f avatarStart
+    Vector3f avatarStart;
     
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
 
     public Zone() {
 
+        avatarStart = new Vector3f();
         avatarBounds = new BoundingBox();
         cameraBounds = new BoundingBox();
+    }
+
+    public void setAvatarStart(Vector3f avatarStart) {
+        this.avatarStart = new Vector3f(avatarStart);
     }
 
     public void addEntity(Entity entity) {
