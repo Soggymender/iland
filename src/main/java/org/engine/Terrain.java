@@ -27,7 +27,7 @@ public class Terrain extends Entity{
 
     private Box2D[][] boundingBoxes = null;
 
-    public Terrain() throws Exception {
+    public Terrain() {
 
     }
 
@@ -84,7 +84,7 @@ public class Terrain extends Entity{
 
     // Generate terrain from mesh.
     //
-    public void createFromMesh(Mesh mesh, String textureFilename) throws Exception {
+    public void createFromMesh(Mesh mesh, String textureFilename) {
 
         //fromMesh = true;
         BoundingBox bbox = mesh.getBbox();

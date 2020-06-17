@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.Object;
 
 import org.engine.core.BoundingBox;
 import org.engine.Utilities;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.joml.Matrix4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.assimp.*;
@@ -25,17 +25,18 @@ import org.engine.renderer.TextureCache;
 public class SceneLoader {
 
     public interface IEventHandler {
-
-        public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception;
-        public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception;
+        
+        public Entity preLoadEntityEvent(Map<String, String>properties);
+        public void postLoadEntityEvent(Entity entity, Map<String, String>properties);
     }
 
-    public static void loadEntities(String resourcePath, String texturesDir, IEventHandler eventHandler) throws Exception {
+    public static void loadEntities(Entity sceneRoot, String resourcePath, String texturesDir, IEventHandler eventHandler) {
 
         AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
         if (aiScene == null) {
             String error = aiGetErrorString();
-            throw new Exception(error);
+            return;
+            //throw new Exception(error);
         }
 
         int numMaterials = aiScene.mNumMaterials();
@@ -46,15 +47,17 @@ public class SceneLoader {
             processMaterial(aiMaterial, materials, texturesDir);
         }
 
-        processNode(aiScene.mRootNode(), aiScene, materials, eventHandler);
+        processNode(sceneRoot, aiScene.mRootNode(), aiScene, materials, eventHandler);
     }
 
-    public static void processNode(AINode aiNode, AIScene aiScene, List<Material> materials, IEventHandler eventHandler) throws Exception {
+    public static void processNode(Entity sceneRoot, AINode aiNode, AIScene aiScene, List<Material> materials, IEventHandler eventHandler) {
 
         if (aiNode.mMetadata() != null) {
 
             Map<String, String> properties = new HashMap<>();
             properties.clear();
+
+            AIString name = aiNode.mName();           
 
             // Load all of the "p_*" properties into a map.
             for (int i = 0; i < aiNode.mMetadata().mNumProperties(); i++) {
@@ -88,38 +91,61 @@ public class SceneLoader {
                 }
             }
 
+            // Engine types.
+
             String p_type = properties.get("p_type");
             if (p_type != null && p_type == "terrain") {
 
                 Entity entity = eventHandler.preLoadEntityEvent(properties);
-
+                entity.setName(name.dataString().toLowerCase());
+                entity.setParent(sceneRoot);
+                
                 Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                
                 entity.setMeshes(meshes);
 
                 eventHandler.postLoadEntityEvent(entity, properties);
             } else {
 
+                // Game types.
+
                 if (aiNode.mNumMeshes() > 0) {
                     Entity entity = eventHandler.preLoadEntityEvent(properties);
+                    entity.setName(name.dataString().toLowerCase());
+                    entity.setParent(sceneRoot);
 
                     Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
                     entity.setMeshes(meshes);
 
-                    AIMatrix4x4 transform = aiNode.mTransformation();
+                    Matrix4f transform = toMatrix(aiNode.mTransformation());
                     Vector3f position = new Vector3f();
-                    position.x = transform.d1();
-                    position.y = transform.d2();
-                    position.z = transform.d3();
+                    
+                    transform.getTranslation(position);
+                    position.div(100);
 
                     entity.setPosition(position);
 
                     eventHandler.postLoadEntityEvent(entity, properties); 
                 } else {
-                    AIMatrix4x4 transform = aiNode.mTransformation();
+
+                    Entity entity = eventHandler.preLoadEntityEvent(properties);
+
+                    if (entity == null) {
+                        entity = new Entity();
+                    }
+
+                    entity.setName(name.dataString().toLowerCase());
+                    entity.setParent(sceneRoot);
+
+                    Matrix4f transform = toMatrix(aiNode.mTransformation());
                     Vector3f position = new Vector3f();
-                    position.x = transform.d1();
-                    position.y = transform.d2();
-                    position.z = transform.d3();
+                    
+                    transform.getTranslation(position);
+                    position.div(100);
+
+                    entity.setPosition(position);
+
+                    eventHandler.postLoadEntityEvent(entity, properties);
                 }
             }
         }
@@ -127,7 +153,7 @@ public class SceneLoader {
         for (int i = 0; i < aiNode.mNumChildren(); i++) {
 
             AINode child = AINode.create(aiNode.mChildren().get(i));
-            processNode(child, aiScene, materials, eventHandler);
+            processNode(sceneRoot, child, aiScene, materials, eventHandler);
         }
     }
 
@@ -142,7 +168,7 @@ public class SceneLoader {
         return parseMesh(aiScene, texturesDir);
     }
 
-    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials) throws Exception {
+    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials) {
 
         int numMeshes = aiNode.mNumMeshes();
         IntBuffer aiMeshes = aiNode.mMeshes();
@@ -181,7 +207,7 @@ public class SceneLoader {
         return meshes;
     }
 
-    private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String texturesDir) throws Exception {
+    private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String texturesDir) {
         AIColor4D colour = AIColor4D.create();
 
         AIString path = AIString.calloc();
@@ -223,7 +249,7 @@ public class SceneLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) throws Exception {
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertices = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -312,5 +338,29 @@ public class SceneLoader {
                 indices.add(index);
             }
         }
+    }
+
+    private static Matrix4f toMatrix(AIMatrix4x4 aiMatrix4x4) {
+
+        Matrix4f result = new Matrix4f();
+
+        result.m00(aiMatrix4x4.a1());
+        result.m10(aiMatrix4x4.a2());
+        result.m20(aiMatrix4x4.a3());
+        result.m30(aiMatrix4x4.a4());
+        result.m01(aiMatrix4x4.b1());
+        result.m11(aiMatrix4x4.b2());
+        result.m21(aiMatrix4x4.b3());
+        result.m31(aiMatrix4x4.b4());
+        result.m02(aiMatrix4x4.c1());
+        result.m12(aiMatrix4x4.c2());
+        result.m22(aiMatrix4x4.c3());
+        result.m32(aiMatrix4x4.c4());
+        result.m03(aiMatrix4x4.d1());
+        result.m13(aiMatrix4x4.d2());
+        result.m23(aiMatrix4x4.d3());
+        result.m33(aiMatrix4x4.d4());
+
+        return result;
     }
 }

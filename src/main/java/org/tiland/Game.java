@@ -36,7 +36,7 @@ public class Game implements SceneLoader.IEventHandler {
     {
         this.scene = scene;
 
-        zone = new Zone();
+        zone = new Zone(scene, this);
 
         avatar = new Avatar(scene, zone);
 
@@ -51,12 +51,17 @@ public class Game implements SceneLoader.IEventHandler {
 
         initializeTileShader();
 
-        SceneLoader.loadEntities("src/main/resources/tiland/models/temple.fbx", "src/main/resources/tiland/textures/", this);
+        zone.requestZone("temple", "");
 
         // Setup Lights
         setupLights();
+    }
 
-       
+    private void startZone() {
+
+        zone.loadRequestedZone();
+
+        avatar.goToStart();
     }
 
     private void initializeTileShader() throws Exception {
@@ -114,6 +119,11 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void update(float interval) {
 
+        // Check for a zone request.
+        if (!zone.getRequestedZone().isEmpty()) {
+            startZone();
+        }
+
         if (accumulator >= 1.0f) {
 
             float fps = 0;
@@ -135,30 +145,49 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
     }
 
-    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
-
-        String collision = properties.get("p_collision");
-        if (collision != null) {
-            if (collision.equals("platform")) {
-
-            } else if (collision.equals("box")) {
-                System.out.println("pre box collision");
-            }
-        }
-
-        String depth = properties.get("p_depth");
-        if (depth != null) {
-            Tile tile = new Tile();
-            tile.depth = Float.parseFloat(depth);
-
-            return tile;
-        } 
-        
-        return new Entity();
+    public void LoadSRequestEvent() {
 
     }
 
-    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
+    public Entity preLoadEntityEvent(Map<String, String>properties) {
+
+        String type = properties.get("p_type");
+        if (type != null) {
+
+            if (type.equals("door")) {
+                return zone.createDoor(properties);
+            }
+
+        } else {
+
+            String collision = properties.get("p_collision");
+            if (collision != null) {
+                if (collision.equals("platform")) {
+
+                } else if (collision.equals("box")) {
+                    System.out.println("pre box collision");
+                }
+            }
+
+            String depth = properties.get("p_depth");
+            if (depth != null) {
+                Tile tile = new Tile();
+                tile.depth = Float.parseFloat(depth);
+
+                return tile;
+            } 
+        }
+
+        return new Entity();
+    }
+
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) {
+
+        String avatarStart = properties.get("p_avatar_start");
+        if (avatarStart != null) {
+            zone.setAvatarStart(entity.getPosition());
+            return;
+        }
 
         Mesh mesh = entity.getMesh();
         if (mesh != null) {
@@ -168,8 +197,9 @@ public class Game implements SceneLoader.IEventHandler {
             }
         }
 
-        scene.addEntity(entity);
-        zone.addEntity(entity);
+        if (!(entity instanceof Door)) {
+            zone.addEntity(entity);
+        }
 
         String collision = properties.get("p_collision");
         if (collision != null) {

@@ -7,15 +7,7 @@ import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-import org.engine.core.Math;
-
 public class GameCamera extends Camera {
-
-    private static final float MOUSE_SENSITIVITY = 3.5f;
-    private static final float PAN_SPEED = 5.0f;
-    private static final float ZOOM_SPEED = 5.0f;
 
     Zone zone = null;
 
@@ -52,14 +44,8 @@ public class GameCamera extends Camera {
         bounds.max.x =  5;
     }
 
-    private static boolean once = false;
-
     @Override
     public void input(Input input) {
-
-        Mouse mouse = input.getMouse();
-
-        Keyboard keyboard = input.getKeyboard();
 
         panVec.zero();
 

@@ -4,8 +4,6 @@ import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.joml.*;
 
-import org.engine.core.Math;
-
 public class Sprite extends Entity {
 
     private static final float MOVE_SPEED = 4.0f;

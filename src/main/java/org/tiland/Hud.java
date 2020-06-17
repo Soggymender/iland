@@ -8,6 +8,7 @@ import org.engine.core.Rect;
 import org.joml.Vector2f;
 
 import org.engine.input.*;
+import org.engine.renderer.Color;
 import org.engine.renderer.FontTexture;
 import org.engine.scene.Scene;
 import org.engine.ui.Button;
@@ -40,8 +41,13 @@ public class Hud {
         fpsText = new Text(canvas, canvas, new Rect(5, -5, 100, 20), new Rect(0, 1, 0, 1, true), new Vector2f(0, 1), "0.0", fontTexture);;
 
         bPanel.setVisible(false);
+        bPanel.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
 
         scene.addEntity(canvas);
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 
     public void setStatusText(String statusText) {

@@ -19,6 +19,7 @@ public class Game implements SceneLoader.IEventHandler {
     Terrain terrain;
 
     private Scene scene = null;
+    private Entity sceneRoot = new Entity();
 
     private Hud hud;
 
@@ -45,21 +46,21 @@ public class Game implements SceneLoader.IEventHandler {
     public void initialize() throws Exception {
 
         avatar.initialize();
-        scene.addEntityMeshes(avatar);
+        scene.addEntity(avatar);
 
         avatar.setPosition(0.0f, 0.0f, 0.0f);
 
         // Load entities from FBX - their types specified via Blender custom properties.
         // Manually add each to the scene.
         // Afterward, programatically add other entities to the scene.
-        SceneLoader.loadEntities("src/main/resources/iland/models/terrain_mesh_test.fbx", "src/main/resources/iland/textures/", this);
+        SceneLoader.loadEntities(sceneRoot, "src/main/resources/iland/models/terrain_mesh_test.fbx", "src/main/resources/iland/textures/", this);
 
         // Setup  SkyBox
         float skyboxScale = 100.0f;
         Skybox skybox = new Skybox("src/main/resources/iland/models/default_skybox.fbx", "src/main/resources/iland/textures/");
         skybox.setScale(skyboxScale);
 
-        scene.addEntityMeshes(skybox);
+        scene.addEntity(skybox);
 
         // Setup Lights
         setupLights();
@@ -150,7 +151,7 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
     }
   
-    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
+    public Entity preLoadEntityEvent(Map<String, String>properties) {
 
         String type = properties.get("p_type");
         if (type != null && type.equals("terrain")) {
@@ -163,7 +164,7 @@ public class Game implements SceneLoader.IEventHandler {
         return null;
    }
 
-    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) {
 
         if (entity instanceof Terrain) {
 
@@ -174,10 +175,12 @@ public class Game implements SceneLoader.IEventHandler {
 
             // Specify the textures since they can't be specified in the scene FBX. Yuck.
             terrainEntity.createFromMesh(mesh, "src/main/resources/iland/textures/terrain.png");
-            scene.addEntitiesMeshes(terrainEntity.getEntities());
+            
+            // Just add the "entities" as children. Then this isn't necessary.
+            //scene.addEntitiesMeshes(terrainEntity.getEntities());
         }
 
         // Add these entities to the scene.
-        scene.addEntityMeshes(entity);
+        scene.addEntity(entity);
     }
 }

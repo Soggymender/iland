@@ -36,6 +36,8 @@ public class Entity {
         }
     }
 
+    private String name = new String();
+
     private Mesh[] meshes;
 
     protected Vector3f position;
@@ -60,6 +62,8 @@ public class Entity {
     public Flags flags = null;
 
     public Entity() {
+
+        name = "none";
 
         flags = new Flags();
         oldFlags = new Flags();
@@ -91,6 +95,14 @@ public class Entity {
         flags.newMesh = true;
 
         calculateBoundingBox();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public void setParent(Entity parent) {

@@ -3,8 +3,6 @@ package org.engine.core;
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
 import org.engine.scene.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

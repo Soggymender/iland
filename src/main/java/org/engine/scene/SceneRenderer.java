@@ -9,7 +9,6 @@ import org.engine.Utilities;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.engine.core.*;
 import org.joml.Matrix4f;
 
 import org.joml.Vector3f;
@@ -22,8 +21,6 @@ public class SceneRenderer {
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
 
-    private Transform transform;
-
     private Shader defaultShader;
     private Shader skyboxShader;
     private Shader hudShader;
@@ -34,7 +31,6 @@ public class SceneRenderer {
 
         this.window = window;
 
-        transform = new Transform();
         specularPower = 10.0f;
 
         initializeDefaultShader();

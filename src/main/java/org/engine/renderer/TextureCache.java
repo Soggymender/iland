@@ -20,7 +20,7 @@ public class TextureCache {
         return INSTANCE;
     }
 
-    public Texture getTexture(String path) throws Exception {
+    public Texture getTexture(String path) {
 
         path = path.toLowerCase();
 

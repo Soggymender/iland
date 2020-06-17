@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joml.Vector3f;
-
-import org.engine.core.BoundingBox;
 import org.engine.input.Input;
 import org.engine.renderer.Camera;
 import org.engine.renderer.Mesh;
@@ -15,20 +12,23 @@ import org.engine.renderer.Shader;
 
 public class Scene {
 
-    int count = 0;
+  //  int count = 0;
     Camera camera = null;
 
     /*  This is the scene root. All entities or entity hierarchies in the scene have this as their root ancestor.
         When an entity is part of this hierarchy, its input and update methods are called automatically. Flag behavior
         can be used to bypass work in those calls */
-    Entity root = null;
+//    Entity root = null;
+    
+    public List<Entity> entities = null;
+
 
     /*  A "flat" map of meshes in the scene, where each references the list of entities that reference the mesh.
         TODO: Entities in the root hierarchy will automatically be added to the map. Entities do not have to be in the
         root hierarchy in order to be added manually. */
-    private Map<Mesh, List<Entity>> meshMap;
+    private Map<Mesh, List<Entity>> meshToEntityMap;
 
-    private Map<Shader, List<Mesh>> shaderMap;
+    private Map<Shader, List<Mesh>> shaderToMeshMap;
 
     /*  Store Shader on material next to texture.
         SceneRenderer no longer infers shader.
@@ -45,30 +45,43 @@ public class Scene {
 
     public Scene()
     {
-        root = new Entity();
+        //root = new Entity();
+        entities = new ArrayList<>();
 
-        meshMap = new HashMap<>();
-        shaderMap = new HashMap<>();
+        meshToEntityMap = new HashMap<>();
+        shaderToMeshMap = new HashMap<>();
         frameEntities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {
 
-        Entity entityRoot = entity.findRoot();
-        if (entityRoot != root) {
-            entityRoot.setParent(root);
+        if (!entities.contains(entity)) {
+            entities.add(entity);
+        }
+    }
+
+    public void removeEntity(Entity entity) {
+        if (entities.contains(entity)) {
+            entities.remove(entity);
+
+            // Remove meshes if no other entities reference them.
+            removeEntityMeshes(entity);
+            
+            for (Entity child : entity.children) {
+                removeEntityMeshes(child);
+            }
         }
     }
 
     public Map<Shader, List<Mesh>> getMeshShaders() {
-        return shaderMap;
+        return shaderToMeshMap;
     }
 
     public Map<Mesh, List<Entity>> getEntityMeshes() {
-        return meshMap;
+        return meshToEntityMap;
     }
 
-    public void addEntityMeshes(Entity entity) {
+    private void addEntityMeshes(Entity entity) {
 
         Mesh[] meshes = entity.getMeshes();
         if (meshes == null) {
@@ -78,10 +91,10 @@ public class Scene {
         for (Mesh mesh : meshes) {
 
             // Map the mesh to entity.
-            List<Entity> entityList = meshMap.get(mesh);
+            List<Entity> entityList = meshToEntityMap.get(mesh);
             if (entityList == null) {
                 entityList = new ArrayList<>();
-                meshMap.put(mesh, entityList);
+                meshToEntityMap.put(mesh, entityList);
             }
 
             entityList.add(entity);
@@ -89,17 +102,59 @@ public class Scene {
             // Map the shader to mesh.
             Shader shader = mesh.getMaterial().getShader();
 
-            List<Mesh> meshList = shaderMap.get(shader);
+            List<Mesh> meshList = shaderToMeshMap.get(shader);
             if (meshList == null) {
                 meshList = new ArrayList<>();
-                shaderMap.put(shader, meshList);
+                shaderToMeshMap.put(shader, meshList);
             }
 
             meshList.add(mesh);
         }
     }
 
-    public void addEntitiesMeshes(Entity[] entities) {
+    private void removeEntityMeshes(Entity entity) {
+
+        Mesh[] meshes = entity.getMeshes();
+        if (meshes == null) {
+            return;
+        }
+        for (Mesh mesh : meshes) {
+
+            // Get the entities for this mesh.
+            List<Entity> entityList = meshToEntityMap.get(mesh);
+            if (entityList == null) {
+                continue;
+            }
+
+            if (!entityList.contains(entity)) {
+                continue;
+            }
+
+            entityList.remove(entity);
+
+            if (entityList.size() > 0) {
+                continue;
+            }
+            
+            meshToEntityMap.remove(mesh);
+
+            // Remove the mesh shader if it is unused.
+
+            Shader shader = mesh.getMaterial().getShader();
+
+            List<Mesh> meshList = shaderToMeshMap.get(shader);
+
+            meshList.remove(mesh);
+
+            if (meshList.size() > 0) {
+                continue;
+            }
+
+            shaderToMeshMap.remove(shader);
+        }
+    }
+
+    private void addEntitiesMeshes(Entity[] entities) {
 
         for (Entity entity : entities) {
             addEntityMeshes(entity);
@@ -131,8 +186,21 @@ public class Scene {
         return frameEntities;
     }
 
+    public void clear() {
+
+        /*
+        root = new Entity();
+
+        meshMap.clear();
+        shaderMap.clear();
+        frameEntities.clear();
+        */
+    }
+
     public void input(Input input) {
-        root.input(input);
+        for (Entity entity : entities) {
+            entity.input(input);
+        }
     }
 
     /*  The scene will walk the entity hierarchy directly so that it can check for new meshes and add them
@@ -142,7 +210,9 @@ public class Scene {
 
         frameEntities.clear();
 
-        update(interval, root);
+        for (Entity entity : entities) {
+            update(interval, entity);
+        }
     }
 
     private void update(float interval, Entity entity) {
@@ -151,11 +221,10 @@ public class Scene {
 
         frameEntities.add(entity);
 
-        if (entity.getNewMeshFlag()) {// .justRenderable()) {
+        if (entity.getNewMeshFlag()) {
             entity.setNewMeshFlag(false);
 
             addEntityMeshes(entity);
-
         }
 
         if (entity.children == null) {
