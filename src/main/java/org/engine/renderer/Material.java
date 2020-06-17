@@ -102,6 +102,10 @@ public class Material {
         this.texture = texture;
     }
 
+    public boolean isTransparent() {
+        return (this.diffuseColor.w < 1.0f);
+    }
+
     public Shader getShader() { return shader; }
 
     public void setShader(Shader shader) { this.shader = shader; }

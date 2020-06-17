@@ -114,17 +114,28 @@ public class SceneRenderer {
         // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
         window.setResized(false);
  
+        // Opaque
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
 
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(shader, scene, meshList);
+            renderShaderMeshes(shader, scene, meshList, false);
         }
+
+        // Transparent
+        for (Shader shader : mapShaders.keySet()) {
+
+            // Get the meshes that use this shader.
+            List<Mesh> meshList = mapShaders.get(shader);
+
+            renderShaderMeshes(shader, scene, meshList, true);
+        }
+
     }
 
-    private void renderShaderMeshes(Shader shader, Scene scene, List<Mesh> meshList) {
+    private void renderShaderMeshes(Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
 
         shader.bind();
 
@@ -139,6 +150,10 @@ public class SceneRenderer {
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
         for (Mesh mesh : meshList) {
+
+            if (transparency != mesh.getMaterial().isTransparent()){
+                continue;
+            }
 
             uniformManager.setMeshUniforms(mesh);
 

@@ -33,7 +33,7 @@ public class Hud {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
 
         canvas = new Canvas(window, new Vector2f(720, 480));
-        bPanel = new Panel(canvas,  canvas, new Rect(0, 0, -100, -100, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
+        bPanel = new Panel(canvas,  canvas, new Rect(50, 50, -50, -50, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
         new Button(canvas, bPanel, new Rect(100, 100, 100, 30),      new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
         new Panel(canvas,  bPanel, new Rect(-100, 100, 100, 50),     new Rect(1, 0, 1, 0, true), new Vector2f(1, 0));
 
@@ -41,7 +41,7 @@ public class Hud {
         fpsText = new Text(canvas, canvas, new Rect(5, -5, 100, 20), new Rect(0, 1, 0, 1, true), new Vector2f(0, 1), "0.0", fontTexture);;
 
         bPanel.setVisible(false);
-        bPanel.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+        bPanel.setColor(new Color(0.25f, 0.0f, 0.75f, 0.5f));
 
         scene.addEntity(canvas);
     }
