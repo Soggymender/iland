@@ -10,9 +10,6 @@ import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.Utilities;
 
-import org.tiland.Tile;
-import org.tiland.TileUniformManager;
-
 public class Game implements SceneLoader.IEventHandler {
 
     private Zone zone;
@@ -29,6 +26,8 @@ public class Game implements SceneLoader.IEventHandler {
     private int   fpsSamples = 0;
 
     Shader tileShader = null;
+
+    int count = 0;
 
     //private TileMap tileMap = null;
 
@@ -59,9 +58,22 @@ public class Game implements SceneLoader.IEventHandler {
 
     private void startZone() {
 
+        hud.setFadeOut();
+        hud.startFadeIn();
+
         zone.loadRequestedZone();
 
         avatar.goToStart();
+        
+        if (zone.enteredByDoor()) {
+            if (count % 2 != 0) {
+                camera.setHeading(45.0f);
+            } else {
+                camera.setHeading(-45.0f);
+            }
+        }
+        
+        count += 1;
     }
 
     private void initializeTileShader() throws Exception {
@@ -123,6 +135,8 @@ public class Game implements SceneLoader.IEventHandler {
         if (!zone.getRequestedZone().isEmpty()) {
             startZone();
         }
+
+        hud.update(interval);
 
         if (accumulator >= 1.0f) {
 

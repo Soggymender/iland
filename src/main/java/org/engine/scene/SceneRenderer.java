@@ -223,7 +223,7 @@ public class SceneRenderer {
             DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
 
             Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-            dir.mul(viewMatrix);
+            //dir.mul(viewMatrix);
             currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
             shader.setUniform("directionalLight", currDirLight);
         }

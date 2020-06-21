@@ -55,6 +55,10 @@ public class Zone {
         return requestedZoneName;
     }
 
+    public boolean enteredByDoor() {
+        return !requestedDoorName.isEmpty();
+    }
+
     public void loadRequestedZone() {
         if (requestedZoneName.isEmpty()) {
             return;
