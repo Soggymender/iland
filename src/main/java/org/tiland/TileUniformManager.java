@@ -1,6 +1,7 @@
 package org.tiland;
 
 import org.engine.core.Transform;
+import org.engine.renderer.Camera;
 import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
@@ -47,9 +48,9 @@ public class TileUniformManager implements IUniformManager {
         shader.setUniform("material", mesh.getMaterial());
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity) {
+    public void setEntityUniforms(Camera camera, Scene scene, Entity entity) {
 
-        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
+        Matrix4f viewMatrix = camera.getViewMatrix();
 
         Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
         shader.setUniform("modelViewMatrix", modelViewMatrix);

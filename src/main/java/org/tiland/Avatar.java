@@ -13,11 +13,11 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Avatar extends Sprite {
 
-    private static final float CROUCH_JUMP_IMPULSE = -4.0f;
-
     private Zone zone = null;
 
     public boolean crouch = false;
+    public boolean enter = false;
+
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
@@ -47,6 +47,14 @@ public class Avatar extends Sprite {
         scene.addEntity(this);
     }
 
+    public void goToStart() {
+
+        Vector3f avatarStart = new Vector3f(zone.avatarStart);
+        avatarStart.z = getPosition().z;
+        
+        setPosition(avatarStart);
+    }
+
     @Override
     public void input(Input input) {
 
@@ -70,6 +78,10 @@ public class Avatar extends Sprite {
             crouch = true;
         }
 
+        if (keyboard.keyJustDown(GLFW_KEY_W)) {
+            enter = true;
+        }
+
         if (moveVec.length() > 0.0f) {
             moveVec.normalize();
         }
@@ -77,6 +89,15 @@ public class Avatar extends Sprite {
 
     @Override
     public void update(float interval) {
+
+        if (enter) {
+
+            enter = false;
+
+            if (zone.enterDoor(this)) {
+                return;
+            }
+        }
 
         if (jump && crouch) {
 

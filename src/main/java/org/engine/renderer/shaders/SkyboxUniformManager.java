@@ -1,6 +1,7 @@
 package org.engine.renderer.shaders;
 
 import org.engine.core.Transform;
+import org.engine.renderer.Camera;
 import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
@@ -36,8 +37,8 @@ public class SkyboxUniformManager implements IUniformManager {
 
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity) {
-        Matrix4f viewMatrix = new Matrix4f(scene.getCamera().getViewMatrix());
+    public void setEntityUniforms(Camera camera, Scene scene, Entity entity) {
+        Matrix4f viewMatrix = new Matrix4f(camera.getViewMatrix());
         viewMatrix.m30(0);
         viewMatrix.m31(0);
         viewMatrix.m32(0);

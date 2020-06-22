@@ -5,6 +5,7 @@ import org.joml.Vector2f;
 
 import org.engine.core.Rect;
 import org.engine.input.*;
+import org.engine.renderer.Color;
 import org.engine.renderer.Material;
 import org.engine.renderer.Shader;
 import org.engine.renderer.Mesh;
@@ -78,6 +79,10 @@ public class UiElement extends Entity {
 
     public void setDepth(float depth) {
         rectTrans.setDepth(depth);
+    }
+
+    public void setColor(Color color) {
+        material.setDiffuseColor(color);
     }
 
     public void updateSize() {

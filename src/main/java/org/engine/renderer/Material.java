@@ -16,7 +16,7 @@ public class Material {
     private Shader shader;
 //    private Texture normalMap;
 
-    public Material() throws Exception {
+    public Material() {
         this.ambientColor = DEFAULT_COLOR;
         this.diffuseColor = DEFAULT_COLOR;
         this.specularColor = DEFAULT_COLOR;
@@ -100,6 +100,10 @@ public class Material {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public boolean isTransparent() {
+        return (this.diffuseColor.w < 1.0f);
     }
 
     public Shader getShader() { return shader; }

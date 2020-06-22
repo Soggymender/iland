@@ -15,7 +15,7 @@ public class Texture {
     private int width;
     private int height;
 
-    public Texture(String fileName) throws Exception {
+    public Texture(String fileName) {
 
     //    this(loadTexture(fileName);
         ByteBuffer buf;
@@ -27,7 +27,8 @@ public class Texture {
 
             buf = stbi_load(fileName, w, h, channels, 4);
             if (buf == null) {
-                throw new Exception("Image file [" + fileName  + "] not loaded: " + stbi_failure_reason());
+                return;
+                //throw new Exception("Image file [" + fileName  + "] not loaded: " + stbi_failure_reason());
             }
 
             width = w.get();

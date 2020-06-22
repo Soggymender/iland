@@ -10,9 +10,6 @@ import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.Utilities;
 
-import org.tiland.Tile;
-import org.tiland.TileUniformManager;
-
 public class Game implements SceneLoader.IEventHandler {
 
     private Zone zone;
@@ -21,8 +18,13 @@ public class Game implements SceneLoader.IEventHandler {
     private final GameCamera camera;
 
     private Scene scene = null;
+    private Scene mapScene = null;
+
+    private SceneRenderer sceneRenderer = null;
 
     private Hud hud;
+
+    private MiniMap map;
 
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
@@ -30,33 +32,58 @@ public class Game implements SceneLoader.IEventHandler {
 
     Shader tileShader = null;
 
+    int count = 0;
+
     //private TileMap tileMap = null;
 
-    public Game(Window window, Scene scene) throws Exception
+    public Game(Window window, Scene scene, Scene mapScene, SceneRenderer sceneRenderer) throws Exception
     {
         this.scene = scene;
+        this.mapScene = mapScene;
 
-        zone = new Zone();
+        this.sceneRenderer = sceneRenderer;
+
+        zone = new Zone(scene, this);
 
         avatar = new Avatar(scene, zone);
 
         camera = new GameCamera(window, avatar, zone);
-     
-        scene.setCamera(camera);
 
         hud = new Hud(window, scene);
+
+        map = new MiniMap(mapScene, avatar, window);
     }
 
     public void initialize() throws Exception {
 
         initializeTileShader();
 
-        SceneLoader.loadEntities("src/main/resources/tiland/models/temple.fbx", "src/main/resources/tiland/textures/", this);
+        zone.requestZone("temple", "");
 
         // Setup Lights
         setupLights();
+    }
 
-       
+    private void startZone() {
+
+        hud.setFadeOut();
+        hud.startFadeIn();
+
+        zone.loadRequestedZone();
+
+        avatar.goToStart();
+        
+        if (zone.enteredByDoor()) {
+            if (count % 2 != 0) {
+                camera.setHeading(45.0f);
+            } else {
+                camera.setHeading(-45.0f);
+            }
+        }
+        
+        count += 1;
+
+        mapScene.addEntity(zone.zoneRoot);
     }
 
     private void initializeTileShader() throws Exception {
@@ -82,6 +109,7 @@ public class Game implements SceneLoader.IEventHandler {
     private void setupLights() {
         SceneLighting sceneLighting = new SceneLighting();
         scene.setSceneLighting(sceneLighting);
+        mapScene.setSceneLighting(sceneLighting);
 
         // Ambient Light
      //   sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
@@ -110,9 +138,20 @@ public class Game implements SceneLoader.IEventHandler {
         }
        
         hud.input(input);
+
+        scene.input(input);
     }
 
     public void update(float interval) {
+
+        // Check for a zone request.
+        if (!zone.getRequestedZone().isEmpty()) {
+            startZone();
+        }
+
+        hud.update(interval);
+
+        map.update(interval);
 
         if (accumulator >= 1.0f) {
 
@@ -133,32 +172,65 @@ public class Game implements SceneLoader.IEventHandler {
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
+
+       scene.update(interval);
+       mapScene.update(interval);
     }
 
-    public Entity preLoadEntityEvent(Map<String, String>properties) throws Exception {
+    public void render(float interval) {
 
-        String collision = properties.get("p_collision");
-        if (collision != null) {
-            if (collision.equals("platform")) {
+        // Update the camera last so that the targets transform is up to date and already simulated.
+        camera.update(interval);
+        map.camera.update(interval);
 
-            } else if (collision.equals("box")) {
-                System.out.println("pre box collision");
+        // Render
+        sceneRenderer.render(camera, scene, true);
+        sceneRenderer.render(map.camera, scene, false);
+    }
+
+    public void LoadSRequestEvent() {
+
+    }
+
+    public Entity preLoadEntityEvent(Map<String, String>properties) {
+
+        String type = properties.get("p_type");
+        if (type != null) {
+
+            if (type.equals("door")) {
+                return zone.createDoor(properties);
             }
+
+        } else {
+
+            String collision = properties.get("p_collision");
+            if (collision != null) {
+                if (collision.equals("platform")) {
+
+                } else if (collision.equals("box")) {
+                    System.out.println("pre box collision");
+                }
+            }
+
+            String depth = properties.get("p_depth");
+            if (depth != null) {
+                Tile tile = new Tile();
+                tile.depth = Float.parseFloat(depth);
+
+                return tile;
+            } 
         }
 
-        String depth = properties.get("p_depth");
-        if (depth != null) {
-            Tile tile = new Tile();
-            tile.depth = Float.parseFloat(depth);
-
-            return tile;
-        } 
-        
         return new Entity();
-
     }
 
-    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) throws Exception {
+    public void postLoadEntityEvent(Entity entity, Map<String, String>properties) {
+
+        String avatarStart = properties.get("p_avatar_start");
+        if (avatarStart != null) {
+            zone.setAvatarStart(entity.getPosition());
+            return;
+        }
 
         Mesh mesh = entity.getMesh();
         if (mesh != null) {
@@ -168,8 +240,9 @@ public class Game implements SceneLoader.IEventHandler {
             }
         }
 
-        scene.addEntity(entity);
-        zone.addEntity(entity);
+        if (!(entity instanceof Door)) {
+            zone.addEntity(entity);
+        }
 
         String collision = properties.get("p_collision");
         if (collision != null) {

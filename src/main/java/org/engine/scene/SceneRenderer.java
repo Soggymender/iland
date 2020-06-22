@@ -9,7 +9,6 @@ import org.engine.Utilities;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.engine.core.*;
 import org.joml.Matrix4f;
 
 import org.joml.Vector3f;
@@ -22,8 +21,6 @@ public class SceneRenderer {
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
 
-    private Transform transform;
-
     private Shader defaultShader;
     private Shader skyboxShader;
     private Shader hudShader;
@@ -34,7 +31,6 @@ public class SceneRenderer {
 
         this.window = window;
 
-        transform = new Transform();
         specularPower = 10.0f;
 
         initializeDefaultShader();
@@ -112,37 +108,59 @@ public class SceneRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Scene scene) {
-        clear();
+    public void render(Camera camera, Scene scene, boolean clear) {
+
+        Viewport viewport = camera.getViewport();
+
+        glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
+
+        if (clear) {
+            clear();
+        }
         
         // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
         window.setResized(false);
  
+        // Opaque
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         for (Shader shader : mapShaders.keySet()) {
 
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(shader, scene, meshList);
+            renderShaderMeshes(camera, shader, scene, meshList, false);
         }
+
+        // Transparent
+        for (Shader shader : mapShaders.keySet()) {
+
+            // Get the meshes that use this shader.
+            List<Mesh> meshList = mapShaders.get(shader);
+
+            renderShaderMeshes(camera, shader, scene, meshList, true);
+        }
+
     }
 
-    private void renderShaderMeshes(Shader shader, Scene scene, List<Mesh> meshList) {
+    private void renderShaderMeshes(Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
 
         shader.bind();
 
         IUniformManager uniformManager = shader.getUniformManager();
 
-        uniformManager.setShaderUniforms(scene.getCamera().getViewport());
+        uniformManager.setShaderUniforms(camera.getViewport());
 
         if (uniformManager.getUseSceneLighting()) {
-            setLightingUniforms(shader, scene);
+            setLightingUniforms(camera, shader, scene);
         }
         
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
 
         for (Mesh mesh : meshList) {
+
+            if (transparency != mesh.getMaterial().isTransparent()){
+                continue;
+            }
 
             uniformManager.setMeshUniforms(mesh);
 
@@ -151,7 +169,7 @@ public class SceneRenderer {
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
                 if (entity.getVisible() && entity.getParentVisible()) {
-                    uniformManager.setEntityUniforms(scene, entity);
+                    uniformManager.setEntityUniforms(camera,scene, entity);
                 }
             });
         }
@@ -159,12 +177,15 @@ public class SceneRenderer {
         shader.unbind();
     }
 
-    private void setLightingUniforms(Shader shader, Scene scene) {
+    private void setLightingUniforms(Camera camera, Shader shader, Scene scene) {
 
         SceneLighting sceneLighting = scene.getSceneLighting();
+        if (sceneLighting == null) {
+            return;
+        }
 
         // Update the view matrix.
-        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
+        Matrix4f viewMatrix = camera.getViewMatrix();
 
         if (sceneLighting.getAmbientLight() != null) {
             shader.setUniform("ambientLight", sceneLighting.getAmbientLight());
@@ -212,7 +233,7 @@ public class SceneRenderer {
             DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
 
             Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-            dir.mul(viewMatrix);
+            //dir.mul(viewMatrix);
             currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
             shader.setUniform("directionalLight", currDirLight);
         }

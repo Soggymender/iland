@@ -85,7 +85,7 @@ public class HeightMapMesh {
 
 
     // Heightmap mesh from mesh.
-    public HeightMapMesh(Mesh mesh, String textureFilename) throws Exception {
+    public HeightMapMesh(Mesh mesh, String textureFilename) {
 
         BoundingBox bbox = mesh.getBbox();
 

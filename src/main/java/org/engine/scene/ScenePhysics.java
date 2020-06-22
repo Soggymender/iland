@@ -1,7 +1,6 @@
 package org.engine.scene;
 
 import java.util.List;
-import java.util.Map;
 
 import org.joml.Vector3f;
 
@@ -88,7 +87,7 @@ public class ScenePhysics {
                         boolean fromTop = aPos.y + aBox.min.y + 0.001f >= bPos.y + bBox.max.y;
                         boolean fromBottom = aPos.y + aBox.max.y <= bPos.y + bBox.min.y;
 
-                        float fromTopVal = (aPos.y + aBox.min.y) - (bPos.y + bBox.max.y);
+                //        float fromTopVal = (aPos.y + aBox.min.y) - (bPos.y + bBox.max.y);
 
                         Vector3f aRes = new Vector3f();
 

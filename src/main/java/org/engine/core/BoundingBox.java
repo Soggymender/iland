@@ -10,4 +10,9 @@ public class BoundingBox {
         min = new Vector3f();
         max = new Vector3f();
     }
+
+    public void reset() {
+        min.zero();
+        max.zero();
+    }
 }

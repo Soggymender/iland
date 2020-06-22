@@ -1,6 +1,7 @@
 package org.tiland;
 
 import org.engine.core.Transform;
+import org.engine.renderer.Camera;
 import org.engine.input.*;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
@@ -10,8 +11,9 @@ import org.joml.Vector3f;
 public class Cursor extends Entity {
 
     Scene scene;
+    Camera camera;
 
-    public Cursor(Scene scene) {
+    public Cursor(Scene scene, Camera camera) {
         this.scene = scene;
 
         scene.addEntity(this);
@@ -27,10 +29,10 @@ public class Cursor extends Entity {
             Vector2f pos = mouse.getPosition();
             Vector3f depthPos = new Vector3f(pos.x, pos.y, 0.1f);
 
-            Vector3f nearPos = Transform.unproject(depthPos, scene.getCamera());
+            Vector3f nearPos = Transform.unproject(depthPos, camera);
 
             depthPos.z = 1.1f;
-            Vector3f farPos = Transform.unproject(depthPos, scene.getCamera());
+            Vector3f farPos = Transform.unproject(depthPos, camera);
             
 
             System.out.println("clicked " + pos.x + ", " + pos.y);
