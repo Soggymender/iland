@@ -20,8 +20,14 @@ public class Scene {
         can be used to bypass work in those calls */
 //    Entity root = null;
     
+    // Entities in the scene.
     public List<Entity> entities = null;
 
+    // Entities being rendered.
+    private List<Entity> renderEntities = null;
+
+    // Entities processed this frame.
+    private List<Entity> frameEntities = null;
 
     /*  A "flat" map of meshes in the scene, where each references the list of entities that reference the mesh.
         TODO: Entities in the root hierarchy will automatically be added to the map. Entities do not have to be in the
@@ -41,16 +47,16 @@ public class Scene {
         scene renderer cast them as needed. */
     private SceneLighting sceneLighting;
 
-    private List<Entity> frameEntities;
-
     public Scene()
     {
         //root = new Entity();
         entities = new ArrayList<>();
 
+        renderEntities = new ArrayList<>();
+        frameEntities = new ArrayList<>();
+
         meshToEntityMap = new HashMap<>();
         shaderToMeshMap = new HashMap<>();
-        frameEntities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {
@@ -88,6 +94,8 @@ public class Scene {
             return;
         }
 
+        renderEntities.add(entity);
+
         for (Mesh mesh : meshes) {
 
             // Map the mesh to entity.
@@ -118,6 +126,9 @@ public class Scene {
         if (meshes == null) {
             return;
         }
+
+        renderEntities.remove(entity);
+
         for (Mesh mesh : meshes) {
 
             // Get the entities for this mesh.
@@ -221,8 +232,10 @@ public class Scene {
 
         frameEntities.add(entity);
 
-        if (entity.getNewMeshFlag()) {
-            entity.setNewMeshFlag(false);
+        if (!renderEntities.contains(entity)) {
+
+                //if (entity.getNewMeshFlag()) {
+                //       entity.setNewMeshFlag(false);
 
             addEntityMeshes(entity);
         }

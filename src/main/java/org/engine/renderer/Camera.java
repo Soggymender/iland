@@ -15,11 +15,20 @@ public class Camera extends Entity {
     Matrix4f viewMatrix;
     Viewport viewport;
 
+    public boolean autoResize = false;
+
     Window window;
 
     public Camera(Window window) {
 
+        this();
+
         this.window = window;
+
+        autoResize = true;
+    }
+
+    public Camera() {
 
         viewport = new Viewport();
 
@@ -32,6 +41,11 @@ public class Camera extends Entity {
     public Camera(Vector3f position, Vector3f rotation) {
         this.position = position;
         this.rotation = rotation;
+    }
+
+    public void setViewport(float x, float y, float width, float height) {
+
+        viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV);
     }
 
     public Viewport getViewport() {
@@ -101,9 +115,12 @@ public class Camera extends Entity {
 
         updateViewMatrix();
 
-        if (window.isResized()) {
+        if (autoResize && window.isResized()) {
 
-            viewport.set(0, 0, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR, FOV);
+            float windowWidth = window.getWidth();
+            float windowHeight = window.getHeight();
+
+            viewport.set(0, 0, windowWidth, windowHeight, Z_NEAR, Z_FAR, FOV);
 
           //  window.setResized(false);
         }

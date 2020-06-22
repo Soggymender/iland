@@ -108,8 +108,15 @@ public class SceneRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Scene scene) {
-        clear();
+    public void render(Scene scene, boolean clear) {
+
+        Viewport viewport = scene.getCamera().getViewport();
+
+        glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
+
+        if (clear) {
+            clear();
+        }
         
         // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
         window.setResized(false);
@@ -173,6 +180,9 @@ public class SceneRenderer {
     private void setLightingUniforms(Shader shader, Scene scene) {
 
         SceneLighting sceneLighting = scene.getSceneLighting();
+        if (sceneLighting == null) {
+            return;
+        }
 
         // Update the view matrix.
         Matrix4f viewMatrix = scene.getCamera().getViewMatrix();

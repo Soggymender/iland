@@ -31,9 +31,11 @@ public class TiMain {
             ScenePhysics  scenePhysics  = new ScenePhysics();
             SceneRenderer sceneRenderer = new SceneRenderer(window);
 
+            Scene mapScene = new Scene();
+
             new Sketch();
 
-            Game game = new Game(window, scene);
+            Game game = new Game(window, scene, mapScene);
 
             game.initialize();
 
@@ -58,15 +60,19 @@ public class TiMain {
                 // Update
                 game.update(elapsedTime);                
                 scene.update(elapsedTime);
+                mapScene.update(elapsedTime);
 
                 // Physics
                 scenePhysics.update(scene, elapsedTime);
 
                 // Update the camera last so that the targets transform is up to date and already simulated.
                 scene.getCamera().update(elapsedTime);
+                mapScene.getCamera().update(elapsedTime);
 
                 // Render
-                sceneRenderer.render(scene);
+                sceneRenderer.render(scene, true);
+                sceneRenderer.render(mapScene, false);
+
                 window.update();
             }
 

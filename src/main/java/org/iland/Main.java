@@ -59,7 +59,7 @@ public class Main {
                 scene.getCamera().update(elapsedTime);
 
                 // Render
-                sceneRenderer.render(scene);
+                sceneRenderer.render(scene, true);
                 window.update();
             }
 

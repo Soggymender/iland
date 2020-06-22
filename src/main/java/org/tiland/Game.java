@@ -18,8 +18,11 @@ public class Game implements SceneLoader.IEventHandler {
     private final GameCamera camera;
 
     private Scene scene = null;
+    private Scene mapScene = null;
 
     private Hud hud;
+
+    private MiniMap map;
 
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
@@ -31,9 +34,10 @@ public class Game implements SceneLoader.IEventHandler {
 
     //private TileMap tileMap = null;
 
-    public Game(Window window, Scene scene) throws Exception
+    public Game(Window window, Scene scene, Scene mapScene) throws Exception
     {
         this.scene = scene;
+        this.mapScene = mapScene;
 
         zone = new Zone(scene, this);
 
@@ -44,6 +48,8 @@ public class Game implements SceneLoader.IEventHandler {
         scene.setCamera(camera);
 
         hud = new Hud(window, scene);
+
+        map = new MiniMap(mapScene, avatar, window);
     }
 
     public void initialize() throws Exception {
@@ -74,6 +80,8 @@ public class Game implements SceneLoader.IEventHandler {
         }
         
         count += 1;
+
+        mapScene.addEntity(zone.zoneRoot);
     }
 
     private void initializeTileShader() throws Exception {
@@ -99,6 +107,7 @@ public class Game implements SceneLoader.IEventHandler {
     private void setupLights() {
         SceneLighting sceneLighting = new SceneLighting();
         scene.setSceneLighting(sceneLighting);
+        mapScene.setSceneLighting(sceneLighting);
 
         // Ambient Light
      //   sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
@@ -137,6 +146,8 @@ public class Game implements SceneLoader.IEventHandler {
         }
 
         hud.update(interval);
+
+        map.update(interval);
 
         if (accumulator >= 1.0f) {
 
