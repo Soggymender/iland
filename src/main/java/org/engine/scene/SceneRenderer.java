@@ -108,9 +108,9 @@ public class SceneRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Scene scene, boolean clear) {
+    public void render(Camera camera, Scene scene, boolean clear) {
 
-        Viewport viewport = scene.getCamera().getViewport();
+        Viewport viewport = camera.getViewport();
 
         glViewport((int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height);
 
@@ -128,7 +128,7 @@ public class SceneRenderer {
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(shader, scene, meshList, false);
+            renderShaderMeshes(camera, shader, scene, meshList, false);
         }
 
         // Transparent
@@ -137,21 +137,21 @@ public class SceneRenderer {
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(shader, scene, meshList, true);
+            renderShaderMeshes(camera, shader, scene, meshList, true);
         }
 
     }
 
-    private void renderShaderMeshes(Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
+    private void renderShaderMeshes(Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
 
         shader.bind();
 
         IUniformManager uniformManager = shader.getUniformManager();
 
-        uniformManager.setShaderUniforms(scene.getCamera().getViewport());
+        uniformManager.setShaderUniforms(camera.getViewport());
 
         if (uniformManager.getUseSceneLighting()) {
-            setLightingUniforms(shader, scene);
+            setLightingUniforms(camera, shader, scene);
         }
         
         Map<Mesh, List<Entity>> mapMeshes = scene.getEntityMeshes();
@@ -169,7 +169,7 @@ public class SceneRenderer {
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
                 if (entity.getVisible() && entity.getParentVisible()) {
-                    uniformManager.setEntityUniforms(scene, entity);
+                    uniformManager.setEntityUniforms(camera,scene, entity);
                 }
             });
         }
@@ -177,7 +177,7 @@ public class SceneRenderer {
         shader.unbind();
     }
 
-    private void setLightingUniforms(Shader shader, Scene scene) {
+    private void setLightingUniforms(Camera camera, Shader shader, Scene scene) {
 
         SceneLighting sceneLighting = scene.getSceneLighting();
         if (sceneLighting == null) {
@@ -185,7 +185,7 @@ public class SceneRenderer {
         }
 
         // Update the view matrix.
-        Matrix4f viewMatrix = scene.getCamera().getViewMatrix();
+        Matrix4f viewMatrix = camera.getViewMatrix();
 
         if (sceneLighting.getAmbientLight() != null) {
             shader.setUniform("ambientLight", sceneLighting.getAmbientLight());

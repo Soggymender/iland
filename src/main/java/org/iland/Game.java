@@ -19,6 +19,8 @@ public class Game implements SceneLoader.IEventHandler {
     Terrain terrain;
 
     private Scene scene = null;
+    private SceneRenderer sceneRenderer = null;
+
     private Entity sceneRoot = new Entity();
 
     private Hud hud;
@@ -29,14 +31,13 @@ public class Game implements SceneLoader.IEventHandler {
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
 
-    public Game(Window window, Scene scene) throws Exception
+    public Game(Window window, Scene scene, SceneRenderer sceneRenderer) throws Exception
     {
         this.scene = scene;
+        this.sceneRenderer = sceneRenderer;
 
         avatar = new Avatar(scene);
         camera = new GameCamera(window, avatar);
-
-        scene.setCamera(camera);
 
         hud = new Hud(window, scene);
 
@@ -99,6 +100,9 @@ public class Game implements SceneLoader.IEventHandler {
         }
        
         hud.input(input);
+
+        scene.input(input);
+        camera.input(input);
     }
 
     public void update(float interval) {
@@ -149,8 +153,18 @@ public class Game implements SceneLoader.IEventHandler {
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
+
+       scene.update(interval);
+
+       // Update the camera last so that the targets transform is up to date and already simulated.
+       camera.update(interval);
     }
   
+    public void render(float interval) {
+
+        sceneRenderer.render(camera,scene, true);
+    }
+
     public Entity preLoadEntityEvent(Map<String, String>properties) {
 
         String type = properties.get("p_type");

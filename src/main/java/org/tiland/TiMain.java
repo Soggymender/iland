@@ -35,7 +35,7 @@ public class TiMain {
 
             new Sketch();
 
-            Game game = new Game(window, scene, mapScene);
+            Game game = new Game(window, scene, mapScene, sceneRenderer);
 
             game.initialize();
 
@@ -55,23 +55,14 @@ public class TiMain {
                 }
 
                 game.input(input);
-                scene.input(input);
 
                 // Update
                 game.update(elapsedTime);                
-                scene.update(elapsedTime);
-                mapScene.update(elapsedTime);
 
                 // Physics
                 scenePhysics.update(scene, elapsedTime);
 
-                // Update the camera last so that the targets transform is up to date and already simulated.
-                scene.getCamera().update(elapsedTime);
-                mapScene.getCamera().update(elapsedTime);
-
-                // Render
-                sceneRenderer.render(scene, true);
-                sceneRenderer.render(mapScene, false);
+                game.render(elapsedTime);
 
                 window.update();
             }

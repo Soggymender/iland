@@ -20,6 +20,8 @@ public class Game implements SceneLoader.IEventHandler {
     private Scene scene = null;
     private Scene mapScene = null;
 
+    private SceneRenderer sceneRenderer = null;
+
     private Hud hud;
 
     private MiniMap map;
@@ -34,18 +36,18 @@ public class Game implements SceneLoader.IEventHandler {
 
     //private TileMap tileMap = null;
 
-    public Game(Window window, Scene scene, Scene mapScene) throws Exception
+    public Game(Window window, Scene scene, Scene mapScene, SceneRenderer sceneRenderer) throws Exception
     {
         this.scene = scene;
         this.mapScene = mapScene;
+
+        this.sceneRenderer = sceneRenderer;
 
         zone = new Zone(scene, this);
 
         avatar = new Avatar(scene, zone);
 
         camera = new GameCamera(window, avatar, zone);
-     
-        scene.setCamera(camera);
 
         hud = new Hud(window, scene);
 
@@ -136,6 +138,8 @@ public class Game implements SceneLoader.IEventHandler {
         }
        
         hud.input(input);
+
+        scene.input(input);
     }
 
     public void update(float interval) {
@@ -168,6 +172,20 @@ public class Game implements SceneLoader.IEventHandler {
        accumulator += interval;
        fpsTotal += fps;
        fpsSamples++;
+
+       scene.update(interval);
+       mapScene.update(interval);
+    }
+
+    public void render(float interval) {
+
+        // Update the camera last so that the targets transform is up to date and already simulated.
+        camera.update(interval);
+        map.camera.update(interval);
+
+        // Render
+        sceneRenderer.render(camera, scene, true);
+        sceneRenderer.render(map.camera, scene, false);
     }
 
     public void LoadSRequestEvent() {

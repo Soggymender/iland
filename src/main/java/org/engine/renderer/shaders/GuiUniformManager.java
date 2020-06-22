@@ -1,6 +1,7 @@
 package org.engine.renderer.shaders;
 
 import org.engine.core.Transform;
+import org.engine.renderer.Camera;
 import org.engine.renderer.IUniformManager;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Shader;
@@ -31,9 +32,9 @@ public class GuiUniformManager implements IUniformManager {
         shader.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
     }
 
-    public void setEntityUniforms(Scene scene, Entity entity) {
+    public void setEntityUniforms(Camera camera, Scene scene, Entity entity) {
 
-        Matrix4f ortho = scene.getCamera().getViewport().getOrthoProjectionMatrix();
+        Matrix4f ortho = camera.getViewport().getOrthoProjectionMatrix();
 
         // Set ortohtaphic and model matrix for this HUD item
         Matrix4f projModelMatrix = Transform.buildOrthoProjectionModelMatrix(entity, ortho);

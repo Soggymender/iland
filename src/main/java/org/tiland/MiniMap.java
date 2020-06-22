@@ -8,7 +8,7 @@ public class MiniMap {
     private Scene scene;
     private Entity target;
 
-    private Camera camera;
+    public Camera camera;
 
     public MiniMap(Scene scene, Entity target, Window window) {
 
@@ -28,8 +28,6 @@ public class MiniMap {
         float height = windowHeight * 0.5f;
 
         camera.setViewport(x, y, width, height);
-
-        scene.setCamera(camera);
     }
 
     public void update(float interval) {
