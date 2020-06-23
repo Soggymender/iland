@@ -85,6 +85,10 @@ public class UiElement extends Entity {
         material.setDiffuseColor(color);
     }
 
+    public Rect getScreenRect() {
+        return rectTrans.screenRect.copy();
+    }
+
     public void updateSize() {
         flags.dirty = true;
 

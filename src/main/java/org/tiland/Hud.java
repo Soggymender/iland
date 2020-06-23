@@ -23,6 +23,8 @@ public class Hud {
     private Canvas canvas;
     private Panel bPanel;
 
+    private Panel mapPanel;
+
     private Panel fade;
     private float curFadeValue = 0.0f;
     private float desFadeValue = 0.0f;
@@ -42,6 +44,8 @@ public class Hud {
         
         fade = new Panel(canvas, canvas, new Rect(0, 0, 0, 0, true), new Rect(0, 0, 1, 1), new Vector2f(0, 0));
 
+        mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 200), new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
+
         bPanel = new Panel(canvas,  canvas, new Rect(50, 50, -50, -50, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
         new Button(canvas, bPanel, new Rect(100, 100, 100, 30),      new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
         new Panel(canvas,  bPanel, new Rect(-100, 100, 100, 50),     new Rect(1, 0, 1, 0, true), new Vector2f(1, 0));
@@ -52,6 +56,9 @@ public class Hud {
         fade.setVisible(false);
         fade.setDepth(1.0f);
 
+        mapPanel.setVisible(false);
+        mapPanel.setColor(new Color(0, 0, 0, 0.25f));
+
         bPanel.setVisible(false);
         bPanel.setColor(new Color(0.25f, 0.0f, 0.75f, 0.5f));
 
@@ -60,6 +67,10 @@ public class Hud {
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public Rect getMapPanelRect() {
+        return mapPanel.getScreenRect();
     }
 
     public void startFadeIn() {

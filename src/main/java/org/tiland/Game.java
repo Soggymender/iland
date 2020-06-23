@@ -51,7 +51,8 @@ public class Game implements SceneLoader.IEventHandler {
 
         hud = new Hud(window, scene);
 
-        map = new MiniMap(mapScene, avatar, window);
+        // The target is actually the main camera since it doesn't track during jumps, etc.
+        map = new MiniMap(mapScene, camera, hud, window);
     }
 
     public void initialize() throws Exception {
@@ -83,7 +84,8 @@ public class Game implements SceneLoader.IEventHandler {
         
         count += 1;
 
-        mapScene.addEntity(zone.zoneRoot);
+        //mapScene.addEntity(zone.zoneRoot);
+        map.addZone(zone.getAvatarBounds());
     }
 
     private void initializeTileShader() throws Exception {

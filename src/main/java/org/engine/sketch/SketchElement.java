@@ -44,6 +44,8 @@ public class SketchElement extends Entity {
 
     public void clear() {
         lines.clear();
+
+        // Should this set flags.dirty = true? yes?
     }
 
     public void addLines(Vector4f color, Float ...coords) {
