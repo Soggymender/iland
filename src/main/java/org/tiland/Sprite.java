@@ -6,15 +6,18 @@ import org.joml.*;
 
 public class Sprite extends Entity {
 
-    private static final float MOVE_SPEED = 4.0f;
+    private static final float ACCELERATION = 16.0f;
+    private static final float MOVE_SPEED = 2.5f;
     private static final float JUMP_IMPULSE = 5.0f;
 
     Scene scene = null;
 
     protected Vector2f moveVec;
+    protected Vector2f oldMoveVec;
 
+    Vector2f moveAccel;
     Vector2f moveSpeed;
-    float moveDrag = 16.0f;
+    float moveDrag = 48.0f;
 
     protected boolean jump = false;
 
@@ -25,6 +28,9 @@ public class Sprite extends Entity {
         this.scene = scene;
 
         moveVec = new Vector2f();
+        oldMoveVec = new Vector2f();
+
+        moveAccel = new Vector2f();
         moveSpeed = new Vector2f();
 
         initialize();
@@ -80,9 +86,21 @@ public class Sprite extends Entity {
             moveSpeed.x *= newMoveLength;
         }
 
+        if (moveVec.x > 0.0f && oldMoveVec.x < 0.0f ||
+            moveVec.x < 0.0f && oldMoveVec.x > 0.0f) {
+            moveAccel.x = 0.0f;
+        }
+
         // Apply ground movement.
         if (moveVec.length() > 0.0f) {
-            moveSpeed.x = moveVec.x * MOVE_SPEED;
+            
+            moveAccel.x += ACCELERATION * interval;
+            if (moveAccel.x > MOVE_SPEED) {
+                moveAccel.x = MOVE_SPEED;
+            }
+            moveSpeed.x = moveVec.x * moveAccel.x;//MOVE_SPEED;
+        } else{
+            moveAccel.x = 0.0f;
         }
 
         Vector3f pos = getPosition();
@@ -100,5 +118,8 @@ public class Sprite extends Entity {
         jump = false;
 
         super.update(interval);
+
+        oldMoveVec.x = moveVec.x;
+        oldMoveVec.y = moveVec.y;
     }
 }
