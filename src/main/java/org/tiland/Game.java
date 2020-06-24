@@ -85,7 +85,8 @@ public class Game implements SceneLoader.IEventHandler {
         count += 1;
 
         //mapScene.addEntity(zone.zoneRoot);
-        map.addZone(zone.getAvatarBounds());
+        map.addZone(zone.getName(), zone.getMapOffset(), zone.getMapHeading(), zone.getAvatarBounds());
+        map.enterZone(zone.getName());
     }
 
     private void initializeTileShader() throws Exception {

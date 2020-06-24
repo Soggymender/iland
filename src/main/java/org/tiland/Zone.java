@@ -13,6 +13,7 @@ import org.engine.scene.SceneLoader;
 
 public class Zone {
 
+    String zoneName;
     String requestedZoneName = new String();
     String requestedDoorName = new String();
 
@@ -71,6 +72,7 @@ public class Zone {
         reset();
         load(requestedZoneName);
 
+        zoneName = requestedZoneName;
         requestedZoneName = "";
 
         if (!requestedDoorName.isEmpty()) {
@@ -213,4 +215,20 @@ public class Zone {
 
         return false;
     }   
+
+    public String getName() {
+        return zoneName;
+    }
+
+    public Vector3f getMapOffset() {
+        if (zoneName.compareTo("temple") == 0) {
+            return new Vector3f(0, 0, 0);
+        }
+
+        return new Vector3f(20, 0, 0);
+    }
+
+    public float getMapHeading() {
+        return 0.0f;
+    }
 }

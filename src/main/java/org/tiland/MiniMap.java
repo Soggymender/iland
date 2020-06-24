@@ -1,5 +1,10 @@
 package org.tiland;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector3f;
 
 import org.engine.core.BoundingBox;
@@ -8,17 +13,27 @@ import org.engine.renderer.*;
 import org.engine.scene.*;
 import org.engine.sketch.*;
 
+final class MapZone {
+
+    public Vector3f offset = new Vector3f();
+    public float heading;
+}
+
 public class MiniMap {
  
     private Scene scene;
     private Entity target;
 
     private Camera camera;
+    private Vector3f offset;
+    private float heading;
 
     private Hud hud;
  
     private SketchElement locationSketch;
     private SketchElement zoneSketch;  
+
+    private Map<String, MapZone> mapZones = null;
 
     public MiniMap(Scene scene, Entity target, Hud hud, Window window) throws Exception {
 
@@ -39,6 +54,8 @@ public class MiniMap {
         scene.addEntity(locationSketch);
 
         zoneSketch.clear();
+
+        mapZones = new HashMap<>();
     }
 
     public Scene getScene() {
@@ -49,36 +66,41 @@ public class MiniMap {
         return camera;
     }
 
-    public void addZone(BoundingBox zoneBounds) {
+    public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {
 
-        // This is just test code. Clear the sketch so as we move back and forth between the two test
-        // zones the sketch line don't keep stacking.
+        MapZone mapZone = mapZones.get(name);
+        if (mapZone != null) {
+            return;
+        }
 
-        // There is no depth yet.
-        zoneSketch.clear();
+        mapZone = new MapZone();
+        mapZones.put(name, mapZone);
+
+        mapZone.offset.set(offset);
+        mapZone.heading = heading;
 
         Vector3f pos1 = new Vector3f();
         Vector3f pos2 = new Vector3f();
         Vector3f pos3 = new Vector3f();
         Vector3f pos4 = new Vector3f();
 
-        pos1.x = zoneBounds.min.x;
-        pos1.y = zoneBounds.min.y;
-        pos1.z = 0;
+        pos1.x = zoneBounds.min.x + offset.x;
+        pos1.y = zoneBounds.min.y + offset.y;
+        pos1.z = offset.z;
 
-        pos2.x = zoneBounds.max.x;
-        pos2.y = zoneBounds.min.y;
-        pos2.z = 0;
+        pos2.x = zoneBounds.max.x + offset.x;
+        pos2.y = zoneBounds.min.y + offset.y;
+        pos2.z = offset.z;
         
         
-        pos3.x = zoneBounds.max.x;
-        pos3.y = zoneBounds.max.y;
-        pos3.z = 0;
+        pos3.x = zoneBounds.max.x + offset.x;
+        pos3.y = zoneBounds.max.y + offset.y;
+        pos3.z = offset.z;
 
         
-        pos4.x = zoneBounds.min.x;
-        pos4.y = zoneBounds.max.y;
-        pos4.z = 0;
+        pos4.x = zoneBounds.min.x + offset.x;
+        pos4.y = zoneBounds.max.y + offset.y;
+        pos4.z = offset.z;
 
         zoneSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
         zoneSketch.addLines(Color.WHITE, pos2.x, pos2.y, pos2.z, pos3.x, pos3.y, pos3.z);
@@ -86,6 +108,17 @@ public class MiniMap {
         zoneSketch.addLines(Color.WHITE, pos4.x, pos4.y, pos4.z, pos1.x, pos1.y, pos1.z);
     }
 
+    public void enterZone(String name) {
+
+        MapZone mapZone = mapZones.get(name);
+        if (mapZone == null) {
+            return;
+        }
+
+        offset = mapZone.offset;
+        heading = mapZone.heading;
+    }
+    
     private void updateLocationSketch() {
 
         // Use the main game camera's location to represent the avatar's location. This is nicer because
@@ -99,21 +132,21 @@ public class MiniMap {
 
         Vector3f location = new Vector3f(target.getPosition());
 
-        pos1.x = location.x + -0.25f;
-        pos1.y = location.y + -0.25f;
-        pos1.z = 0;
+        pos1.x = location.x + offset.x + -0.25f;
+        pos1.y = location.y + offset.y + -0.25f;
+        pos1.z = offset.z;
 
-        pos2.x = location.x + 0.25f;
-        pos2.y = location.y + -0.25f;
-        pos2.z = 0;
+        pos2.x = location.x + offset.x + 0.25f;
+        pos2.y = location.y + offset.y + -0.25f;
+        pos2.z = offset.z;
                 
-        pos3.x = location.x + 0.25f;
-        pos3.y = location.y + 0.25f;
-        pos3.z = 0;
+        pos3.x = location.x + offset.x + 0.25f;
+        pos3.y = location.y + offset.y + 0.25f;
+        pos3.z = offset.z;
 
-        pos4.x = location.x + -0.25f;
-        pos4.y = location.y + 0.25f;
-        pos4.z = 0;
+        pos4.x = location.x + offset.x + -0.25f;
+        pos4.y = location.y + offset.y + 0.25f;
+        pos4.z = offset.z;
 
         locationSketch.clear();
         locationSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
@@ -125,9 +158,12 @@ public class MiniMap {
     public void update(float interval) {
 
         Vector3f targetPos = new Vector3f(target.getPosition());
-        targetPos.z = camera.getPosition().z;
+        targetPos.x += offset.x;
+        targetPos.y += offset.y;
+        targetPos.z = camera.getPosition().z + offset.z;
 
         camera.setPosition(targetPos);
+        camera.setRotation(0, heading, 0);
 
         updateLocationSketch();
 
