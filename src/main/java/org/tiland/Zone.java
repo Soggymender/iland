@@ -14,6 +14,9 @@ import org.engine.scene.SceneLoader;
 public class Zone {
 
     String zoneName;
+    Vector3f zoneOffset = new Vector3f();
+    float zoneHeading;
+
     String requestedZoneName = new String();
     String requestedDoorName = new String();
 
@@ -112,6 +115,23 @@ public class Zone {
     public void setAvatarStart(Vector3f avatarStart) {
 
         this.avatarStart = new Vector3f(avatarStart);
+    }
+
+    public void setMetadata(Map<String, String>properties) {
+    
+        String offsetString = properties.get("p_offset");
+        if (offsetString.length() > 0) {
+            String[] coords = offsetString.split(",");
+        
+            zoneOffset.x = Float.parseFloat(coords[0]);
+            zoneOffset.y = Float.parseFloat(coords[1]);
+            zoneOffset.z = Float.parseFloat(coords[2]);
+        }
+
+        String headingString = properties.get("p_heading");
+        if (headingString.length() > 0) {
+            zoneHeading = Float.parseFloat(headingString);
+        }
     }
 
     public Entity createDoor(Map<String, String>properties) {
@@ -221,14 +241,10 @@ public class Zone {
     }
 
     public Vector3f getMapOffset() {
-        if (zoneName.compareTo("temple") == 0) {
-            return new Vector3f(0, 0, 0);
-        }
-
-        return new Vector3f(20, 0, 0);
+        return zoneOffset;
     }
 
     public float getMapHeading() {
-        return 0.0f;
+        return zoneHeading;
     }
 }

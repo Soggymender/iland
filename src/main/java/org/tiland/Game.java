@@ -200,7 +200,13 @@ public class Game implements SceneLoader.IEventHandler {
         String type = properties.get("p_type");
         if (type != null) {
 
-            if (type.equals("door")) {
+            if (type.equals("zone metadata")) {
+
+                zone.setMetadata(properties);
+                return null;
+            }
+
+            else if (type.equals("door")) {
                 return zone.createDoor(properties);
             }
 

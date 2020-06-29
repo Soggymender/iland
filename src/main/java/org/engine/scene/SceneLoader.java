@@ -130,22 +130,26 @@ public class SceneLoader {
 
                     Entity entity = eventHandler.preLoadEntityEvent(properties);
 
-                    if (entity == null) {
-                        entity = new Entity();
-                    }
-
-                    entity.setName(name.dataString().toLowerCase());
-                    entity.setParent(sceneRoot);
-
-                    Matrix4f transform = toMatrix(aiNode.mTransformation());
-                    Vector3f position = new Vector3f();
+                    // If etity is null, the game got all it needs out of the properties.
                     
-                    transform.getTranslation(position);
-                    position.div(100);
+                    //if (entity == null) {
+                    //    entity = new Entity();
+                    //}
 
-                    entity.setPosition(position);
+                    if (entity != null) {
+                        entity.setName(name.dataString().toLowerCase());
+                        entity.setParent(sceneRoot);
 
-                    eventHandler.postLoadEntityEvent(entity, properties);
+                        Matrix4f transform = toMatrix(aiNode.mTransformation());
+                        Vector3f position = new Vector3f();
+                        
+                        transform.getTranslation(position);
+                        position.div(100);
+
+                        entity.setPosition(position);
+
+                        eventHandler.postLoadEntityEvent(entity, properties);
+                    }
                 }
             }
         }
