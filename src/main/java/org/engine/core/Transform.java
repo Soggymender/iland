@@ -55,7 +55,7 @@ public class Transform {
         Viewport viewport = camera.getViewport();
 
         Matrix4f model = new Matrix4f();
-        Matrix4f projection = viewport.getSelectedProjectionMatrix();
+        Matrix4f projection = viewport.getProjectionMatrix();
 
         Matrix4f temp = new Matrix4f(model);
         temp = temp.mul(projection);

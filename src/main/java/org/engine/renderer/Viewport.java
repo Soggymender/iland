@@ -10,15 +10,13 @@ public class Viewport {
     public float zNear, zFar;
     public float fov;
 
-    private Matrix4f selectedProjectionMatrix;
-
-    private Matrix4f perspectiveMatrix;
+    private Matrix4f projectionMatrix;
     private Matrix4f orthoMatrix;
 
 
     public Viewport() {
 
-        perspectiveMatrix = new Matrix4f();
+        projectionMatrix = new Matrix4f();
 
         orthoMatrix = new Matrix4f();
     }
@@ -35,35 +33,25 @@ public class Viewport {
 
         glViewport(0, 0, (int)width, (int)height);
 
-        updatePerspectiveProjectionMatrix(fov, width, height, zNear, zFar);
+        updateProjectionMatrix(fov, width, height, zNear, zFar);
         updateOrthoProjectionMatrix(0, width, height, 0);
-
-        selectProjectionMatrix(perspectiveMatrix);
     }
 
-    public final Matrix4f updatePerspectiveProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
+    public final Matrix4f updateProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
         float aspectRatio = width / height;
-        perspectiveMatrix.identity();
-        perspectiveMatrix.perspective(fov, aspectRatio, zNear, zFar);
-        return perspectiveMatrix;
+        projectionMatrix.identity();
+        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
+        return projectionMatrix;
     }
     
     public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top) {
         orthoMatrix.identity();
         orthoMatrix.setOrtho2D(left, right, bottom, top);
         return orthoMatrix;
-    }
-
-    public void selectProjectionMatrix(Matrix4f matrix) {
-        selectedProjectionMatrix = matrix;
-    }
-
-    public Matrix4f getSelectedProjectionMatrix() {
-        return selectedProjectionMatrix;
-    }
-
-    public Matrix4f getPerspectiveProjectionMatrix() {
-        return perspectiveMatrix;
     }
 
     public final Matrix4f getOrthoProjectionMatrix() {

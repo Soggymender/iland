@@ -35,7 +35,7 @@ public class DefaultUniformManager implements IUniformManager {
     public void setShaderUniforms(Viewport viewport) {
 
         // Update the projection matrix.
-        Matrix4f projectionMatrix = viewport.getSelectedProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);

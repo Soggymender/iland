@@ -1,13 +1,11 @@
 package org.tiland;
 
-import java.lang.Math.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.joml.Vector3f;
-import org.joml.Matrix4f;
 
 import org.engine.core.BoundingBox;
 import org.engine.core.Math;
@@ -236,19 +234,5 @@ public class MiniMap {
         Rect hudPanel = hud.getMapPanelRect();
 
         camera.setViewport(hudPanel.xMin, hudPanel.yMax, hudPanel.xMax - hudPanel.xMin, hudPanel.yMax - hudPanel.yMin); 
-        
-        Matrix4f cavalierMat = new Matrix4f(
-            1, 0, -1 * Math.cos((float)java.lang.Math.PI / 4), 0,
-            0, 1, -1 * Math.sin((float)java.lang.Math.PI / 4), 0,
-            0, 0, 1                    , 0,
-            0, 0, 0                    , 1
-        );
-
-        cavalierMat = cavalierMat.transpose();
-
-        Viewport viewport = camera.getViewport();
-        Matrix4f projMat = viewport.getOrthoProjectionMatrix();
-        viewport.selectProjectionMatrix(cavalierMat.mul(projMat));
-        //viewport.selectProjectionMatrix(projMat.mul(cavalierMat));
     }
 }
