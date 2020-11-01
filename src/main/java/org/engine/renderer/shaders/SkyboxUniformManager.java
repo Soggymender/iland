@@ -27,7 +27,7 @@ public class SkyboxUniformManager implements IUniformManager {
     public void setShaderUniforms(Viewport viewport) {
 
         // Update projection Matrix
-        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getSelectedProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);

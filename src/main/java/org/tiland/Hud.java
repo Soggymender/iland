@@ -56,7 +56,7 @@ public class Hud {
         fade.setVisible(false);
         fade.setDepth(1.0f);
 
-        mapPanel.setVisible(false);
+        mapPanel.setVisible(true);
         mapPanel.setColor(new Color(0, 0, 0, 0.25f));
 
         bPanel.setVisible(false);
