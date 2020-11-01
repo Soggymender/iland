@@ -37,7 +37,7 @@ public class TileUniformManager implements IUniformManager {
     public void setShaderUniforms(Viewport viewport) {
 
         // Update the projection matrix.
-        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getSelectedProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);
