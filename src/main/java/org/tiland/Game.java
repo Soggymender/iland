@@ -177,14 +177,16 @@ public class Game implements SceneLoader.IEventHandler {
        fpsSamples++;
 
        scene.update(interval);
-       mapScene.update(interval);
-    }
-
-    public void render(float interval) {
 
         // Update the camera last so that the targets transform is up to date and already simulated.
         camera.update(interval);
         map.getCamera().update(interval);
+
+
+       mapScene.update(interval);
+    }
+
+    public void render(float interval) {
 
         // Render
         sceneRenderer.render(camera, scene, true);

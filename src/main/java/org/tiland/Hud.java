@@ -56,7 +56,7 @@ public class Hud {
         fade.setVisible(false);
         fade.setDepth(1.0f);
 
-        mapPanel.setVisible(true);
+        mapPanel.setVisible(false);
         mapPanel.setColor(new Color(0, 0, 0, 0.25f));
 
         bPanel.setVisible(false);
@@ -68,7 +68,7 @@ public class Hud {
     public Canvas getCanvas() {
         return canvas;
     }
-
+ 
     public Rect getMapPanelRect() {
         return mapPanel.getScreenRect();
     }

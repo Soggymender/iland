@@ -49,8 +49,8 @@ public class MiniMap {
 
         camera = new Camera();
                 
-        camera.setPosition(0,2.5f, 30.0f);
-
+        //camera.setPosition(0,2.5f, 30.0f);
+        //camera.setPosition(0, 125.5f, 30.0f);
     
         zoneSketch = new SketchElement(null);
         scene.addEntity(zoneSketch);
@@ -220,13 +220,21 @@ public class MiniMap {
 
         float rad = Math.toRadians(heading);
 
+
+        Vector3f finalOrigin = new Vector3f(origin);
+        Vector3f finalOffset = new Vector3f(offset);
+
+        finalOrigin.rotateY(rad);
+        finalOffset.rotateY(rad);
+
         targetPos.sub(origin);
         targetPos.rotateY(rad);
-        targetPos.add(origin);
-        targetPos.add(offset);
+        targetPos.add(finalOrigin);
+        targetPos.add(finalOffset);
+        targetPos.add(new Vector3f(-25.0f, -25.0f, 0).rotateY(rad));
 
         camera.setPosition(targetPos);
-        camera.setRotation(0, rad, 0);
+        camera.setRotation(0, -rad, 0);
 
 
 
@@ -237,18 +245,27 @@ public class MiniMap {
 
         camera.setViewport(hudPanel.xMin, hudPanel.yMax, hudPanel.xMax - hudPanel.xMin, hudPanel.yMax - hudPanel.yMin); 
         
+        Viewport viewport = camera.getViewport();
+        Matrix4f projMat = viewport.getOrthoProjectionMatrix();
+
+
         Matrix4f cavalierMat = new Matrix4f(
-            1, 0, -1 * Math.cos((float)java.lang.Math.PI / 4), 0,
-            0, 1, -1 * Math.sin((float)java.lang.Math.PI / 4), 0,
+            1, 0, 0.001f, 0,
+            0, 1, 0.001f, 0,
+       //     1, 0, -1 * Math.cos(((float)java.lang.Math.PI / 4)), 0,
+         //   0, 1, -1 * Math.sin(((float)java.lang.Math.PI / 4)), 0,
             0, 0, 1                    , 0,
             0, 0, 0                    , 1
         );
 
         cavalierMat = cavalierMat.transpose();
 
-        Viewport viewport = camera.getViewport();
-        Matrix4f projMat = viewport.getOrthoProjectionMatrix();
+        projMat.scale(8.5f);
         viewport.selectProjectionMatrix(cavalierMat.mul(projMat));
-        //viewport.selectProjectionMatrix(projMat.mul(cavalierMat));
+        //viewport.selectProjectionMatrix(projMat);//.mul(cavalierMat));
+ 
+
+
+      //  camera.getViewMatrix().mul(cavalierMat);
     }
 }
