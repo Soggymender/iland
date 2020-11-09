@@ -52,7 +52,7 @@ public class Game implements SceneLoader.IEventHandler {
         hud = new Hud(window, scene);
 
         // The target is actually the main camera since it doesn't track during jumps, etc.
-        map = new MiniMap(mapScene, camera, hud, window);
+        map = new MiniMap(mapScene, avatar, camera, hud, window);
     }
 
     public void initialize() throws Exception {
@@ -180,7 +180,7 @@ public class Game implements SceneLoader.IEventHandler {
 
         // Update the camera last so that the targets transform is up to date and already simulated.
         camera.update(interval);
-        map.getCamera().update(interval);
+      //  map.getCamera().update(interval);
 
 
        mapScene.update(interval);
@@ -189,8 +189,8 @@ public class Game implements SceneLoader.IEventHandler {
     public void render(float interval) {
 
         // Render
-        sceneRenderer.render(camera, scene, true);
-        sceneRenderer.render(map.getCamera(), map.getScene(), false);
+        sceneRenderer.render(map.getCamera(), map.getScene(), true);
+        sceneRenderer.render(camera, scene, false);
     }
 
     public void LoadSRequestEvent() {

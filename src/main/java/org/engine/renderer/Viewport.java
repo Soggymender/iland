@@ -15,6 +15,7 @@ public class Viewport {
     private Matrix4f perspectiveMatrix;
     private Matrix4f orthoMatrix;
 
+    private boolean centerOrtho = false;
 
     public Viewport() {
 
@@ -24,6 +25,10 @@ public class Viewport {
     }
 
     public void set(float x, float y, float width, float height, float zNear, float zFar, float fov) {
+        set(x, y, width, height, zNear, zFar, fov, this.centerOrtho);
+    }
+
+    public void set(float x, float y, float width, float height, float zNear, float zFar, float fov, boolean centerOrtho) {
        
         this.x = x;
         this.y = y;
@@ -32,11 +37,17 @@ public class Viewport {
         this.zNear = zNear;
         this.zFar = zFar;
         this.fov = fov;
+        this.centerOrtho = centerOrtho;
 
-        glViewport(0, 0, (int)width, (int)height);
+        glViewport((int)x, (int)y, (int)width, (int)height);
 
         updatePerspectiveProjectionMatrix(fov, width, height, zNear, zFar);
-        updateOrthoProjectionMatrix(0, width, height, 0);
+
+        if (centerOrtho) {
+            updateOrthoProjectionMatrix(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+        } else {
+            updateOrthoProjectionMatrix(0, width, 0, height);
+        }
 
         selectProjectionMatrix(perspectiveMatrix);
     }

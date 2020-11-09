@@ -187,7 +187,10 @@ public class UiElement extends Entity {
 
         // To screen space.
         rectTrans.screenRect.set(rectTrans.globalRect);
-
+        float tempMax = rectTrans.screenRect.yMax;
+        rectTrans.screenRect.yMax = canvas.workingResolution.y - rectTrans.screenRect.yMin;
+        rectTrans.screenRect.yMin = canvas.workingResolution.y - tempMax;
+        
 
         // If the screen rect didn't change, the children don't need to be updated.
         if (rectTrans.screenRect.equals(oldScreenRect)) {
@@ -214,7 +217,7 @@ public class UiElement extends Entity {
 
         // Top left
         positions[0] = rectTrans.screenRect.xMin;
-        positions[1] = rectTrans.screenRect.yMin;
+        positions[1] = rectTrans.screenRect.yMax;
         positions[2] = depth;
 
         texCoords[0] = 0.0f;
@@ -222,7 +225,7 @@ public class UiElement extends Entity {
 
         // Top right
         positions[3] = rectTrans.screenRect.xMax;
-        positions[4] = rectTrans.screenRect.yMin;
+        positions[4] = rectTrans.screenRect.yMax;
         positions[5] = depth;
 
         texCoords[2] = 1.0f;
@@ -230,7 +233,7 @@ public class UiElement extends Entity {
 
         // Bottom right
         positions[6] = rectTrans.screenRect.xMax;
-        positions[7] = rectTrans.screenRect.yMax;
+        positions[7] = rectTrans.screenRect.yMin;
         positions[8] = depth;
 
         texCoords[4] = 1.0f;
@@ -238,7 +241,7 @@ public class UiElement extends Entity {
 
         // Bottom left
         positions[9] = rectTrans.screenRect.xMin;
-        positions[10] = rectTrans.screenRect.yMax;
+        positions[10] = rectTrans.screenRect.yMin;
         positions[11] = depth;
 
         texCoords[6] = 0.0f;

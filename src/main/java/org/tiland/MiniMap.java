@@ -26,6 +26,7 @@ final class MapZone {
 public class MiniMap {
  
     private Scene scene;
+    private GameCamera gameCamera;
     private Entity target;
 
     private Camera camera;
@@ -40,10 +41,11 @@ public class MiniMap {
 
     private Map<String, MapZone> mapZones = null;
 
-    public MiniMap(Scene scene, Entity target, Hud hud, Window window) throws Exception {
+    public MiniMap(Scene scene, Entity target, GameCamera gameCamera, Hud hud, Window window) throws Exception {
 
         this.scene = scene;
         this.target = target;
+        this.gameCamera = gameCamera;
 
         this.hud = hud;
 
@@ -71,8 +73,8 @@ public class MiniMap {
         return camera;
     }
 
-    public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {
-
+    public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {  
+ 
         MapZone mapZone = mapZones.get(name);
         if (mapZone != null) {
             return;
@@ -94,19 +96,19 @@ public class MiniMap {
         float height = zoneBounds.max.y - zoneBounds.min.y;
 
         pos1.x = 0;
-        pos1.y = 0;
+        pos1.y = height;
         pos1.z = 0.0f;
 
         pos2.x = width;
-        pos2.y = 0;
+        pos2.y = height;
         pos2.z = 0.0f;
         
         pos3.x = width;
-        pos3.y = height;
+        pos3.y = 0.0f;
         pos3.z = 0.0f;
 
         pos4.x = 0;
-        pos4.y = height;
+        pos4.y = 0.0f;
         pos4.z = 0.0f;
 
         float rad = Math.toRadians(heading);
@@ -116,22 +118,22 @@ public class MiniMap {
         pos3.rotateY(rad);
         pos4.rotateY(rad);
 
-        pos1.x += zoneBounds.min.x + offset.x;
-        pos1.y += zoneBounds.min.y + offset.y;
+        pos1.x += /*zoneBounds.min.x +*/ offset.x;
+        pos1.y += /*zoneBounds.min.y +*/ offset.y;
         pos1.z += offset.z;
 
-        pos2.x += zoneBounds.min.x + offset.x;
-        pos2.y += zoneBounds.min.y + offset.y;
+        pos2.x += /*zoneBounds.min.x +*/ offset.x;
+        pos2.y += /*zoneBounds.min.y +*/ offset.y;
         pos2.z += offset.z;
         
         
-        pos3.x += zoneBounds.min.x + offset.x;
-        pos3.y += zoneBounds.min.y + offset.y;
+        pos3.x += /*zoneBounds.min.x +*/ offset.x;
+        pos3.y += /*zoneBounds.min.y +*/ offset.y;
         pos3.z += offset.z;
 
         
-        pos4.x += zoneBounds.min.x + offset.x;
-        pos4.y += zoneBounds.min.y + offset.y;
+        pos4.x += /*zoneBounds.min.x +*/ offset.x;
+        pos4.y += /*zoneBounds.min.y +*/ offset.y;
         pos4.z += offset.z;
 
         zoneSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
@@ -166,19 +168,19 @@ public class MiniMap {
         Vector3f location = new Vector3f(target.getPosition());
 
         pos1.x = location.x - origin.x + -0.25f;
-        pos1.y = location.y - origin.y + -0.25f;
+        pos1.y = location.y - origin.y + 1.0f;
         pos1.z = -origin.z;
 
         pos2.x = location.x - origin.x + 0.25f;
-        pos2.y = location.y - origin.y + -0.25f;
+        pos2.y = location.y - origin.y + 1.0f;
         pos2.z = -origin.z;
                 
         pos3.x = location.x - origin.x + 0.25f;
-        pos3.y = location.y - origin.y + 0.25f;
+        pos3.y = location.y - origin.y;// - 0.25f;
         pos3.z = -origin.z;
 
         pos4.x = location.x - origin.x + -0.25f;
-        pos4.y = location.y - origin.y + 0.25f;
+        pos4.y = location.y - origin.y;// + 0.25f;
         pos4.z = -origin.z;
 
         float rad = Math.toRadians(heading);
@@ -188,21 +190,21 @@ public class MiniMap {
         pos3.rotateY(rad);
         pos4.rotateY(rad);
 
-        pos1.x += origin.x + offset.x;
-        pos1.y += origin.y + offset.y;
-        pos1.z += origin.z + offset.z;
+        pos1.x += /*origin.x +*/ offset.x;
+        pos1.y += /*origin.y +*/ offset.y;
+        pos1.z += /*origin.z +*/ offset.z;
 
-        pos2.x += origin.x + offset.x;
-        pos2.y += origin.y + offset.y;
-        pos2.z += origin.z + offset.z;
+        pos2.x += /*origin.x +*/ offset.x;
+        pos2.y += /*origin.y +*/ offset.y;
+        pos2.z += /*origin.z +*/ offset.z;
                 
-        pos3.x += origin.x + offset.x;
-        pos3.y += origin.y + offset.y;
-        pos3.z += origin.z + offset.z;
+        pos3.x += /*origin.x +*/ offset.x;
+        pos3.y += /*origin.y +*/ offset.y;
+        pos3.z += /*origin.z +*/ offset.z;
 
-        pos4.x += origin.x + offset.x;
-        pos4.y += origin.y + offset.y;
-        pos4.z += origin.z + offset.z;
+        pos4.x += /*origin.x +*/ offset.x;
+        pos4.y += /*origin.y +*/ offset.y;
+        pos4.z += /*origin.z +*/ offset.z;
 
         locationSketch.clear();
         locationSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
@@ -216,22 +218,12 @@ public class MiniMap {
         Vector3f targetPos = new Vector3f(target.getPosition());
 
         // "Zoom" out a good ways for that sweet minimap feel.
-        targetPos.z = 30;
-
-        float rad = Math.toRadians(heading);
-
-
-        Vector3f finalOrigin = new Vector3f(origin);
-        Vector3f finalOffset = new Vector3f(offset);
-
-        finalOrigin.rotateY(rad);
-        finalOffset.rotateY(rad);
-
+        targetPos.y = gameCamera.getPosition().y;
+        float rad = Math.toRadians(heading - gameCamera.getHeading());
+        
         targetPos.sub(origin);
         targetPos.rotateY(rad);
-        targetPos.add(finalOrigin);
-        targetPos.add(finalOffset);
-        targetPos.add(new Vector3f(-25.0f, -25.0f, 0).rotateY(rad));
+        targetPos.add(offset);
 
         camera.setPosition(targetPos);
         camera.setRotation(0, -rad, 0);
@@ -243,17 +235,15 @@ public class MiniMap {
         // TODO: Only set the viewport on startup and resize. But the panelneeds to update once for the screen rect to be valid.
         Rect hudPanel = hud.getMapPanelRect();
 
-        camera.setViewport(hudPanel.xMin, hudPanel.yMax, hudPanel.xMax - hudPanel.xMin, hudPanel.yMax - hudPanel.yMin); 
+        camera.setViewport(hudPanel.xMin, hudPanel.yMin, hudPanel.xMax - hudPanel.xMin, (hudPanel.yMax - hudPanel.yMin), true); 
         
         Viewport viewport = camera.getViewport();
         Matrix4f projMat = viewport.getOrthoProjectionMatrix();
 
 
         Matrix4f cavalierMat = new Matrix4f(
-            1, 0, 0.001f, 0,
-            0, 1, 0.001f, 0,
-       //     1, 0, -1 * Math.cos(((float)java.lang.Math.PI / 4)), 0,
-         //   0, 1, -1 * Math.sin(((float)java.lang.Math.PI / 4)), 0,
+            1, 0, -0.5f * Math.cos(((float)java.lang.Math.PI / 4)), 0,
+            0, 1, -0.5f * Math.sin(((float)java.lang.Math.PI / 4)), 0,
             0, 0, 1                    , 0,
             0, 0, 0                    , 1
         );
@@ -261,11 +251,11 @@ public class MiniMap {
         cavalierMat = cavalierMat.transpose();
 
         projMat.scale(8.5f);
-        viewport.selectProjectionMatrix(cavalierMat.mul(projMat));
-        //viewport.selectProjectionMatrix(projMat);//.mul(cavalierMat));
+        viewport.selectProjectionMatrix(projMat);
  
 
-
-      //  camera.getViewMatrix().mul(cavalierMat);
+        camera.update(interval);
+        cavalierMat.mul(camera.getViewMatrix());
+        camera.setViewMatrix(cavalierMat);
     }
 }

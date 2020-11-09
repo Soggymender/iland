@@ -131,6 +131,8 @@ public class SceneRenderer {
             renderShaderMeshes(camera, shader, scene, meshList, false);
         }
 
+        glDepthMask(false);
+
         // Transparent
         for (Shader shader : mapShaders.keySet()) {
 
@@ -139,6 +141,8 @@ public class SceneRenderer {
 
             renderShaderMeshes(camera, shader, scene, meshList, true);
         }
+
+        glDepthMask(true);
 
     }
 

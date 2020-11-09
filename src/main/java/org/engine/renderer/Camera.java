@@ -12,6 +12,8 @@ public class Camera extends Entity {
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.0f;
 
+    private boolean centerOrtho = false;
+
     Matrix4f viewMatrix;
     Viewport viewport;
 
@@ -43,9 +45,9 @@ public class Camera extends Entity {
         this.rotation = rotation;
     }
 
-    public void setViewport(float x, float y, float width, float height) {
+    public void setViewport(float x, float y, float width, float height, boolean centerOrtho) {
 
-        viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV);
+        viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV, centerOrtho);
     }
 
     public Viewport getViewport() {
@@ -54,6 +56,11 @@ public class Camera extends Entity {
 
     public Matrix4f getViewMatrix() {
         return viewMatrix;
+    }
+
+    public void setViewMatrix(Matrix4f newViewMat){
+
+        viewMatrix.set(newViewMat);
     }
 
     public void updateViewMatrix() {

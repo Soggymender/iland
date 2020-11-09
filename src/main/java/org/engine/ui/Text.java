@@ -87,6 +87,7 @@ public class Text extends UiElement {
         }
 
         float startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+        startY = canvas.workingResolution.y - startY;
 
         float depth = getDepth();
 
@@ -163,7 +164,7 @@ public class Text extends UiElement {
 
                 // Left Bottom vertex
                 positions.add(startX); // x
-                positions.add(startY + texHeight * scale); //y
+                positions.add(startY - texHeight * scale); //y
                 positions.add(depth); //z
                 textCoords.add((float) charStartX / texWidth);
                 textCoords.add(1.0f);
@@ -171,7 +172,7 @@ public class Text extends UiElement {
 
                 // Right Bottom vertex
                 positions.add(startX + charWidth * scale); // x
-                positions.add(startY + texHeight * scale); //y
+                positions.add(startY - texHeight * scale); //y
                 positions.add(depth); //z
                 textCoords.add((charStartX + charWidth) / texWidth);
                 textCoords.add(1.0f);

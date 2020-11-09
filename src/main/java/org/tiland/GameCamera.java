@@ -70,6 +70,10 @@ public class GameCamera extends Camera {
         this.heading = heading;
     }
 
+    public float getHeading() {
+        return this.heading;
+    }
+
     @Override
     public void update(float interval) {
 
