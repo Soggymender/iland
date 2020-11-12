@@ -119,12 +119,12 @@ public class GameCamera extends Camera {
         followOffset.y = 0.0f;
         followOffset.z = -targetPos.z;
         
-        position.add(followOffset);
-        position.rotateY(-Math.toRadians(heading));
+        position.sub(followOffset);
+        position.rotateY(Math.toRadians(heading));
 
-        followOffset = followOffset.negate();
+//        followOffset = followOffset.negate();
         position.add(followOffset);
-        rotation.y = Math.toRadians(heading);
+        rotation.y = -Math.toRadians(heading);
 
         super.update(interval);
     }

@@ -58,9 +58,6 @@ public class Sprite extends Entity {
                 moveSpeed.y = JUMP_IMPULSE;
                 
             }
-            else {
-                System.out.println(moveSpeed.y);
-            }
         }
 
         // Apply gravity.

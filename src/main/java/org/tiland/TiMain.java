@@ -41,6 +41,7 @@ public class TiMain {
 
             Timer timer = new Timer();
             
+            boolean paused = false;
             float elapsedTime;
 
             while (!window.windowShouldClose()) {
@@ -50,18 +51,31 @@ public class TiMain {
                 // Input
                 input.input();
 
+                if (keyboard.keyJustDown(GLFW_KEY_0)) {
+                    paused = !paused;
+                }
+
+                if (paused) {
+
+                    if (!keyboard.keyJustDown(GLFW_KEY_1)) {
+                        elapsedTime = 0.0f;
+                    }
+                }
+
                 if (input.getKeyboard().keyJustDown(GLFW_KEY_ESCAPE)) {
                     glfwSetWindowShouldClose(window.getWindowHandle(), true);
                 }
 
-                game.input(input);
+                if (elapsedTime > 0.0f) {
+                    game.input(input);
 
-                // Update
-                game.update(elapsedTime);                
+                    // Update
+                    game.update(elapsedTime);                
 
-                // Physics
-                scenePhysics.update(scene, elapsedTime);
-
+                    // Physics
+                    scenePhysics.update(scene, elapsedTime);
+                }
+                
                 game.render(elapsedTime);
 
                 window.update();

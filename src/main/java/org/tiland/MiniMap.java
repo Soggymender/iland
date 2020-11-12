@@ -50,9 +50,6 @@ public class MiniMap {
         this.hud = hud;
 
         camera = new Camera();
-                
-        //camera.setPosition(0,2.5f, 30.0f);
-        //camera.setPosition(0, 125.5f, 30.0f);
     
         zoneSketch = new SketchElement(null);
         scene.addEntity(zoneSketch);
@@ -118,22 +115,22 @@ public class MiniMap {
         pos3.rotateY(rad);
         pos4.rotateY(rad);
 
-        pos1.x += /*zoneBounds.min.x +*/ offset.x;
-        pos1.y += /*zoneBounds.min.y +*/ offset.y;
+        pos1.x += offset.x;
+        pos1.y += offset.y;
         pos1.z += offset.z;
 
-        pos2.x += /*zoneBounds.min.x +*/ offset.x;
-        pos2.y += /*zoneBounds.min.y +*/ offset.y;
+        pos2.x += offset.x;
+        pos2.y += offset.y;
         pos2.z += offset.z;
         
         
-        pos3.x += /*zoneBounds.min.x +*/ offset.x;
-        pos3.y += /*zoneBounds.min.y +*/ offset.y;
+        pos3.x += offset.x;
+        pos3.y += offset.y;
         pos3.z += offset.z;
 
         
-        pos4.x += /*zoneBounds.min.x +*/ offset.x;
-        pos4.y += /*zoneBounds.min.y +*/ offset.y;
+        pos4.x += offset.x;
+        pos4.y += offset.y;
         pos4.z += offset.z;
 
         zoneSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
@@ -176,11 +173,11 @@ public class MiniMap {
         pos2.z = -origin.z;
                 
         pos3.x = location.x - origin.x + 0.25f;
-        pos3.y = location.y - origin.y;// - 0.25f;
+        pos3.y = location.y - origin.y;
         pos3.z = -origin.z;
 
         pos4.x = location.x - origin.x + -0.25f;
-        pos4.y = location.y - origin.y;// + 0.25f;
+        pos4.y = location.y - origin.y;
         pos4.z = -origin.z;
 
         float rad = Math.toRadians(heading);
@@ -190,21 +187,21 @@ public class MiniMap {
         pos3.rotateY(rad);
         pos4.rotateY(rad);
 
-        pos1.x += /*origin.x +*/ offset.x;
-        pos1.y += /*origin.y +*/ offset.y;
-        pos1.z += /*origin.z +*/ offset.z;
+        pos1.x += offset.x;
+        pos1.y += offset.y;
+        pos1.z += offset.z;
 
-        pos2.x += /*origin.x +*/ offset.x;
-        pos2.y += /*origin.y +*/ offset.y;
-        pos2.z += /*origin.z +*/ offset.z;
+        pos2.x += offset.x;
+        pos2.y += offset.y;
+        pos2.z += offset.z;
                 
-        pos3.x += /*origin.x +*/ offset.x;
-        pos3.y += /*origin.y +*/ offset.y;
-        pos3.z += /*origin.z +*/ offset.z;
+        pos3.x += offset.x;
+        pos3.y += offset.y;
+        pos3.z += offset.z;
 
-        pos4.x += /*origin.x +*/ offset.x;
-        pos4.y += /*origin.y +*/ offset.y;
-        pos4.z += /*origin.z +*/ offset.z;
+        pos4.x += offset.x;
+        pos4.y += offset.y;
+        pos4.z += offset.z;
 
         locationSketch.clear();
         locationSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
@@ -219,16 +216,19 @@ public class MiniMap {
 
         // "Zoom" out a good ways for that sweet minimap feel.
         targetPos.y = gameCamera.getPosition().y;
-        float rad = Math.toRadians(heading - gameCamera.getHeading());
-        
+    
+        float rad = Math.toRadians(heading);
+        float camRad = Math.toRadians(gameCamera.getHeading());
+
+        // Minimap rooms pivot around their left edge.
         targetPos.sub(origin);
+   
+        // The location within the room needs to be transformed into the overall minimap location.
         targetPos.rotateY(rad);
         targetPos.add(offset);
 
         camera.setPosition(targetPos);
-        camera.setRotation(0, -rad, 0);
-
-
+        camera.setRotation(0, rad - camRad, 0);
 
         updateLocationSketch();
 
@@ -242,13 +242,11 @@ public class MiniMap {
 
 
         Matrix4f cavalierMat = new Matrix4f(
-            1, 0, -0.5f * Math.cos(((float)java.lang.Math.PI / 4)), 0,
-            0, 1, -0.5f * Math.sin(((float)java.lang.Math.PI / 4)), 0,
-            0, 0, 1                    , 0,
-            0, 0, 0                    , 1
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            -0.5f * Math.cos(((float)java.lang.Math.PI / 4)), -0.5f * Math.sin(((float)java.lang.Math.PI / 4)), 1                    , 0,
+            0, 0, 0 , 1
         );
-
-        cavalierMat = cavalierMat.transpose();
 
         projMat.scale(8.5f);
         viewport.selectProjectionMatrix(projMat);

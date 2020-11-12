@@ -67,8 +67,8 @@ public class Game implements SceneLoader.IEventHandler {
 
     private void startZone() {
 
-        hud.setFadeOut();
-        hud.startFadeIn();
+        //hud.setFadeOut();
+        //hud.startFadeIn();
 
         zone.loadRequestedZone();
 
@@ -214,15 +214,6 @@ public class Game implements SceneLoader.IEventHandler {
 
         } else {
 
-            String collision = properties.get("p_collision");
-            if (collision != null) {
-                if (collision.equals("platform")) {
-
-                } else if (collision.equals("box")) {
-                    System.out.println("pre box collision");
-                }
-            }
-
             String depth = properties.get("p_depth");
             if (depth != null) {
                 Tile tile = new Tile();
@@ -263,7 +254,6 @@ public class Game implements SceneLoader.IEventHandler {
                 entity.flags.platform_collision = true;
             } else if (collision.equals("box")) {
                 entity.flags.box_collision = true;
-                System.out.println("box collision");
             }
         }
     }

@@ -67,8 +67,10 @@ public class Camera extends Entity {
 
         viewMatrix.identity();
 
-        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
+        
+        viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
         viewMatrix.translate(-position.x, -position.y, -position.z);
+
     }
 
     public Vector3f getPosition() {

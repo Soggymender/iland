@@ -33,14 +33,7 @@ public class Cursor extends Entity {
 
             depthPos.z = 1.1f;
             Vector3f farPos = Transform.unproject(depthPos, camera);
-            
-
-            System.out.println("clicked " + pos.x + ", " + pos.y);
-            System.out.println(nearPos.x + ", " + nearPos.y + ", " + nearPos.z);
-            System.out.println( farPos.x + ", " +  farPos.y + ", " +  farPos.z);
         }
-
-
     }
 
     @Override
