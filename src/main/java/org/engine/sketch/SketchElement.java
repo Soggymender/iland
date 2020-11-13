@@ -24,7 +24,7 @@ public class SketchElement extends Entity {
 
     protected Flags flags = new Flags();
 
-    public SketchElement(Entity parent) throws Exception {
+    public SketchElement(Entity parent) {
         super();
 
         if (parent != null){

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.joml.Matrix4f;
 
 import org.engine.core.BoundingBox;
@@ -21,6 +22,14 @@ final class MapZone {
     public Vector3f offset = new Vector3f();
     public Vector3f origin = new Vector3f();
     public float heading;
+
+    Vector3f pos1 = new Vector3f();
+    Vector3f pos2 = new Vector3f();
+    Vector3f pos3 = new Vector3f();
+    Vector3f pos4 = new Vector3f();    
+
+    SketchElement zoneSketch = null;
+    
 }
 
 public class MiniMap {
@@ -33,11 +42,11 @@ public class MiniMap {
     private Vector3f offset;
     private Vector3f origin;
     private float heading;
+    private String currentZoneName;
 
     private Hud hud;
  
-    private SketchElement locationSketch;
-    private SketchElement zoneSketch;  
+    private SketchElement locationSketch; 
 
     private Map<String, MapZone> mapZones = null;
 
@@ -51,13 +60,8 @@ public class MiniMap {
 
         camera = new Camera();
     
-        zoneSketch = new SketchElement(null);
-        scene.addEntity(zoneSketch);
-
         locationSketch = new SketchElement(null);
         scene.addEntity(locationSketch);
-
-        zoneSketch.clear();
 
         mapZones = new HashMap<>();
     }
@@ -79,67 +83,62 @@ public class MiniMap {
 
         mapZone = new MapZone();
         mapZones.put(name, mapZone);
-
+ 
         mapZone.offset.set(offset);
         mapZone.origin.set(zoneBounds.min);
         mapZone.heading = heading;
 
-        Vector3f pos1 = new Vector3f();
-        Vector3f pos2 = new Vector3f();
-        Vector3f pos3 = new Vector3f();
-        Vector3f pos4 = new Vector3f();
-
         float width = zoneBounds.max.x - zoneBounds.min.x;
         float height = zoneBounds.max.y - zoneBounds.min.y;
 
-        pos1.x = 0;
-        pos1.y = height;
-        pos1.z = 0.0f;
+        mapZone.zoneSketch = new SketchElement(null);
+        scene.addEntity(mapZone.zoneSketch);
+    
+        mapZone.pos1.x = 0;
+        mapZone.pos1.y = height;
+        mapZone.pos1.z = 0.0f;
 
-        pos2.x = width;
-        pos2.y = height;
-        pos2.z = 0.0f;
+        mapZone.pos2.x = width;
+        mapZone.pos2.y = height;
+        mapZone.pos2.z = 0.0f;
         
-        pos3.x = width;
-        pos3.y = 0.0f;
-        pos3.z = 0.0f;
+        mapZone.pos3.x = width;
+        mapZone.pos3.y = 0.0f;
+        mapZone.pos3.z = 0.0f;
 
-        pos4.x = 0;
-        pos4.y = 0.0f;
-        pos4.z = 0.0f;
+        mapZone.pos4.x = 0;
+        mapZone.pos4.y = 0.0f;
+        mapZone.pos4.z = 0.0f;
 
         float rad = Math.toRadians(heading);
 
-        pos1.rotateY(rad);
-        pos2.rotateY(rad);
-        pos3.rotateY(rad);
-        pos4.rotateY(rad);
+        mapZone.pos1.rotateY(rad);
+        mapZone.pos2.rotateY(rad);
+        mapZone.pos3.rotateY(rad);
+        mapZone.pos4.rotateY(rad);
 
-        pos1.x += offset.x;
-        pos1.y += offset.y;
-        pos1.z += offset.z;
+        mapZone.pos1.x += offset.x;
+        mapZone.pos1.y += offset.y;
+        mapZone.pos1.z += offset.z;
 
-        pos2.x += offset.x;
-        pos2.y += offset.y;
-        pos2.z += offset.z;
+        mapZone.pos2.x += offset.x;
+        mapZone.pos2.y += offset.y;
+        mapZone.pos2.z += offset.z;
         
         
-        pos3.x += offset.x;
-        pos3.y += offset.y;
-        pos3.z += offset.z;
+        mapZone.pos3.x += offset.x;
+        mapZone.pos3.y += offset.y;
+        mapZone.pos3.z += offset.z;
 
         
-        pos4.x += offset.x;
-        pos4.y += offset.y;
-        pos4.z += offset.z;
-
-        zoneSketch.addLines(Color.WHITE, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-        zoneSketch.addLines(Color.WHITE, pos2.x, pos2.y, pos2.z, pos3.x, pos3.y, pos3.z);
-        zoneSketch.addLines(Color.WHITE, pos3.x, pos3.y, pos3.z, pos4.x, pos4.y, pos4.z);
-        zoneSketch.addLines(Color.WHITE, pos4.x, pos4.y, pos4.z, pos1.x, pos1.y, pos1.z);
+        mapZone.pos4.x += offset.x;
+        mapZone.pos4.y += offset.y;
+        mapZone.pos4.z += offset.z;
     }
 
     public void enterZone(String name) {
+
+        currentZoneName = name;
 
         MapZone mapZone = mapZones.get(name);
         if (mapZone == null) {
@@ -150,7 +149,29 @@ public class MiniMap {
         origin = mapZone.origin;
         heading = mapZone.heading;
     }
-    
+
+    private void updateZoneSketches() {
+
+        for (MapZone mapZone : mapZones.values()) {
+            updateZoneSketch(mapZone);
+        }
+    }
+
+    private void updateZoneSketch(MapZone mapZone) {
+
+        mapZone.zoneSketch.clear();
+
+        Vector4f color = Color.GREY;
+        if (mapZones.get(currentZoneName) == mapZone) {
+            color = Color.WHITE;
+        }
+
+        mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z);
+    }
+
     private void updateLocationSketch() {
 
         // Use the main game camera's location to represent the avatar's location. This is nicer because
@@ -230,6 +251,7 @@ public class MiniMap {
         camera.setPosition(targetPos);
         camera.setRotation(0, rad - camRad, 0);
 
+        updateZoneSketches();
         updateLocationSketch();
 
         // TODO: Only set the viewport on startup and resize. But the panelneeds to update once for the screen rect to be valid.
@@ -244,7 +266,7 @@ public class MiniMap {
         Matrix4f cavalierMat = new Matrix4f(
             1, 0, 0, 0,
             0, 1, 0, 0,
-            -0.5f * Math.cos(((float)java.lang.Math.PI / 4)), -0.5f * Math.sin(((float)java.lang.Math.PI / 4)), 1                    , 0,
+            -0.65f * Math.cos(((float)java.lang.Math.PI / 4)), -0.65f * Math.sin(((float)java.lang.Math.PI / 4)), 1                    , 0,
             0, 0, 0 , 1
         );
 

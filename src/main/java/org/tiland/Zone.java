@@ -134,12 +134,13 @@ public class Zone {
         }
     }
 
-    public Entity createDoor(Map<String, String>properties) {
+    public Entity createDoor(Map<String, String>properties, boolean isTrigger) {
     
         Door door = new Door();
 
         door.targetZone = properties.get("p_target_zone");
         door.targetDoor = properties.get("p_target_object");
+        door.isTrigger = isTrigger;
 
         doors.add(door);
 

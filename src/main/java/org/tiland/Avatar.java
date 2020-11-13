@@ -120,7 +120,7 @@ public class Avatar extends Sprite {
 
             // Can't move while crouching unless jumping or fall.
             float yVel = getVelocity().y;
-            if (java.lang.Math.abs(yVel) < 0.1f) {
+            if (java.lang.Math.abs(yVel) == 0.0f) {
                 moveVec.zero();
             }
 

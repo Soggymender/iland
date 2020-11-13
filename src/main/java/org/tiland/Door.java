@@ -6,4 +6,6 @@ public class Door extends Entity {
 
     public String targetZone;
     public String targetDoor;
+
+    public boolean isTrigger;
 }

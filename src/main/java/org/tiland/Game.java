@@ -67,8 +67,8 @@ public class Game implements SceneLoader.IEventHandler {
 
     private void startZone() {
 
-        //hud.setFadeOut();
-        //hud.startFadeIn();
+        hud.setFadeOut();
+        hud.startFadeIn();
 
         zone.loadRequestedZone();
 
@@ -209,7 +209,11 @@ public class Game implements SceneLoader.IEventHandler {
             }
 
             else if (type.equals("door")) {
-                return zone.createDoor(properties);
+                return zone.createDoor(properties, false);
+            }
+
+            else if (type.equals("exit")) {
+                return zone.createDoor(properties, true);
             }
 
         } else {

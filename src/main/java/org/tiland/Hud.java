@@ -28,7 +28,7 @@ public class Hud {
     private Panel fade;
     private float curFadeValue = 0.0f;
     private float desFadeValue = 0.0f;
-    private float fadeLength = 1.0f;
+    private float fadeLength = 0.66f;
     private float fadeTime = 0.0f;
 
     private static final Font FONT = new Font("Arial", Font.PLAIN, 24);
