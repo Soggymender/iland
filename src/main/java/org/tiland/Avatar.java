@@ -1,6 +1,7 @@
 package org.tiland;
 
 import org.engine.core.BoundingBox;
+import org.engine.scene.Entity;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
@@ -17,6 +18,10 @@ public class Avatar extends Sprite {
 
     public boolean crouch = false;
     public boolean enter = false;
+    public boolean climb = false;
+
+    public boolean climbing = false;
+    public Entity climbingEntity = null;
 
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -72,10 +77,32 @@ public class Avatar extends Sprite {
 
         if (keyboard.keyJustDown(GLFW_KEY_SPACE)) {
             jump = true;
+            //stopClimbing();
         }
 
-        if (keyboard.keyDown(GLFW_KEY_S)) {
-            crouch = true;
+        if (/*!jump &&*/ climbingEntity != null) {
+
+            if (keyboard.keyDown(GLFW_KEY_W)) {
+                moveVec.y = 1.0f;
+            }
+
+            if (keyboard.keyDown(GLFW_KEY_S)) {
+                moveVec.y = -1.0f;
+            }
+        } else {
+
+            if (keyboard.keyJustDown(GLFW_KEY_S)) {
+                crouch = true;
+            }
+
+            if (keyboard.keyJustUp(GLFW_KEY_S)) {
+                crouch = false;
+            }
+
+            // Grab something.
+            if (keyboard.keyDown(GLFW_KEY_W)) {
+                climb = true;
+            }
         }
 
         if (keyboard.keyJustDown(GLFW_KEY_W)) {
@@ -90,6 +117,14 @@ public class Avatar extends Sprite {
     @Override
     public void update(float interval) {
 
+        // Continue climbing?
+        if (climbingEntity != null) {
+
+            if (!zone.entitiesOverlap(this, climbingEntity, 0.5f, 0.5f)) {
+                stopClimbing();
+            }
+        }
+
         if (enter) {
 
             enter = false;
@@ -99,21 +134,58 @@ public class Avatar extends Sprite {
             }
         }
 
+        if (climb) {
+
+            float yVel = getVelocity().y;
+            if (climbingEntity == null && !jump && yVel <= 0.0f) {
+                climbingEntity = zone.climb(this);
+                if (climbingEntity != null) {
+                    startClimbing();
+                }
+            }
+
+            climb = false;
+        }
+
         if (jump && crouch) {
 
             // Crouch fall through floor, but only if its a platform, not a box.
-            if (support != null) {
-                if (support.flags.platform_collision) { 
+            // or
+            // Release climbing surface.
+            if ((support != null && support.flags.platform_collision) ||
+                (climbingEntity != null)) { 
 
-                    float yVel = getVelocity().y;
-                    if (java.lang.Math.abs(yVel) < 0.1f) {
-                        // Nudge the position down below the standing surface.
-                        position.y -= 0.1f;
+                float yVel = getVelocity().y;
+                if (java.lang.Math.abs(yVel) < 0.1f) {
+                    // Nudge the position down below the standing surface.
+                    position.y -= 0.1f;
+
+                    // Crouch jump to climb if there is a ladder below.
+                    if (climbingEntity == null) {
+
+                        climbingEntity = zone.climb(this);
+                        if (climbingEntity != null) {
+                            startClimbing();
+                            crouch = false;
+                        }
                     }
                 }
             }
 
             jump = false;
+
+            if (crouch && climbingEntity != null) {
+                stopClimbing();
+                crouch = false;
+            }
+        } else if (jump && climbingEntity != null) {
+
+            // Climbing down and jumping should just release.
+            if (moveVec.y < 0.0f) {
+                jump = false;
+            }
+
+            stopClimbing();
         }
 
         if (crouch) {
@@ -125,7 +197,7 @@ public class Avatar extends Sprite {
             }
 
             setScale(crouchScale);
-            crouch = false;
+            //crouch = false;
         } else {
             setScale(standScale);
         }
@@ -143,5 +215,23 @@ public class Avatar extends Sprite {
         if (position.x +bBox.max.x > bounds.max.x) {
             position.x = bounds.max.x - bBox.max.x;
         }
+    }
+
+    public void startClimbing() {
+        gravityScalar = 0.0f;
+        setVelocity(0.0f, 0.0f, 0.0f);
+    }
+
+    public void stopClimbing() {
+
+        if (climbingEntity == null) {
+            return;
+        }
+
+        climbingEntity = null;
+        gravityScalar = 1.0f;
+        getVelocity().y = 0.0f;
+        moveVec.y = 0.0f;
+        moveSpeed.y = 0.0f;
     }
 }

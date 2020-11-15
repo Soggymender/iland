@@ -216,6 +216,10 @@ public class Game implements SceneLoader.IEventHandler {
                 return zone.createDoor(properties, true);
             }
 
+            else if (type.equals("ladder")) {
+                return zone.createLadder(properties);
+            }
+
         } else {
 
             String depth = properties.get("p_depth");
@@ -246,7 +250,8 @@ public class Game implements SceneLoader.IEventHandler {
             }
         }
 
-        if (!(entity instanceof Door)) {
+        if (!(entity instanceof Door) &&
+            !(entity instanceof Ladder)) {
             zone.addEntity(entity);
         }
 

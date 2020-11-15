@@ -102,7 +102,7 @@ public class ScenePhysics {
                             aRes.x = (bNewPos.x + bBox.max.x) - (aNewPos.x + aBox.min.x);
                         }
 
-                        if (fromBottom) {
+                        if (fromBottom && boxCollision) {
                             collide = true;
                             aRes.y = (bNewPos.y + bBox.min.y) - (aNewPos.y + aBox.max.y);
                         }

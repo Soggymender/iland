@@ -23,6 +23,7 @@ public class Zone {
     Vector3f avatarStart;
 
     public List<Door> doors;
+    public List<Ladder> ladders;
 
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
@@ -43,6 +44,7 @@ public class Zone {
         avatarStart = new Vector3f();
 
         doors = new ArrayList<>();
+        ladders = new ArrayList<>();
 
         avatarBounds = new BoundingBox();
         cameraBounds = new BoundingBox();
@@ -107,6 +109,7 @@ public class Zone {
         avatarStart.zero();
 
         doors.clear();
+        ladders.clear();
 
         avatarBounds.reset();
         cameraBounds.reset();
@@ -145,6 +148,19 @@ public class Zone {
         doors.add(door);
 
         return door;
+    }
+
+    public Entity createLadder(Map<String, String>properties) {
+    
+        Ladder ladder = new Ladder();
+
+        ladders.add(ladder);
+
+        ladder.flags.collidable = true;
+        ladder.flags.platform_collision = true;
+
+
+        return ladder;
     }
 
     public void addEntity(Entity entity) {
@@ -236,6 +252,82 @@ public class Zone {
 
         return false;
     }   
+
+    public Entity climb(Entity entity) {
+
+        for (int i = 0; i < ladders.size(); i++) {
+
+            Ladder ladder = ladders.get(i);
+ 
+            // Over ladder.
+            if (entitiesOverlap(entity, ladder, 0.5f, 0.5f)) {
+                return ladder;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean entitiesOverlap(Entity entityA, Entity entityB, float xMinOverlapPct, float yMinOverlapPct) {
+
+        Vector3f entityAPos = entityA.getPosition();
+        BoundingBox entityABox = entityA.getBBox();
+
+        Vector3f entityBPos = entityB.getPosition();
+        BoundingBox entityBBox = entityB.getBBox();
+
+        float aL = entityAPos.x + entityABox.min.x;
+        float aR = entityAPos.x + entityABox.max.x;
+        float aT = entityAPos.y + entityABox.max.y;
+        float aB = entityAPos.y + entityABox.min.y;
+
+        float bL = entityBPos.x + entityBBox.min.x;
+        float bR = entityBPos.x + entityBBox.max.x;
+        float bT = entityBPos.y + entityBBox.max.y;
+        float bB = entityBPos.y + entityBBox.min.y;
+
+        if ((aL <= bR && aR >= bL) && (aT >= bB && aB <= bT)) {
+
+            float width;
+            float height;
+
+            if (aR > bR) {
+                width = bR - aL;
+            } else {
+                width = aR - bL;
+            }
+
+            if (aB < bT) {
+                height = aT - bB;
+            } else {
+                height = bT - aB;
+            }
+
+            float aWidth = aR - aL;
+            float aHeight = aT - aB;
+
+            float xPct = width / aWidth;
+            float yPct = height / aHeight;
+
+            if (xPct >= xMinOverlapPct && yPct >= yMinOverlapPct) {
+                return true;
+            }
+
+            /*
+            float xOverlap = (entityAPos.x + entityABox.max.x) - (entityBPos.x + entityBBox.min.x);
+            float yOverlap = (entityAPos.y + entityABox.max.y) - (entityBPos.y + entityBBox.min.y);
+
+            float xOverlapPct = Math.abs(xOverlap) / (entityABox.max.x - entityABox.min.x);
+            float yOverlapPct = Math.abs(yOverlap) / (entityABox.max.y - entityABox.min.y);
+
+            if (xOverlapPct >= xMinOverlapPct && yOverlapPct >= yMinOverlapPct) {
+                return true;
+            }
+            */
+        }
+
+        return false;
+    }
 
     public String getName() {
         return zoneName;
