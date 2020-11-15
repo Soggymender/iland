@@ -58,6 +58,12 @@ public class Avatar extends Sprite {
         avatarStart.z = getPosition().z;
         
         setPosition(avatarStart);
+
+        // Attach to a climbable surface?
+        climbingEntity = zone.climb(this);
+        if (climbingEntity != null) {
+            startClimbing();
+        }
     }
 
     @Override
@@ -125,14 +131,12 @@ public class Avatar extends Sprite {
             }
         }
 
-        if (enter) {
-
+        // Enter automatic or interactive doors.
+        if (zone.enterDoor(this, enter)) {
             enter = false;
-
-            if (zone.enterDoor(this)) {
-                return;
-            }
+            return;
         }
+        enter = false;
 
         if (climb) {
 

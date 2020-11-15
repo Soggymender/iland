@@ -88,7 +88,16 @@ public class Zone {
                 if (door.getName().equals(requestedDoorName)) {
                     
                     setAvatarStart(door.getPosition());
-                    break;
+                    return;
+                }
+            }
+
+            for (int i = 0; i < ladders.size(); i++) {
+
+                if (ladders.get(i).getName().equals(requestedDoorName)) {
+
+                    setAvatarStart(ladders.get(i).getPosition());
+                    return;
                 }
             }
         }
@@ -209,36 +218,37 @@ public class Zone {
         return cameraBounds;
     }
 
-    public boolean enterDoor(Entity entity) {
+    public boolean enterDoor(Entity entity, boolean use) {
 
         String targetZone = null;
         String targetDoor = null;
 
-        Vector3f entityPos = entity.getPosition();
-        BoundingBox entityBox = entity.getBBox();
-
         for (int i = 0; i < doors.size(); i++) {
 
             Door door = doors.get(i);
-            Vector3f doorPos = door.getPosition();
-            BoundingBox doorBox = door.getBBox();
- 
-            // Over door.
-            if ((entityPos.x + entityBox.min.x <= doorPos.x + doorBox.max.x && entityPos.x + entityBox.max.x >= doorPos.x + doorBox.min.x) &&
-                (entityPos.y + entityBox.min.y <= doorPos.y + doorBox.max.y && entityPos.y + entityBox.max.y >= doorPos.y + doorBox.min.y)) {
 
-                float xOverlap = (doorPos.x + doorBox.min.x) - (entityPos.x + entityBox.max.x);
-                float yOverlap = (doorPos.y + doorBox.min.y) - (entityPos.y + entityBox.max.y);
+            // If there was no interaction, skip doors that require it.
+            if (!door.isTrigger && !use) {
+                continue;
+            }
 
-                float xOverlapPct = Math.abs(xOverlap) / (doorBox.max.x - doorBox.min.x);
-                float yOverlapPct = Math.abs(yOverlap) / (doorBox.max.y - doorBox.min.y);
-    
-                if (xOverlapPct > 0.5f && yOverlapPct > 0.95f) {
+            // If this is a trigger door, and we entered through it, and we're no longer overlapping with it
+            // clear it out, allowing re-entry.
+            boolean enteredFromHere = door.getName().equals(requestedDoorName);
 
-                    targetZone = door.targetZone;
-                    targetDoor = door.targetDoor;
+            if (entitiesOverlap(entity, door, 0.5f, 0.95f)) {
 
-                    break;
+                if (enteredFromHere && door.isTrigger) {
+                    continue;
+                }
+
+                targetZone = door.targetZone;
+                targetDoor = door.targetDoor;
+            
+                break;
+            } else {
+                if (enteredFromHere) {
+                    requestedDoorName = null;
                 }
             }
         }
