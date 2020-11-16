@@ -81,11 +81,11 @@ public class ScenePhysics {
 
                         boolean boxCollision = a.flags.box_collision || b.flags.box_collision;
 
-                        boolean fromLeft  = aPos.x + aBox.max.x <= bPos.x + bBox.min.x;
-                        boolean fromRight = aPos.x + aBox.min.x >= bPos.x + bBox.max.x; 
+                        boolean fromLeft  = aPos.x + aBox.max.x - 0.001f <= bPos.x + bBox.min.x;
+                        boolean fromRight = aPos.x + aBox.min.x + 0.001f >= bPos.x + bBox.max.x; 
                         
                         boolean fromTop = aPos.y + aBox.min.y + 0.001f >= bPos.y + bBox.max.y;
-                        boolean fromBottom = aPos.y + aBox.max.y <= bPos.y + bBox.min.y;
+                        boolean fromBottom = aPos.y + aBox.max.y - 0.001f <= bPos.y + bBox.min.y;
 
                 //        float fromTopVal = (aPos.y + aBox.min.y) - (bPos.y + bBox.max.y);
 
@@ -128,9 +128,9 @@ public class ScenePhysics {
             Entity a = frameEntities.get(i);
             if (a.numCollisions > 0) {
 
-                a.resolutionVec.x /= a.numCollisions;
-                a.resolutionVec.y /= a.numCollisions;
-                a.resolutionVec.z /= a.numCollisions;
+            //    a.resolutionVec.x /= a.numCollisions;
+            //    a.resolutionVec.y /= a.numCollisions;
+            //    a.resolutionVec.z /= a.numCollisions;
 
                 a.frameVelocity.add(a.resolutionVec);
 
