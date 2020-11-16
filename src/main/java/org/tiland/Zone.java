@@ -22,6 +22,8 @@ public class Zone {
 
     Vector3f avatarStart;
 
+    public List<Npc> npcs;
+
     public List<Door> doors;
     public List<Ladder> ladders;
 
@@ -42,6 +44,8 @@ public class Zone {
         
     
         avatarStart = new Vector3f();
+
+        npcs = new ArrayList<>();
 
         doors = new ArrayList<>();
         ladders = new ArrayList<>();
@@ -117,6 +121,8 @@ public class Zone {
 
         avatarStart.zero();
 
+        npcs.clear();
+
         doors.clear();
         ladders.clear();
 
@@ -144,6 +150,18 @@ public class Zone {
         if (headingString.length() > 0) {
             zoneHeading = Float.parseFloat(headingString);
         }
+    }
+
+    public Entity createNpc(Map<String, String>properties) {
+    
+        String meshFilename = properties.get("p_filename");
+        //String scriptFilename = properties.get("p_script");
+
+        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename);
+
+        npcs.add(npc);
+
+        return npc;
     }
 
     public Entity createDoor(Map<String, String>properties, boolean isTrigger) {
