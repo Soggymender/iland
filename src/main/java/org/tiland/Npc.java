@@ -39,8 +39,6 @@ public class Npc extends Sprite {
         npcMesh[0].setMaterial(material);
 
         setMeshes(npcMesh);
-
-        scene.addEntity(this);
     }
 
     @Override

@@ -24,6 +24,8 @@ public class Hud {
     private Panel bPanel;
 
     private Panel mapPanel;
+    private Panel dialog;
+    private Text dialogText;
 
     private Panel fade;
     private float curFadeValue = 0.0f;
@@ -31,7 +33,7 @@ public class Hud {
     private float fadeLength = 0.66f;
     private float fadeTime = 0.0f;
 
-    private static final Font FONT = new Font("Arial", Font.PLAIN, 24);
+    private static final Font FONT = new Font("Arial", Font.BOLD, 16);
     private static final String CHARSET = "ISO-8859-1";
 
     private final Text fpsText;
@@ -44,7 +46,10 @@ public class Hud {
         
         fade = new Panel(canvas, canvas, new Rect(0, 0, 0, 0, true), new Rect(0, 0, 1, 1), new Vector2f(0, 0));
 
-        mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 200), new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
+        mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 100), new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
+     
+        dialog = new Panel(canvas,  canvas, new Rect(20, 20, 400, 100), new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
+        dialogText = new Text(canvas, dialog, new Rect(0, 0, 0, 0), new Rect(0, 0, 1, 1), new Vector2f(0, 1), "0.0", fontTexture);;
 
         bPanel = new Panel(canvas,  canvas, new Rect(50, 50, -50, -50, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
         new Button(canvas, bPanel, new Rect(100, 100, 100, 30),      new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
@@ -57,8 +62,16 @@ public class Hud {
         fade.setDepth(1.0f);
 
         mapPanel.setVisible(true);
-        mapPanel.setColor(new Color(0, 0, 0, 0.25f));
+        mapPanel.setColor(new Color(0, 0, 0, 0.5f));
      //  mapPanel.setDepth(1.0f);
+
+        dialog.setVisible(true);
+        dialog.setColor(new Color(0, 0, 0, 0.5f));
+
+        dialogText.xJustifyCenter = false;
+        dialogText.yJustifyCenter = false;
+        dialogText.setVisible(true);
+        setDialogText("water is becoming dangerously scarce. we've sent many diviners but none have returned. now we send you. may your search be blessed.");
 
         bPanel.setVisible(false);
         bPanel.setColor(new Color(0.25f, 0.0f, 0.75f, 0.5f));
@@ -96,6 +109,14 @@ public class Hud {
         curFadeValue = 1.0f;
         desFadeValue = 1.0f;
         fade.setVisible(false);
+    }
+
+    public void showDialog(boolean show) {
+        dialog.setVisible(show);
+    }
+
+    public void setDialogText(String text) {
+        dialogText.setText(text);
     }
 
     public void setStatusText(String statusText) {

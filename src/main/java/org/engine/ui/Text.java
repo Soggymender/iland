@@ -18,7 +18,8 @@ public class Text extends UiElement {
     private String text;
     private final FontTexture fontTexture;
 
-    private boolean xJustifyCenter = true;
+    public boolean xJustifyCenter = true;
+    public boolean yJustifyCenter = true;
     private boolean wordWrap = true;
 
     public Text(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
@@ -79,6 +80,7 @@ public class Text extends UiElement {
         }
 
         float startX = rectTrans.globalRect.xMin;
+        float startY = rectTrans.globalRect.yMin;
 
         // Cannot x center justify if the line is longer than the box can hold.
         // This covers word wrap as well.
@@ -86,7 +88,11 @@ public class Text extends UiElement {
             startX += (maxWidth - maxLineWidth) / 2;
         }
 
-        float startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+        if (yJustifyCenter) {
+            startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+        }
+
+        // To screen space.
         startY = canvas.workingResolution.y - startY;
 
         float depth = getDepth();
@@ -104,7 +110,7 @@ public class Text extends UiElement {
                 wordWidth = 0;
 
                 // Pre-emptively calculate whether there's room on another line to wrap to.
-                onLastLine = startY + (2 * texHeight * scale) > rectTrans.globalRect.yMax;
+                onLastLine = startY - (2 * texHeight * scale) < rectTrans.screenRect.yMin;//> rectTrans.globalRect.yMax;
 
                 // Start of a new word. Pre-calculate word wrap.
                 for (int j = i; j < numChars + 1; j++) {
@@ -120,9 +126,9 @@ public class Text extends UiElement {
 
                             // Wrap and continue.
                             startX = rectTrans.globalRect.xMin;
-                            startY += texHeight * scale;
+                            startY -= texHeight * scale;
 
-                            if (startY + texHeight > rectTrans.globalRect.yMax) {
+                            if (startY - texHeight * scale < rectTrans.screenRect.yMin) {
                                 full = true;
                             }
                         }
@@ -146,11 +152,9 @@ public class Text extends UiElement {
             float charWidth = (float) charInfo.getWidth();
 
             // If wrapping didn't happen for whatever reason, and this character doesn't fit, clip it and subsequent letters until a new word starts.
-            if (startX + charInfo.getWidth() * scale <= rectTrans.globalRect.xMax) {
+           // if (startX + charInfo.getWidth() * scale <= rectTrans.globalRect.xMax) {
 
-                if (characters[i] == ' ') {
-                    inWord = false;
-                }
+
 
                 // Build a character tile composed by two triangles
 
@@ -189,6 +193,10 @@ public class Text extends UiElement {
                 // Add indices por left top and bottom right vertices
                 indices.add(i * VERTICES_PER_QUAD);
                 indices.add(i * VERTICES_PER_QUAD + 2);
+            //}
+
+            if (characters[i] == ' ') {
+                inWord = false;
             }
 
             startX += charWidth * scale;
