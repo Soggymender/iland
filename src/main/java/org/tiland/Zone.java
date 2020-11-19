@@ -35,7 +35,9 @@ public class Zone {
 
     Entity zoneRoot = null;
 
-    public Zone(Scene scene, SceneLoader.IEventHandler sceneLoader) {
+    Hud hud;
+
+    public Zone(Scene scene, SceneLoader.IEventHandler sceneLoader, Hud hud) {
 
         this.scene = scene;
 
@@ -54,6 +56,8 @@ public class Zone {
         cameraBounds = new BoundingBox();
 
         this.sceneLoader = sceneLoader;
+
+        this.hud = hud;
     }
 
     public void requestZone(String zoneName, String doorName) {
@@ -279,7 +283,53 @@ public class Zone {
         }
 
         return false;
-    }   
+    }
+
+    public Entity interact(Entity entity, Entity other) {
+
+        if (other != null) {
+
+            Npc npc = (Npc)other;
+
+            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+                npc.interact(hud);
+                return other;
+            }
+
+            npc.endInteraction(hud);
+            return null;
+        }
+
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+
+            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+            
+                npc.interact(hud);
+                return npc;
+            }
+        }
+
+        return null;
+    } 
+    
+    public Entity validateInteraction(Entity entity, Entity other) {
+
+        if (other != null) {
+
+            Npc npc = (Npc)other;
+
+            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+                return other;
+            }
+
+            npc.endInteraction(hud);
+            return null;
+        }
+
+        return null;
+    }     
 
     public Entity climb(Entity entity) {
 
@@ -355,6 +405,39 @@ public class Zone {
         }
 
         return false;
+    }
+
+    public boolean entitiesNear(Entity entityA, Entity entityB, float xMinDistance, float yMinDistance) {
+
+        Vector3f entityAPos = entityA.getPosition();
+        BoundingBox entityABox = entityA.getBBox();
+
+        Vector3f entityBPos = entityB.getPosition();
+        BoundingBox entityBBox = entityB.getBBox();
+
+        Vector3f xVec = new Vector3f(entityBPos);
+        float dist;
+
+        xVec.sub(entityAPos);
+        xVec.y = 0.0f;
+
+        dist = xVec.length();
+
+        if (dist > xMinDistance) {
+            return false;
+        }
+
+        Vector3f yVec = new Vector3f(entityBPos);
+        yVec.sub(entityAPos);
+        yVec.x = 0.0f;
+
+        dist = yVec.length();
+
+        if (dist > yMinDistance) {
+            return false;
+        }
+
+        return true;
     }
 
     public String getName() {

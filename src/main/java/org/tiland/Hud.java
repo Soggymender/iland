@@ -49,7 +49,7 @@ public class Hud {
         mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 100), new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
      
         dialog = new Panel(canvas,  canvas, new Rect(20, 20, 400, 100), new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
-        dialogText = new Text(canvas, dialog, new Rect(0, 0, 0, 0), new Rect(0, 0, 1, 1), new Vector2f(0, 1), "0.0", fontTexture);;
+        dialogText = new Text(canvas, dialog, new Rect(5, 5, -5, 5), new Rect(0, 0, 1, 1), new Vector2f(0, 1), "0.0", fontTexture);;
 
         bPanel = new Panel(canvas,  canvas, new Rect(50, 50, -50, -50, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
         new Button(canvas, bPanel, new Rect(100, 100, 100, 30),      new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
@@ -57,21 +57,20 @@ public class Hud {
 
         // Setup a text box.
         fpsText = new Text(canvas, canvas, new Rect(5, -5, 100, 20), new Rect(0, 1, 0, 1, true), new Vector2f(0, 1), "0.0", fontTexture);;
+        fpsText.xJustifyCenter = false;
 
         fade.setVisible(false);
         fade.setDepth(1.0f);
 
         mapPanel.setVisible(true);
-        mapPanel.setColor(new Color(0, 0, 0, 0.5f));
-     //  mapPanel.setDepth(1.0f);
+        mapPanel.setColor(new Color(0, 0, 0, 0.75f));
+       mapPanel.setDepth(1.0f);
 
-        dialog.setVisible(true);
-        dialog.setColor(new Color(0, 0, 0, 0.5f));
+        dialog.setVisible(false);
+        dialog.setColor(new Color(0, 0, 0, 0.75f));
 
         dialogText.xJustifyCenter = false;
         dialogText.yJustifyCenter = false;
-        dialogText.setVisible(true);
-        setDialogText("water is becoming dangerously scarce. we've sent many diviners but none have returned. now we send you. may your search be blessed.");
 
         bPanel.setVisible(false);
         bPanel.setColor(new Color(0.25f, 0.0f, 0.75f, 0.5f));

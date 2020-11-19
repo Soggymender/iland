@@ -43,13 +43,13 @@ public class Game implements SceneLoader.IEventHandler {
 
         this.sceneRenderer = sceneRenderer;
 
-        zone = new Zone(scene, this);
+        hud = new Hud(window, scene);
+
+        zone = new Zone(scene, this, hud);
 
         avatar = new Avatar(scene, zone);
 
         camera = new GameCamera(window, avatar, zone);
-
-        hud = new Hud(window, scene);
 
         // The target is actually the main camera since it doesn't track during jumps, etc.
         map = new MiniMap(mapScene, avatar, camera, hud, window);

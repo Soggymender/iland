@@ -23,6 +23,8 @@ public class Avatar extends Sprite {
     public boolean climbing = false;
     public Entity climbingEntity = null;
 
+    public Entity interactEntity = null;
+
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
@@ -136,7 +138,19 @@ public class Avatar extends Sprite {
             enter = false;
             return;
         }
+
+        if (enter) {
+            interactEntity = zone.interact(this, interactEntity);
+            if (interactEntity != null) {
+                enter = false;
+                return;
+            }
+        }
         enter = false;
+
+        if (interactEntity != null) {
+            interactEntity = zone.validateInteraction(this, interactEntity);
+        }
 
         if (climb) {
 

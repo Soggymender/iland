@@ -9,6 +9,9 @@ import org.joml.*;
 
 public class Npc extends Sprite {
 
+    private int dialogLine = -1;
+    private int numDialogLines = 1;
+
     public Npc(Scene scene, Vector3f position, String meshFilename) {
 
         super(scene);
@@ -45,5 +48,26 @@ public class Npc extends Sprite {
     public void update(float interval) {
 
         super.update(interval);
+    }
+
+    public void interact(Hud hud) {
+        
+        if (dialogLine == -1) {
+            hud.showDialog(true);
+            hud.setDialogText("water is becoming dangerously scarce. we've sent all from the diviner's guild, and all have failed. our survival is in your hands.");
+        }
+
+        if (dialogLine == numDialogLines - 1) {
+            hud.showDialog(false);
+            dialogLine = -1;
+            return;
+        }
+
+        dialogLine++;
+    }
+
+    public void endInteraction(Hud hud) {
+        hud.showDialog(false);
+        dialogLine = -1;
     }
 }

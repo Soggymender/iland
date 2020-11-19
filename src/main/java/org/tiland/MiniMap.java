@@ -164,6 +164,7 @@ public class MiniMap {
         Vector4f color = Color.GREY;
         if (mapZones.get(currentZoneName) == mapZone) {
             color = Color.WHITE;
+            color.z = 0.9f;
         }
 
         mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);

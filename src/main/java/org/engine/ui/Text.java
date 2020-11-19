@@ -49,6 +49,7 @@ public class Text extends UiElement {
             Shader defaultGuiShader = shaderCache.getShader("defaultGui");
 
             material.setShader(defaultGuiShader);
+            material.setTransparent();
         }
 
         List<Float> positions = new ArrayList<>();
