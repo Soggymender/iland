@@ -9,10 +9,10 @@ import org.joml.*;
 
 public class Npc extends Sprite {
 
-    private int dialogLine = -1;
-    private int numDialogLines = 1;
+    private Script script = null;
+    private boolean talking = false;
 
-    public Npc(Scene scene, Vector3f position, String meshFilename) {
+    public Npc(Scene scene, Vector3f position, String meshFilename, String scriptFilename) {
 
         super(scene);
 
@@ -20,10 +20,10 @@ public class Npc extends Sprite {
         flags.dynamic = false;
         flags.collidable = false;
 
-        initialize(scene, position, meshFilename);
+        initialize(scene, position, meshFilename, scriptFilename);
     }
 
-    public void initialize(Scene scene, Vector3f position, String meshFilename) {
+    public void initialize(Scene scene, Vector3f position, String meshFilename, String scriptFilename) {
 
         setPosition(position);
 
@@ -42,6 +42,10 @@ public class Npc extends Sprite {
         npcMesh[0].setMaterial(material);
 
         setMeshes(npcMesh);
+
+        if (scriptFilename != null) {
+            script = new Script(scriptFilename);
+        }
     }
 
     @Override
@@ -52,22 +56,68 @@ public class Npc extends Sprite {
 
     public void interact(Hud hud) {
         
-        if (dialogLine == -1) {
-            hud.showDialog(true);
-            hud.setDialogText("water is becoming dangerously scarce. we've sent all from the diviner's guild, and all have failed. our survival is in your hands.");
-        }
-
-        if (dialogLine == numDialogLines - 1) {
-            hud.showDialog(false);
-            dialogLine = -1;
+        if (script == null) {
             return;
         }
 
-        dialogLine++;
+        // Grab the current command.
+
+        int prevCommand = script.nextCommand;
+
+        outer:
+        while (script.nextCommand < script.numCommands) {
+
+            String command = script.commands.get(script.nextCommand);
+            String[] args = command.split(":");
+
+            script.nextCommand++;
+
+            switch (args[0]) {
+
+                case "talk":
+                    talking = true;
+                    hud.showDialog(true);
+                    hud.setDialogText(args[1]);
+    
+                    break outer;
+
+                case "eint":
+                    endInteraction(hud, false);
+                    break outer;
+
+                case "goto":
+                    script.nextCommand = Integer.parseInt(args[1]);
+                    break;
+                    
+                default:
+                    break outer;
+            }
+        }
+
+        if (prevCommand == script.nextCommand) {
+            // We were at the end. Close any active dialog.
+            endInteraction(hud, true);            
+        }
     }
 
-    public void endInteraction(Hud hud) {
+    public void interruptInteraction(Hud hud) {
+        
+        if (talking) {
+            
+            hud.showDialog(false);
+
+            script.nextCommand--;
+        }
+    }
+    
+    public void endInteraction(Hud hud, boolean reset) {
+        
+        talking = false;
+        
         hud.showDialog(false);
-        dialogLine = -1;
+
+        if (reset) {
+            script.nextCommand = 0;
+        }
     }
 }

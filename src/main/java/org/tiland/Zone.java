@@ -159,9 +159,9 @@ public class Zone {
     public Entity createNpc(Map<String, String>properties) {
     
         String meshFilename = properties.get("p_filename");
-        //String scriptFilename = properties.get("p_script");
+        String scriptFilename = properties.get("p_script");
 
-        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename);
+        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename, scriptFilename);
 
         npcs.add(npc);
 
@@ -296,7 +296,7 @@ public class Zone {
                 return other;
             }
 
-            npc.endInteraction(hud);
+            npc.endInteraction(hud, false);
             return null;
         }
 
@@ -324,7 +324,7 @@ public class Zone {
                 return other;
             }
 
-            npc.endInteraction(hud);
+            npc.interruptInteraction(hud);
             return null;
         }
 

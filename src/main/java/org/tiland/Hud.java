@@ -63,8 +63,8 @@ public class Hud {
         fade.setDepth(1.0f);
 
         mapPanel.setVisible(true);
-        mapPanel.setColor(new Color(0, 0, 0, 0.75f));
-       mapPanel.setDepth(1.0f);
+        mapPanel.setColor(new Color(0, 0, 0, 0.5f));
+    
 
         dialog.setVisible(false);
         dialog.setColor(new Color(0, 0, 0, 0.75f));
