@@ -134,7 +134,7 @@ public class Avatar extends Sprite {
         }
 
         // Enter automatic or interactive doors.
-        if (zone.enterDoor(this, enter)) {
+        if (zone.enterDoor(this, enter, crouch)) {
             enter = false;
             return;
         }

@@ -15,7 +15,7 @@ public class Script {
     public Script(String name) {
         this.name = name;
     
-        this.filename = new String("src/main/resources/tiland/scripts/" + name + ".txt");
+        this.filename = new String("src/main/resources/tiland/scripts/" + name);
 
         File file = new File(filename);
 

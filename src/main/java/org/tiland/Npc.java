@@ -12,7 +12,7 @@ public class Npc extends Sprite {
     private Script script = null;
     private boolean talking = false;
 
-    public Npc(Scene scene, Vector3f position, String meshFilename, String scriptFilename) {
+    public Npc(Scene scene, Vector3f position, String meshFilename, Script script) {
 
         super(scene);
 
@@ -20,10 +20,10 @@ public class Npc extends Sprite {
         flags.dynamic = false;
         flags.collidable = false;
 
-        initialize(scene, position, meshFilename, scriptFilename);
+        initialize(scene, position, meshFilename, script);
     }
 
-    public void initialize(Scene scene, Vector3f position, String meshFilename, String scriptFilename) {
+    public void initialize(Scene scene, Vector3f position, String meshFilename, Script script) {
 
         setPosition(position);
 
@@ -43,9 +43,7 @@ public class Npc extends Sprite {
 
         setMeshes(npcMesh);
 
-        if (scriptFilename != null) {
-            script = new Script(scriptFilename);
-        }
+        this.script = script;
     }
 
     @Override

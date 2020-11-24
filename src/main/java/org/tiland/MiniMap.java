@@ -164,13 +164,13 @@ public class MiniMap {
         Vector4f color = Color.GREY;
         if (mapZones.get(currentZoneName) == mapZone) {
             color = Color.WHITE;
-            color.z = 0.9f;
+            color.z = 0.1f;
         }
 
-        mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);
-        mapZone.zoneSketch.addLines(color, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z);
+        //mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);
+        //mapZone.zoneSketch.addLines(color, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z);
         mapZone.zoneSketch.addLines(color, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z);
-        mapZone.zoneSketch.addLines(color, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z);
+        //mapZone.zoneSketch.addLines(color, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z);
     }
 
     private void updateLocationSketch() {

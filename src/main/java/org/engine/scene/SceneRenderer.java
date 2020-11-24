@@ -121,17 +121,21 @@ public class SceneRenderer {
         // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
         window.setResized(false);
  
+        
         // Opaque
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
+        
         for (Shader shader : mapShaders.keySet()) {
 
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
             renderShaderMeshes(camera, shader, scene, meshList, false);
-        }
 
+        }
+        
         glDepthMask(false);
+   //     glClear(GL_DEPTH_BUFFER_BIT);
 
         // Transparent
         for (Shader shader : mapShaders.keySet()) {
@@ -140,10 +144,10 @@ public class SceneRenderer {
             List<Mesh> meshList = mapShaders.get(shader);
 
             renderShaderMeshes(camera, shader, scene, meshList, true);
+
         }
-
+        
         glDepthMask(true);
-
     }
 
     private void renderShaderMeshes(Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {

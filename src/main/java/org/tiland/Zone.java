@@ -1,5 +1,6 @@
 package org.tiland;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class Zone {
     String requestedDoorName = new String();
 
     Vector3f avatarStart;
+
+    public ArrayList<Script> scripts = new ArrayList<Script>();
 
     public List<Npc> npcs;
 
@@ -58,6 +61,26 @@ public class Zone {
         this.sceneLoader = sceneLoader;
 
         this.hud = hud;
+
+        loadScripts();
+    }
+
+    private void loadScripts() {
+
+
+
+        List<String> scriptFiles = new ArrayList<String>();
+        File dir = new File("src/main/resources/tiland/scripts/");
+        for (File file : dir.listFiles()) {
+
+            if (file.getName().endsWith((".txt"))) {
+                scriptFiles.add(file.getName());
+            }
+        }
+        
+        for (String filename : scriptFiles) {
+            scripts.add(new Script(filename));
+        }
     }
 
     public void requestZone(String zoneName, String doorName) {
@@ -159,21 +182,34 @@ public class Zone {
     public Entity createNpc(Map<String, String>properties) {
     
         String meshFilename = properties.get("p_filename");
-        String scriptFilename = properties.get("p_script");
+        String scriptFilename = properties.get("p_script") + ".txt";
 
-        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename, scriptFilename);
+        // Find the script for this NPC.
+        Script script = null;
+        if (scriptFilename != null && scriptFilename.length() > 0) {
+            for (Script curScript : scripts) {
+                if (curScript.name.equals(scriptFilename)) {
+                    script = curScript;
+                    break;
+                }
+            }
+        }
+
+
+        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename, script);
 
         npcs.add(npc);
 
         return npc;
     }
 
-    public Entity createDoor(Map<String, String>properties, boolean isTrigger) {
+    public Entity createDoor(Map<String, String>properties, boolean frontDoor, boolean isTrigger) {
     
         Door door = new Door();
 
         door.targetZone = properties.get("p_target_zone");
         door.targetDoor = properties.get("p_target_object");
+        door.isFront = frontDoor;
         door.isTrigger = isTrigger;
 
         doors.add(door);
@@ -240,7 +276,7 @@ public class Zone {
         return cameraBounds;
     }
 
-    public boolean enterDoor(Entity entity, boolean use) {
+    public boolean enterDoor(Entity entity, boolean useBack, boolean useFront) {
 
         String targetZone = null;
         String targetDoor = null;
@@ -250,7 +286,15 @@ public class Zone {
             Door door = doors.get(i);
 
             // If there was no interaction, skip doors that require it.
-            if (!door.isTrigger && !use) {
+            if (!door.isTrigger && !useFront && !useBack) {
+                continue;
+            }
+
+            if (door.isFront && !useFront) {
+                continue;
+            }
+
+            if (!door.isFront && !useBack) {
                 continue;
             }
 

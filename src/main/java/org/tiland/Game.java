@@ -189,8 +189,9 @@ public class Game implements SceneLoader.IEventHandler {
     public void render(float interval) {
 
         // Render
-        sceneRenderer.render(map.getCamera(), map.getScene(), true);
-        sceneRenderer.render(camera, scene, false);
+        sceneRenderer.render(camera, scene, true);
+        sceneRenderer.render(map.getCamera(), map.getScene(), false);
+        
     }
 
     public void LoadSRequestEvent() {
@@ -209,11 +210,15 @@ public class Game implements SceneLoader.IEventHandler {
             }
 
             else if (type.equals("door")) {
-                return zone.createDoor(properties, false);
+                return zone.createDoor(properties, false, false);
+            }
+
+            else if (type.equals("front_door")) {
+                return zone.createDoor(properties, true, false);
             }
 
             else if (type.equals("exit")) {
-                return zone.createDoor(properties, true);
+                return zone.createDoor(properties, false, true);
             }
 
             else if (type.equals("ladder")) {

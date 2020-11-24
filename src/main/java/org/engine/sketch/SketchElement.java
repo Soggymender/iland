@@ -107,6 +107,7 @@ public class SketchElement extends Entity {
             mesh = new Mesh(Mesh.LINES, positions, texCoords, normals, indices);
             setMesh(mesh);
             mesh.setMaterial(material);
+            material.setTransparent();
         } else {
             mesh.set(Mesh.LINES, positions, texCoords, normals, indices);
         }
