@@ -165,7 +165,7 @@ public class Game implements SceneLoader.IEventHandler {
         sceneRenderer.render(camera,scene, true);
     }
 
-    public Entity preLoadEntityEvent(Map<String, String>properties) {
+    public Entity preLoadEntityEvent(String name, Map<String, String>properties) {
 
         String type = properties.get("p_type");
         if (type != null && type.equals("terrain")) {

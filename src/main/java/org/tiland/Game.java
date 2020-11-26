@@ -176,6 +176,7 @@ public class Game implements SceneLoader.IEventHandler {
        fpsTotal += fps;
        fpsSamples++;
 
+       avatar.takePendingItem();
        scene.update(interval);
 
         // Update the camera last so that the targets transform is up to date and already simulated.
@@ -198,7 +199,7 @@ public class Game implements SceneLoader.IEventHandler {
 
     }
 
-    public Entity preLoadEntityEvent(Map<String, String>properties) {
+    public Entity preLoadEntityEvent(String name, Map<String, String>properties) {
 
         String type = properties.get("p_type");
         if (type != null) {
@@ -226,7 +227,11 @@ public class Game implements SceneLoader.IEventHandler {
             }
 
             else if (type.equals("npc")) {
-                return zone.createNpc(properties);
+                return zone.createNpc(name, properties, false);
+            }
+
+            else if (type.equals("item")) {
+                return zone.createNpc(name, properties, true);
             }
 
         } else {

@@ -9,16 +9,22 @@ import org.joml.*;
 
 public class Npc extends Sprite {
 
-    private Script script = null;
-    private boolean talking = false;
+    private String home;
 
-    public Npc(Scene scene, Vector3f position, String meshFilename, Script script) {
+    private Script script = null;
+
+    public boolean isItem = false;
+    public  boolean talking = false;
+
+    public Npc(Scene scene, Vector3f position, String home, String meshFilename, Script script) {
 
         super(scene);
 
         moveVec = new Vector2f();
         flags.dynamic = false;
         flags.collidable = false;
+
+        this.home = home;
 
         initialize(scene, position, meshFilename, script);
     }
@@ -49,73 +55,27 @@ public class Npc extends Sprite {
     @Override
     public void update(float interval) {
 
-        super.update(interval);
-    }
-
-    public void interact(Hud hud) {
-        
-        if (script == null) {
-            return;
-        }
-
-        // Grab the current command.
-
-        int prevCommand = script.nextCommand;
-
-        outer:
-        while (script.nextCommand < script.numCommands) {
-
-            String command = script.commands.get(script.nextCommand);
-            String[] args = command.split(":");
-
-            script.nextCommand++;
-
-            switch (args[0]) {
-
-                case "talk":
-                    talking = true;
-                    hud.showDialog(true);
-                    hud.setDialogText(args[1]);
     
-                    break outer;
 
-                case "eint":
-                    endInteraction(hud, false);
-                    break outer;
 
-                case "goto":
-                    script.nextCommand = Integer.parseInt(args[1]);
-                    break;
-                    
-                default:
-                    break outer;
+        super.update(interval);
+
+        /*
+        if (flags.dynamic) {
+            if (velocity.y == 0.0f) {
+                flags.dynamic = false;
+                flags.collidable = false;
             }
         }
-
-        if (prevCommand == script.nextCommand) {
-            // We were at the end. Close any active dialog.
-            endInteraction(hud, true);            
-        }
+        */
     }
 
-    public void interruptInteraction(Hud hud) {
-        
-        if (talking) {
-            
-            hud.showDialog(false);
+    public String getHome() {
+        return home;
 
-            script.nextCommand--;
-        }
     }
     
-    public void endInteraction(Hud hud, boolean reset) {
-        
-        talking = false;
-        
-        hud.showDialog(false);
-
-        if (reset) {
-            script.nextCommand = 0;
-        }
+    public Script getScript() {
+        return script;
     }
 }

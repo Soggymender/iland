@@ -25,8 +25,16 @@ public class Avatar extends Sprite {
 
     public Entity interactEntity = null;
 
+    public Npc heldItem = null;
+    public Npc pendingHeldItem = null;
+
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
+
+    private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.01f);
+    private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.0f);
+
+    private Vector3f dirScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
     public Avatar(Scene scene, Zone zone) throws Exception {
 
@@ -77,10 +85,12 @@ public class Avatar extends Sprite {
 
         if (keyboard.keyDown(GLFW_KEY_A)){
             moveVec.x = -1;
+            dirScale.x = -1.0f;
         } 
 
         if (keyboard.keyDown(GLFW_KEY_D)) {
             moveVec.x = 1.0f;
+            dirScale.x = 1.0f;
         }
 
         if (keyboard.keyJustDown(GLFW_KEY_SPACE)) {
@@ -140,7 +150,7 @@ public class Avatar extends Sprite {
         }
 
         if (enter) {
-            interactEntity = zone.interact(this, interactEntity);
+            interactEntity = zone.interact(this, interactEntity, heldItem == null);
             if (interactEntity != null) {
                 enter = false;
                 return;
@@ -166,36 +176,39 @@ public class Avatar extends Sprite {
         }
 
         if (jump && crouch) {
+ 
+ 
+               // Crouch fall through floor, but only if its a platform, not a box.
+                // or
+                // Release climbing surface.
+                if ((support != null && support.flags.platform_collision) ||
+                    (climbingEntity != null)) { 
 
-            // Crouch fall through floor, but only if its a platform, not a box.
-            // or
-            // Release climbing surface.
-            if ((support != null && support.flags.platform_collision) ||
-                (climbingEntity != null)) { 
+                    float yVel = getVelocity().y;
+                    if (java.lang.Math.abs(yVel) < 0.1f) {
+                        // Nudge the position down below the standing surface.
+                        position.y -= 0.1f;
 
-                float yVel = getVelocity().y;
-                if (java.lang.Math.abs(yVel) < 0.1f) {
-                    // Nudge the position down below the standing surface.
-                    position.y -= 0.1f;
+                        // Crouch jump to climb if there is a ladder below.
+                        if (climbingEntity == null) {
 
-                    // Crouch jump to climb if there is a ladder below.
-                    if (climbingEntity == null) {
-
-                        climbingEntity = zone.climb(this);
-                        if (climbingEntity != null) {
-                            startClimbing();
-                            crouch = false;
+                            climbingEntity = zone.climb(this);
+                            if (climbingEntity != null) {
+                                startClimbing();
+                                crouch = false;
+                            }
                         }
                     }
                 }
-            }
 
-            jump = false;
+                jump = false;
 
-            if (crouch && climbingEntity != null) {
-                stopClimbing();
-                crouch = false;
-            }
+                if (crouch && climbingEntity != null) {
+                    stopClimbing();
+                    crouch = false;
+                }
+            
+
         } else if (jump && climbingEntity != null) {
 
             // Climbing down and jumping should just release.
@@ -208,14 +221,23 @@ public class Avatar extends Sprite {
 
         if (crouch) {
 
-            // Can't move while crouching unless jumping or fall.
-            float yVel = getVelocity().y;
-            if (java.lang.Math.abs(yVel) == 0.0f) {
-                moveVec.zero();
-            }
 
-            setScale(crouchScale);
-            //crouch = false;
+            // If holding something, drop it.
+            if (heldItem != null) {
+
+                drop();
+            //    crouch = false;
+            }// else {
+
+                // Can't move while crouching unless jumping or fall.
+                float yVel = getVelocity().y;
+                if (java.lang.Math.abs(yVel) == 0.0f) {
+                    moveVec.zero();
+                }
+
+                setScale(crouchScale);
+                //crouch = false;
+            //}
         } else {
             setScale(standScale);
         }
@@ -233,6 +255,27 @@ public class Avatar extends Sprite {
         if (position.x +bBox.max.x > bounds.max.x) {
             position.x = bounds.max.x - bBox.max.x;
         }
+
+        updateHeldItem();
+    }
+
+    private void updateHeldItem() {
+
+        if (heldItem == null) {
+            return;
+        }
+
+        Vector3f offset = new Vector3f(holdOffset);
+
+        if (crouch) {
+
+             offset.mul(crouchScale);
+        }
+
+        offset.mul(dirScale);
+        offset.add(position);
+
+        heldItem.setPosition(offset);
     }
 
     public void startClimbing() {
@@ -251,5 +294,54 @@ public class Avatar extends Sprite {
         getVelocity().y = 0.0f;
         moveVec.y = 0.0f;
         moveSpeed.y = 0.0f;
+    }
+
+    public void take(Npc npc) {
+
+        if (heldItem == null) {
+            pendingHeldItem = npc;
+        }
+    }
+
+    public void takePendingItem() {
+
+        if (pendingHeldItem == null) {
+            return;
+        }
+
+            heldItem = pendingHeldItem;
+            heldItem.flags.dynamic = false;
+            heldItem.flags.collidable = false;
+
+           // heldItem.setParent(null);
+           // scene.removeEntity(heldItem);
+           // heldItem.scene = scene;
+           // scene.addEntity(heldItem);
+
+            pendingHeldItem = null;
+      
+        
+    }
+
+    public void drop() {
+        if (heldItem == null) {
+            return;
+        }
+
+
+        Vector3f offset = new Vector3f(dropOffset);
+
+        offset.mul(dirScale);
+        offset.add(position);
+
+
+
+
+        heldItem.setPosition(offset);
+
+        heldItem.flags.dynamic = true;
+        heldItem.flags.collidable = true;
+
+        heldItem = null;
     }
 }

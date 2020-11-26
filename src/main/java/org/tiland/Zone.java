@@ -106,9 +106,10 @@ public class Zone {
         }
 
         reset();
-        load(requestedZoneName);
 
         zoneName = requestedZoneName;
+        load(requestedZoneName);
+
         requestedZoneName = "";
 
         if (!requestedDoorName.isEmpty()) {
@@ -148,7 +149,7 @@ public class Zone {
 
         avatarStart.zero();
 
-        npcs.clear();
+        //npcs.clear();
 
         doors.clear();
         ladders.clear();
@@ -179,8 +180,28 @@ public class Zone {
         }
     }
 
-    public Entity createNpc(Map<String, String>properties) {
-    
+    public Entity createNpc(String name, Map<String, String>properties, boolean isItem) {
+
+        // Was this NPC created during a previous load?
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+
+            String npcName = npc.getName();
+            String npcHome = npc.getHome();
+
+            if (npcName != null && npcHome != null)  {
+                if (npcName.equals(name) && npcHome.equals(zoneName)) {
+
+        //            npc.scene = scene;
+        //            scene.addEntity((Entity)npc);
+                    npc.setParent(zoneRoot);
+                    return null; // Signal not to create or modify the existing NPC.
+                }
+            }
+        }
+
+
         String meshFilename = properties.get("p_filename");
         String scriptFilename = properties.get("p_script") + ".txt";
 
@@ -196,9 +217,10 @@ public class Zone {
         }
 
 
-        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), meshFilename, script);
-
+        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), zoneName, meshFilename, script);
+        npc.isItem = isItem;
         npcs.add(npc);
+        
 
         return npc;
     }
@@ -329,28 +351,54 @@ public class Zone {
         return false;
     }
 
-    public Entity interact(Entity entity, Entity other) {
+    public Entity interact(Entity entity, Entity other, boolean canTake) {
 
         if (other != null) {
 
             Npc npc = (Npc)other;
 
             if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
-                npc.interact(hud);
+                interact(entity, npc);
                 return other;
             }
 
-            npc.endInteraction(hud, false);
+            endInteraction(entity, npc, false);
             return null;
         }
 
+        // Take?
+        if (canTake) {
+            for (int i = 0; i < npcs.size(); i++) {
+
+                Npc npc = npcs.get(i);
+
+                if (!npc.getVisible()) {
+                    continue;
+                }
+
+                if (!npc.isItem) {
+                    continue;
+                }
+
+                if (entitiesNear(entity, npc, 0.25f, 0.25f)) {
+                
+                    interact(entity, npc);
+                    return null;
+                }
+            }
+        }
+
+        // Talk?
         for (int i = 0; i < npcs.size(); i++) {
 
             Npc npc = npcs.get(i);
+            if (npc.isItem) {
+                continue;
+            }
 
             if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
             
-                npc.interact(hud);
+                interact(entity, npc);
                 return npc;
             }
         }
@@ -368,7 +416,7 @@ public class Zone {
                 return other;
             }
 
-            npc.interruptInteraction(hud);
+            interruptInteraction(entity, npc);
             return null;
         }
 
@@ -434,18 +482,6 @@ public class Zone {
             if (xPct >= xMinOverlapPct && yPct >= yMinOverlapPct) {
                 return true;
             }
-
-            /*
-            float xOverlap = (entityAPos.x + entityABox.max.x) - (entityBPos.x + entityBBox.min.x);
-            float yOverlap = (entityAPos.y + entityABox.max.y) - (entityBPos.y + entityBBox.min.y);
-
-            float xOverlapPct = Math.abs(xOverlap) / (entityABox.max.x - entityABox.min.x);
-            float yOverlapPct = Math.abs(yOverlap) / (entityABox.max.y - entityABox.min.y);
-
-            if (xOverlapPct >= xMinOverlapPct && yOverlapPct >= yMinOverlapPct) {
-                return true;
-            }
-            */
         }
 
         return false;
@@ -495,4 +531,87 @@ public class Zone {
     public float getMapHeading() {
         return zoneHeading;
     }
+
+    public void interact(Entity entity, Npc npc) {
+        
+        Script script = npc.getScript();
+
+        if (script == null) {
+            return;
+        }
+
+        // Grab the current command.
+
+        int prevCommand = script.nextCommand;
+
+        outer:
+        while (script.nextCommand < script.numCommands) {
+
+            String command = script.commands.get(script.nextCommand);
+            String[] args = command.split(":");
+
+            script.nextCommand++;
+
+            switch (args[0]) {
+
+                case "ainv":
+
+                    Avatar avatar = (Avatar)entity;
+                    avatar.take(npc);
+
+                    //npc.setVisible(!npc.getVisible());
+                    script.nextCommand = 0;
+
+                    break outer;
+
+                case "talk":
+                    npc.talking = true;
+                    hud.showDialog(true);
+                    hud.setDialogText(args[1]);
+    
+                    break outer;
+
+                case "eint":
+                    endInteraction(entity, npc, false);
+                    break outer;
+
+                case "goto":
+                    script.nextCommand = Integer.parseInt(args[1]);
+                    break;
+                    
+                default:
+                    break outer;
+            }
+        }
+
+        if (prevCommand == script.nextCommand) {
+            // We were at the end. Close any active dialog.
+            endInteraction(entity, npc, true);            
+        }
+    }
+
+    public void interruptInteraction(Entity entity, Npc npc) {
+        
+        Script script = npc.getScript();
+
+        if (npc.talking) {
+            
+            hud.showDialog(false);
+
+            script.nextCommand--;
+        }
+    }
+    
+    public void endInteraction(Entity entity, Npc npc, boolean reset) {
+        
+        Script script = npc.getScript();
+
+        npc.talking = false;
+        
+        hud.showDialog(false);
+
+        if (reset) {
+            script.nextCommand = 0;
+        }
+    }    
 }

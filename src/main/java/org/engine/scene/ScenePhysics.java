@@ -27,23 +27,31 @@ public class ScenePhysics {
         for (int i = 0; i < frameEntities.size(); i++) {
 
             Entity a = frameEntities.get(i);
-            Vector3f aPos = a.getPosition();
-            BoundingBox aBox = a.getBBox();
-            float aResScalar = 1.0f;
-            
+
             if (!a.flags.collidable || !a.flags.visible) {
                 continue;
             }
 
             if (!a.flags.dynamic) {
-                aResScalar = 0.0f;
+                continue;
+//                aResScalar = 0.0f;
             }
 
-            for (int j = i + 1; j < frameEntities.size(); j++) {
+            Vector3f aPos = a.getPosition();
+            BoundingBox aBox = a.getBBox();
+            
 
+//            for (int j = i + 1; j < frameEntities.size(); j++) {
+
+            for (int j = 0; j < frameEntities.size(); j++) {
+                if (j == i) {
+                    continue;
+                }
+            
                 Entity b = frameEntities.get(j);
                 Vector3f bPos = b.getPosition();
                 BoundingBox bBox = b.getBBox();
+                float aResScalar = 1.0f;
                 float bResScalar = 1.0f;
                 
                 if (!b.flags.collidable || !b.flags.visible) {
@@ -59,9 +67,11 @@ public class ScenePhysics {
                     bResScalar = 0.0f;
                 }
 
-                if (b.flags.dynamic && b.flags.dynamic) {
-                    aResScalar = 0.5f;
-                    bResScalar = 0.5f;
+                if (a.flags.dynamic && b.flags.dynamic) {
+                    // We're just going to try to avoid NxN dynamics because resolution gets complex.
+                    continue;
+                    //aResScalar = 0.5f;
+                    //bResScalar = 0.5f;
                 }
 
                 aNewPos.x = aPos.x + a.frameVelocity.x;

@@ -110,12 +110,19 @@ public class Entity {
         if (this.parent == null) {
             this.parent = parent;
 
-            this.parent.addChild(this);
+            if (parent != null) {
+                this.parent.addChild(this);
+            }
         } else {
             // If there is already a parent, adopt.
             // Consider how this may impact the scene update.
-//            Entity oldParent = this.parent;
-//            this.parent.removeChild(this);
+            //Entity oldParent = this.parent;
+            this.parent.removeChild(this);
+            this.parent = parent;
+
+            if (parent != null) {
+                this.parent.addChild(this);
+            }
         }
     }
 

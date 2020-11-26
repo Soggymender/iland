@@ -26,7 +26,7 @@ public class SceneLoader {
 
     public interface IEventHandler {
         
-        public Entity preLoadEntityEvent(Map<String, String>properties);
+        public Entity preLoadEntityEvent(String name, Map<String, String>properties);
         public void postLoadEntityEvent(Entity entity, Map<String, String>properties);
     }
 
@@ -96,8 +96,10 @@ public class SceneLoader {
             String p_type = properties.get("p_type");
             if (p_type != null && p_type == "terrain") {
 
-                Entity entity = eventHandler.preLoadEntityEvent(properties);
-                entity.setName(name.dataString().toLowerCase());
+                String entityName = name.dataString().toLowerCase();
+
+                Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
+                entity.setName(entityName);
                 entity.setParent(sceneRoot);
                 
                 Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
@@ -110,8 +112,10 @@ public class SceneLoader {
                 // Game types.
 
                 if (aiNode.mNumMeshes() > 0) {
-                    Entity entity = eventHandler.preLoadEntityEvent(properties);
-                    entity.setName(name.dataString().toLowerCase());
+
+                    String entityName = name.dataString().toLowerCase();
+                    Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
+                    entity.setName(entityName);
                     entity.setParent(sceneRoot);
 
                     Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
@@ -128,7 +132,9 @@ public class SceneLoader {
                     eventHandler.postLoadEntityEvent(entity, properties); 
                 } else {
 
-                    Entity entity = eventHandler.preLoadEntityEvent(properties);
+                    String entityName = name.dataString().toLowerCase();
+
+                    Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
 
                     // If etity is null, the game got all it needs out of the properties.
                     
@@ -137,7 +143,7 @@ public class SceneLoader {
                     //}
 
                     if (entity != null) {
-                        entity.setName(name.dataString().toLowerCase());
+                        entity.setName(entityName);
                         entity.setParent(sceneRoot);
 
                         Matrix4f transform = toMatrix(aiNode.mTransformation());
