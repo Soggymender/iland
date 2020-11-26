@@ -211,27 +211,27 @@ public class Game implements SceneLoader.IEventHandler {
             }
 
             else if (type.equals("door")) {
-                return zone.createDoor(properties, false, false);
+                return zone.loadDoor(properties, false, false);
             }
 
             else if (type.equals("front_door")) {
-                return zone.createDoor(properties, true, false);
+                return zone.loadDoor(properties, true, false);
             }
 
             else if (type.equals("exit")) {
-                return zone.createDoor(properties, false, true);
+                return zone.loadDoor(properties, false, true);
             }
 
             else if (type.equals("ladder")) {
-                return zone.createLadder(properties);
+                return zone.loadLadder(properties);
             }
 
             else if (type.equals("npc")) {
-                return zone.createNpc(name, properties, false);
+                return zone.loadNpc(name, properties, false);
             }
 
             else if (type.equals("item")) {
-                return zone.createNpc(name, properties, true);
+                return zone.loadNpc(name, properties, true);
             }
 
         } else {

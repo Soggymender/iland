@@ -196,7 +196,7 @@ public class Zone {
         }
     }
 
-    public Entity createNpc(String name, Map<String, String>properties, boolean isItem) {
+    public Entity loadNpc(String name, Map<String, String>properties, boolean isItem) {
 
         // Was this NPC created during a previous load?
         for (int i = 0; i < npcs.size(); i++) {
@@ -235,11 +235,12 @@ public class Zone {
         npc.isItem = isItem;
         npcs.add(npc);
         
+        // The NPC is returned and the scene loader sets it's parent to the zoneRoot, and gives it a name.
 
         return npc;
     }
 
-    public Entity createDoor(Map<String, String>properties, boolean frontDoor, boolean isTrigger) {
+    public Entity loadDoor(Map<String, String>properties, boolean frontDoor, boolean isTrigger) {
     
         Door door = new Door();
 
@@ -253,7 +254,7 @@ public class Zone {
         return door;
     }
 
-    public Entity createLadder(Map<String, String>properties) {
+    public Entity loadLadder(Map<String, String>properties) {
     
         Ladder ladder = new Ladder();
 
@@ -264,6 +265,30 @@ public class Zone {
 
 
         return ladder;
+    }
+
+    public Entity createNpc(String name, String meshFilename, String scriptFilename, boolean isItem) {
+
+        // Find the script for this NPC.
+        Script script = null;
+        if (scriptFilename != null && scriptFilename.length() > 0) {
+            for (Script curScript : scripts) {
+                if (curScript.name.equals(scriptFilename)) {
+                    script = curScript;
+                    break;
+                }
+            }
+        }
+
+        Npc npc = new Npc(scene, new Vector3f(0, 0, 0), zoneName, meshFilename, script);
+        npc.isItem = isItem;
+        npcs.add(npc);
+        
+        // Have to manually set the name and parent.
+        npc.setName(name);
+        npc.setParent(zoneRoot);
+
+        return npc;
     }
 
     public void addEntity(Entity entity) {
@@ -581,15 +606,28 @@ public class Zone {
 
             switch (args[0]) {
 
-                case "ainv":
+                // Spawn an item and take it.
+                case "ainv": {
+
+                    Npc item = (Npc)createNpc(args[1], args[1], args[1] + ".txt", true);
+                    if (item == null) {
+                        break;
+                    }
+
+                    Avatar avatar = (Avatar)entity;
+                    avatar.take(item);
+
+                    break;
+                }
+
+                // Take an existing item from the zone.
+                case "take": {
 
                     Avatar avatar = (Avatar)entity;
                     avatar.take(npc);
 
-                    //npc.setVisible(!npc.getVisible());
-                    script.nextCommand = 0;
-
-                    break outer;
+                    break;
+                }
 
                 case "talk":
                     npc.talking = true;

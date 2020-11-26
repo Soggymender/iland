@@ -233,9 +233,9 @@ public class Scene {
                 removeEntity(entity, true);
             }
 
-            entity.setParent(entity.pendingParent);
-            entity.pendingParent = null;
-            entity.pendingParentValid = false;
+            entity.setParent(entity.requestedParent);
+            entity.requestedParent = null;
+            entity.requestedParentValid = false;
 
             // Add the entity at it's new position.
             if (entity.parent == null) {
@@ -248,7 +248,7 @@ public class Scene {
 
         entity.update(interval);
 
-        if (entity.pendingParentValid) {
+        if (entity.requestedParentValid) {
             adoptions.add(entity);
         }
 

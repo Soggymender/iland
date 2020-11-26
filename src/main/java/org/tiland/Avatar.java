@@ -305,7 +305,7 @@ public class Avatar extends Sprite {
             heldItem.flags.collidable = false;
 
             // Remove it from the zone.
-            heldItem.changeParent(null);
+            heldItem.requestParent(null);
             heldItem.setZoneName(null);
         }
     }
@@ -316,7 +316,7 @@ public class Avatar extends Sprite {
         }
 
         // Put this back in the zone. It will leave the scene when the zone does.
-        heldItem.changeParent(zone.zoneRoot);
+        heldItem.requestParent(zone.zoneRoot);
         heldItem.setZoneName(zone.zoneName);
 
         Vector3f offset = new Vector3f(dropOffset);
