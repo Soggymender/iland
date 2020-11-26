@@ -346,17 +346,19 @@ public class Zone {
 
             Door door = doors.get(i);
 
-            // If there was no interaction, skip doors that require it.
-            if (!door.isTrigger && !useFront && !useBack) {
-                continue;
-            }
+            // If there was no interaction, skip doors that require it / are not triggers.
+            if (!door.isTrigger) {
+                if (!useFront && !useBack) {
+                    continue;
+                }
 
-            if (door.isFront && !useFront) {
-                continue;
-            }
+                if (door.isFront && !useFront) {
+                    continue;
+                }
 
-            if (!door.isFront && !useBack) {
-                continue;
+                if (!door.isFront && !useBack) {
+                    continue;
+                }
             }
 
             // If this is a trigger door, and we entered through it, and we're no longer overlapping with it
