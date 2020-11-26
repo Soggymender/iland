@@ -299,28 +299,15 @@ public class Avatar extends Sprite {
     public void take(Npc npc) {
 
         if (heldItem == null) {
-            pendingHeldItem = npc;
-        }
-    }
 
-    public void takePendingItem() {
-
-        if (pendingHeldItem == null) {
-            return;
-        }
-
-            heldItem = pendingHeldItem;
+            heldItem = npc;
             heldItem.flags.dynamic = false;
             heldItem.flags.collidable = false;
 
-           // heldItem.setParent(null);
-           // scene.removeEntity(heldItem);
-           // heldItem.scene = scene;
-           // scene.addEntity(heldItem);
-
-            pendingHeldItem = null;
-      
-        
+            // Remove it from the zone.
+            heldItem.changeParent(null);
+            heldItem.setZoneName(null);
+        }
     }
 
     public void drop() {
@@ -328,6 +315,9 @@ public class Avatar extends Sprite {
             return;
         }
 
+        // Put this back in the zone. It will leave the scene when the zone does.
+        heldItem.changeParent(zone.zoneRoot);
+        heldItem.setZoneName(zone.zoneName);
 
         Vector3f offset = new Vector3f(dropOffset);
 

@@ -53,6 +53,8 @@ public class Entity {
     protected BoundingBox bBox;
 
     public Entity parent;
+    public boolean pendingParentValid = false;
+    public Entity pendingParent = null;
     public List<Entity> children = null;
 
     public Entity support = null;
@@ -124,6 +126,30 @@ public class Entity {
                 this.parent.addChild(this);
             }
         }
+    }
+
+    public void changeParent(Entity parent) {
+
+        // Changing the parent maintains the scene, but puts the entity in a new position
+        // within the scene hierarchy. The scene itself has to detect this itself and apply
+        // the change after the update.
+        pendingParentValid = true;
+        pendingParent = parent;
+
+        
+        /*
+            // Remove it from the zone.
+            heldItem.changeParent(null);
+
+            // Remove it from the scene manually. (Automate this later in setParent)
+            scene.removeEntity(heldItem);
+
+            // Add it back to the scene at the root level.
+            scene.addEntity(heldItem);
+
+            pendingHeldItem = null;
+            //pendingHeldItem = npc;
+        */
     }
 
     public void addChild(Entity child) {

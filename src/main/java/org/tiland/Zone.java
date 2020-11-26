@@ -36,7 +36,7 @@ public class Zone {
     Scene scene = null;
     SceneLoader.IEventHandler sceneLoader;
 
-    Entity zoneRoot = null;
+    public Entity zoneRoot = null;
 
     Hud hud;
 
@@ -102,7 +102,7 @@ public class Zone {
         }
 
         if (zoneRoot != null) {
-            scene.removeEntity(zoneRoot);
+            scene.removeEntity(zoneRoot, false);
         }
 
         reset();
@@ -141,6 +141,22 @@ public class Zone {
 
         String zoneFilename = new String("src/main/resources/tiland/models/" + zoneName + ".fbx");
         SceneLoader.loadEntities(zoneRoot, zoneFilename, "src/main/resources/tiland/textures/", sceneLoader);
+
+        // Reparent any items that were from another zone but moved here.
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+
+            String npcZone = npc.getZone();
+
+            if (npcZone != null)  {
+
+                // This NPC was in this zone previously.
+                if (npcZone.equals(zoneName)) {
+                    npc.setParent(zoneRoot);
+                }
+            }
+        }
 
         scene.addEntity(zoneRoot);
     }
@@ -189,13 +205,11 @@ public class Zone {
 
             String npcName = npc.getName();
             String npcHome = npc.getHome();
+            String npcZone = npc.getZone();
 
             if (npcName != null && npcHome != null)  {
                 if (npcName.equals(name) && npcHome.equals(zoneName)) {
 
-        //            npc.scene = scene;
-        //            scene.addEntity((Entity)npc);
-                    npc.setParent(zoneRoot);
                     return null; // Signal not to create or modify the existing NPC.
                 }
             }
@@ -357,6 +371,8 @@ public class Zone {
 
             Npc npc = (Npc)other;
 
+            // TODO: Make sure this NPC is in this zone.
+
             if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
                 interact(entity, npc);
                 return other;
@@ -373,6 +389,11 @@ public class Zone {
                 Npc npc = npcs.get(i);
 
                 if (!npc.getVisible()) {
+                    continue;
+                }
+
+                // Can't interact with NPCs in other zones.
+                if (!npc.getZone().equals(zoneName)) {
                     continue;
                 }
 
@@ -395,6 +416,12 @@ public class Zone {
             if (npc.isItem) {
                 continue;
             }
+
+            // Can't interact with NPCs in other zones.
+            if (!npc.getZone().equals(zoneName)) {
+                continue;
+            }
+
 
             if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
             

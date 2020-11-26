@@ -176,7 +176,7 @@ public class Game implements SceneLoader.IEventHandler {
        fpsTotal += fps;
        fpsSamples++;
 
-       avatar.takePendingItem();
+       ;//avatar.takePendingItem();
        scene.update(interval);
 
         // Update the camera last so that the targets transform is up to date and already simulated.

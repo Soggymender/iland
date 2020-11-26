@@ -27,6 +27,9 @@ public class Scene {
     // Entities processed this frame.
     private List<Entity> frameEntities = null;
 
+    // Entities that need to change parents.
+    private List<Entity> adoptions = null;
+
     /*  A "flat" map of meshes in the scene, where each references the list of entities that reference the mesh.
         TODO: Entities in the root hierarchy will automatically be added to the map. Entities do not have to be in the
         root hierarchy in order to be added manually. */
@@ -53,6 +56,8 @@ public class Scene {
         renderEntities = new ArrayList<>();
         frameEntities = new ArrayList<>();
 
+        adoptions = new ArrayList<>();
+
         meshToEntityMap = new HashMap<>();
         shaderToMeshMap = new HashMap<>();
     }
@@ -64,16 +69,24 @@ public class Scene {
         }
     }
 
-    public void removeEntity(Entity entity) {
+    // entityOnly is a flag for when we know we are just changing the entity's position within the scene.
+    public void removeEntity(Entity entity, boolean entityOnly) {
         if (entities.contains(entity)) {
             entities.remove(entity);
+        }
 
-            // Remove meshes if no other entities reference them.
-            removeEntityMeshes(entity);
+        if (entityOnly) {
+            return;
+        }
+        
+        // If the entity being removed is a child it will not be in the entity list, but its meshes may
+        // be in the mesh list.
+
+        // Remove meshes if no other entities reference them.
+        removeEntityMeshes(entity);
             
-            for (Entity child : entity.children) {
-                removeEntityMeshes(child);
-            }
+        for (Entity child : entity.children) {
+            removeEntityMeshes(child);
         }
     }
 
@@ -205,15 +218,39 @@ public class Scene {
     public void update(float interval) {
 
         frameEntities.clear();
+        adoptions.clear();
 
         for (Entity entity : entities) {
             update(interval, entity);
+        }
+
+        // Adoptions (parentage changes) have to be handled outside of the update loop since it changes
+        // the entities list.
+        for (Entity entity : adoptions) {
+
+            // If the current parent is null, remove it from the scene.
+            if (entity.parent == null) {
+                removeEntity(entity, true);
+            }
+
+            entity.setParent(entity.pendingParent);
+            entity.pendingParent = null;
+            entity.pendingParentValid = false;
+
+            // Add the entity at it's new position.
+            if (entity.parent == null) {
+                addEntity(entity);
+            }
         }
     }
 
     private void update(float interval, Entity entity) {
 
         entity.update(interval);
+
+        if (entity.pendingParentValid) {
+            adoptions.add(entity);
+        }
 
         frameEntities.add(entity);
 

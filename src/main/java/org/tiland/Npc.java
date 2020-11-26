@@ -9,7 +9,8 @@ import org.joml.*;
 
 public class Npc extends Sprite {
 
-    private String home;
+    private String homeName;
+    private String zoneName;
 
     private Script script = null;
 
@@ -24,7 +25,8 @@ public class Npc extends Sprite {
         flags.dynamic = false;
         flags.collidable = false;
 
-        this.home = home;
+        this.homeName = home;
+        this.zoneName = home;
 
         initialize(scene, position, meshFilename, script);
     }
@@ -71,11 +73,19 @@ public class Npc extends Sprite {
     }
 
     public String getHome() {
-        return home;
+        return homeName;
 
     }
     
     public Script getScript() {
         return script;
+    }
+
+    public String getZone() {
+        return zoneName;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
     }
 }
