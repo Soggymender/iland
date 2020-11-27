@@ -111,9 +111,11 @@ public class SceneLoader {
 
                 // Game types.
 
+                // Blender makes similar names unique by adding .001 etc. Strip it.
+                String entityName = name.dataString().toLowerCase().split("\\.")[0];
+
                 if (aiNode.mNumMeshes() > 0) {
 
-                    String entityName = name.dataString().toLowerCase();
                     Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
                     entity.setName(entityName);
                     entity.setParent(sceneRoot);
@@ -131,8 +133,6 @@ public class SceneLoader {
 
                     eventHandler.postLoadEntityEvent(entity, properties); 
                 } else {
-
-                    String entityName = name.dataString().toLowerCase();
 
                     Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
 

@@ -70,16 +70,30 @@ public class Game implements SceneLoader.IEventHandler {
         hud.setFadeOut();
         hud.startFadeIn();
 
+        float oldZoneHeading = zone.getMapHeading();
+
         zone.loadRequestedZone();
+
+        float newZoneHeading = zone.getMapHeading(); 
 
         avatar.goToStart();
         
         if (zone.enteredByDoor()) {
+
+            if (newZoneHeading > oldZoneHeading) {
+                camera.setHeading(45.0f);
+            }
+
+            else if (newZoneHeading < oldZoneHeading) {
+                camera.setHeading(-45.0f);
+            }
+/*
             if (count % 2 != 0) {
                 camera.setHeading(45.0f);
             } else {
                 camera.setHeading(-45.0f);
             }
+            */
         }
         
         count += 1;

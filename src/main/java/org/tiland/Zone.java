@@ -172,6 +172,11 @@ public class Zone {
 
         avatarBounds.reset();
         cameraBounds.reset();
+
+        avatarBounds.min.x = 9999.0f;
+        avatarBounds.min.y = 9999.0f;
+        avatarBounds.max.x = -9999.0f;
+        avatarBounds.max.y = -9999.0f;
     }
 
     public void setAvatarStart(Vector3f avatarStart) {
