@@ -487,6 +487,11 @@ public class Zone {
                     continue;
                 }
 
+                // This is probably already being carried.
+                if (npc.getZone() == null) {
+                    continue;
+                }
+
                 // Can't interact with NPCs in other zones.
                 if (!npc.getZone().equals(zoneName)) {
                     continue;

@@ -149,7 +149,7 @@ public class Avatar extends Sprite {
         }
 
         if (enter) {
-            interactEntity = zone.interact(this, interactEntity, inventory.getHeldItem() == null);
+            interactEntity = zone.interact(this, interactEntity, !inventory.isFull());
             if (interactEntity != null) {
                 enter = false;
                 return;
@@ -298,14 +298,14 @@ public class Avatar extends Sprite {
 
     public void take(Npc npc) {
 
-        if (inventory.take(npc)) {
+        if (inventory.take(npc, zone)) {
             updateHeldItem();
         }
     }
 
     public void drop() {
 
-        Npc heldItem = inventory.drop(zone);
+        Npc heldItem = inventory.drop(-1, true, zone);
         if (heldItem == null) {
             return;
         }

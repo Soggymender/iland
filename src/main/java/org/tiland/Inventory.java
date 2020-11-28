@@ -9,30 +9,28 @@ public class Inventory {
   
 
     public int capacity = 2;
-    public int heldItemIdx = -1;
+    public Npc heldItem = null;
 
     List<Npc> items = new ArrayList<>();
     List<String> keys = new ArrayList<>();
 
     public Npc getHeldItem() {
         
-        if (heldItemIdx == -1) {
-            return null;
-        }
-
-        return items.get(heldItemIdx); 
+        return heldItem; 
     }
 
-    public boolean take(Npc npc) {
+    public boolean take(Npc npc, Zone zone) {
 
-        if (heldItemIdx != -1) {
-            return false;
+        if (items.size() == capacity) {
+
+            // Toss the oldest thing on the ground. Safest and provides feedback.
+            drop(0, false, zone);
         }
 
         // Add it to the inventory.
         items.add(npc);
 
-        heldItemIdx = items.size() - 1;
+        heldItem = npc;
     
         npc.flags.dynamic = false;
         npc.flags.collidable = false;
@@ -44,13 +42,25 @@ public class Inventory {
         return true;
     }
 
-    public Npc drop(Zone zone) {
+    public Npc drop(int itemIdx, boolean holdNewest, Zone zone) {
 
-        if (heldItemIdx == -1) {
+        int droppedItemIdx = -1;
+
+        if (itemIdx != -1) {
+            droppedItemIdx = itemIdx; 
+        }
+        
+        else if (heldItem != null) {
+            
+            droppedItemIdx = findHeldItemIdx();
+            heldItem = null;
+        }
+
+        else {
             return null;
         }
 
-        Npc droppedItem = items.get(heldItemIdx);
+        Npc droppedItem = items.get(droppedItemIdx);
 
         // Put this back in the zone. It will leave the scene when the zone does.
         droppedItem.requestParent(zone.zoneRoot);
@@ -59,8 +69,11 @@ public class Inventory {
         droppedItem.flags.dynamic = true;
         droppedItem.flags.collidable = true;
 
-        items.remove(heldItemIdx);
-        heldItemIdx = -1;
+        items.remove(droppedItemIdx);
+
+        if (holdNewest && heldItem == null && items.size() > 0) {
+            heldItem = items.get(items.size() - 1);
+        }
 
         return droppedItem;
     }
@@ -78,13 +91,17 @@ public class Inventory {
 
     public void removeInventoryItem(String itemName, Zone zone) {
 
+        Npc cur;
+
         for (int i = 0; i < items.size(); i++) {
 
-            if (items.get(i).getName().equals(itemName)) {
+            cur = items.get(i);
 
-                if (i == heldItemIdx) {
-                    items.get(heldItemIdx).setVisible(false);
-                    drop(zone);
+            if (cur.getName().equals(itemName)) {
+
+                if (cur == heldItem) {
+                    heldItem.setVisible(false);
+                    drop(-1, true, zone);
                     
                 } else {
                     items.remove(i);
@@ -101,5 +118,25 @@ public class Inventory {
 
     public List<String> getKeys() {
         return keys;
+    }
+
+    private int findHeldItemIdx() {
+
+        if (heldItem == null) {
+            return -1;
+        }
+
+        for (int i = 0; i < items.size(); i++) {
+
+            if (items.get(i) == heldItem) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public boolean isFull() {
+        return items.size() == capacity;
     }
 }
