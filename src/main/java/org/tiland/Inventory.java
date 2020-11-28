@@ -3,56 +3,64 @@ package org.tiland;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Popup;
+
 public class Inventory {
   
-    public Npc heldItem = null;
+
+    public int capacity = 2;
+    public int heldItemIdx = -1;
 
     List<Npc> items = new ArrayList<>();
     List<String> keys = new ArrayList<>();
 
     public Npc getHeldItem() {
-        return heldItem; 
+        
+        if (heldItemIdx == -1) {
+            return null;
+        }
+
+        return items.get(heldItemIdx); 
     }
 
     public boolean take(Npc npc) {
 
-        if (heldItem != null) {
+        if (heldItemIdx != -1) {
             return false;
         }
 
         // Add it to the inventory.
         items.add(npc);
 
-        heldItem = npc;
-        heldItem.flags.dynamic = false;
-        heldItem.flags.collidable = false;
+        heldItemIdx = items.size() - 1;
+    
+        npc.flags.dynamic = false;
+        npc.flags.collidable = false;
 
         // Remove it from the zone.
-        heldItem.requestParent(null);
-        heldItem.setZoneName(null);
+        npc.requestParent(null);
+        npc.setZoneName(null);
 
         return true;
     }
 
     public Npc drop(Zone zone) {
 
-        if (heldItem == null) {
+        if (heldItemIdx == -1) {
             return null;
         }
 
-        if (items.contains(heldItem)) {
-            items.remove(heldItem);
-        }
+        Npc droppedItem = items.get(heldItemIdx);
 
         // Put this back in the zone. It will leave the scene when the zone does.
-        heldItem.requestParent(zone.zoneRoot);
-        heldItem.setZoneName(zone.zoneName);
+        droppedItem.requestParent(zone.zoneRoot);
+        droppedItem.setZoneName(zone.zoneName);
 
-        heldItem.flags.dynamic = true;
-        heldItem.flags.collidable = true;
+        droppedItem.flags.dynamic = true;
+        droppedItem.flags.collidable = true;
 
-        Npc droppedItem = heldItem;
-        heldItem = null;
+        items.remove(heldItemIdx);
+        heldItemIdx = -1;
 
         return droppedItem;
     }
@@ -74,8 +82,8 @@ public class Inventory {
 
             if (items.get(i).getName().equals(itemName)) {
 
-                if (heldItem == items.get(i)) {
-                    heldItem.setVisible(false);
+                if (i == heldItemIdx) {
+                    items.get(heldItemIdx).setVisible(false);
                     drop(zone);
                     
                 } else {
