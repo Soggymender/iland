@@ -721,7 +721,7 @@ public class Zone {
                 // Check if the avatar's inventory contains an item.
                 case "cinv": {
 
-                    String[] inventoryNames = ((Avatar)entity).getInventoryNames();
+                    String[] inventoryNames = ((Avatar)entity).inventory.getInventoryNames();
 
                     for (int i = 0; i < inventoryNames.length; i++) {
                         if (inventoryNames[i].equals(args[1])) {
@@ -738,21 +738,21 @@ public class Zone {
                 // Remove item from avatar's inventory.
                 case "rinv": {
 
-                    ((Avatar)entity).removeInventoryItem(args[1]);
+                    ((Avatar)entity).inventory.removeInventoryItem(args[1], this);
 
                     break;
                 }
 
                 case "akey": {
 
-                    ((Avatar)entity).addKey(args[1]);
+                    ((Avatar)entity).inventory.addKey(args[1]);
 
                     break;
                 }
 
                 case "ckey": {
                     
-                    List<String> keys = ((Avatar)entity).getKeys();
+                    List<String> keys = ((Avatar)entity).inventory.getKeys();
 
                     for (String key : keys) {
 
