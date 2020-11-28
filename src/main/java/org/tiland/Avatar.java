@@ -1,5 +1,8 @@
 package org.tiland;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.engine.core.BoundingBox;
 import org.engine.scene.Entity;
 import org.engine.renderer.Material;
@@ -27,6 +30,9 @@ public class Avatar extends Sprite {
 
     public Npc heldItem = null;
     public Npc pendingHeldItem = null;
+
+    List<Npc> inventory = new ArrayList<>();
+    List<String> keys = new ArrayList<>();
 
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -300,6 +306,9 @@ public class Avatar extends Sprite {
 
         if (heldItem == null) {
 
+            // Add it to the inventory.
+            inventory.add(npc);
+
             heldItem = npc;
             heldItem.flags.dynamic = false;
             heldItem.flags.collidable = false;
@@ -307,12 +316,19 @@ public class Avatar extends Sprite {
             // Remove it from the zone.
             heldItem.requestParent(null);
             heldItem.setZoneName(null);
+
+            // Smash to the correct position so it doesn't flash.
+            updateHeldItem();
         }
     }
 
     public void drop() {
         if (heldItem == null) {
             return;
+        }
+
+        if (inventory.contains(heldItem)) {
+            inventory.remove(heldItem);
         }
 
         // Put this back in the zone. It will leave the scene when the zone does.
@@ -334,4 +350,41 @@ public class Avatar extends Sprite {
 
         heldItem = null;
     }
+
+    public String[] getInventoryNames() {
+
+        String[] inventoryNames = new String[inventory.size()];
+
+        for(int i = 0; i < inventory.size(); i++) {
+            inventoryNames[i] = inventory.get(i).getName();
+        }
+
+        return inventoryNames;
+    }
+
+    public void removeInventoryItem(String itemName) {
+
+        for (int i = 0; i < inventory.size(); i++) {
+
+            if (inventory.get(i).getName().equals(itemName)) {
+
+                if (heldItem == inventory.get(i)) {
+                    heldItem.setVisible(false);
+                    drop();
+                    
+                } else {
+                    inventory.remove(i);
+                }
+                break;
+            }
+        }
+    }
+
+    public void addKey(String key) {
+        keys.add(key);
+    }
+
+    public List<String> getKeys() {
+        return keys;
+    }    
 }

@@ -1,0 +1,23 @@
+talk:Ah, the young temple guard recruit.
+cinv:ros:5
+talk:what brings you here?
+eint:
+goto:1
+talk:aren't you a bit young to be retiring?
+rinv:ros
+talk:if you wish to join the guild, there is a test.
+talk:find the two sources of water that supply the village.
+talk:i'll need proof. take these.
+ainv:jar
+cinv:clean water,dirty water:15
+talk:come back once you've found both water sources.
+eint:
+goto:11
+rinv:clean water
+rinv:dirty water
+talk:ah, excellent work. the two water supplies are all that remains. 
+einv:
+talk:oh, right. you are now an official member of the diviner's guild. congratulations!
+talk:now, to finish my laundry.
+einv:
+talk:the temple priest will start you on your path.

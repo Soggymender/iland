@@ -12,6 +12,8 @@ import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
 
+import org.tiland.Trigger.*;
+
 public class Zone {
 
     String zoneName;
@@ -29,6 +31,7 @@ public class Zone {
 
     public List<Door> doors;
     public List<Ladder> ladders;
+    public List<Trigger> triggers;
 
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
@@ -54,6 +57,8 @@ public class Zone {
 
         doors = new ArrayList<>();
         ladders = new ArrayList<>();
+
+        triggers = new ArrayList<>();
 
         avatarBounds = new BoundingBox();
         cameraBounds = new BoundingBox();
@@ -170,6 +175,8 @@ public class Zone {
         doors.clear();
         ladders.clear();
 
+        triggers.clear();
+
         avatarBounds.reset();
         cameraBounds.reset();
 
@@ -235,6 +242,19 @@ public class Zone {
             }
         }
 
+        // If there was no script and this is an item, use the generic "take" script.
+        if (isItem && script == null) {
+            scriptFilename = "take.txt";
+
+            if (scriptFilename != null && scriptFilename.length() > 0) {
+                for (Script curScript : scripts) {
+                    if (curScript.name.equals(scriptFilename)) {
+                        script = curScript;
+                        break;
+                    }
+                }
+            }
+        }
 
         Npc npc = new Npc(scene, new Vector3f(0, 5, 0), zoneName, meshFilename, script);
         npc.isItem = isItem;
@@ -243,6 +263,28 @@ public class Zone {
         // The NPC is returned and the scene loader sets it's parent to the zoneRoot, and gives it a name.
 
         return npc;
+    }
+
+    public Entity loadTrigger(Map<String, String>properties, TriggerType type) {
+
+        String scriptFilename = properties.get("p_script") + ".txt";
+
+        // Find the script for this NPC.
+        Script script = null;
+        if (scriptFilename != null && scriptFilename.length() > 0) {
+            for (Script curScript : scripts) {
+                if (curScript.name.equals(scriptFilename)) {
+                    script = curScript;
+                    break;
+                }
+            }
+        }
+
+        Trigger trigger = new Trigger(script, type);
+
+        triggers.add(trigger);
+
+        return trigger;
     }
 
     public Entity loadDoor(Map<String, String>properties, boolean frontDoor, boolean isTrigger) {
@@ -285,6 +327,20 @@ public class Zone {
             }
         }
 
+        // If there was no script and this is an item, use the generic "take" script.
+        if (isItem && script == null) {
+            scriptFilename = "take.txt";
+
+            if (scriptFilename != null && scriptFilename.length() > 0) {
+                for (Script curScript : scripts) {
+                    if (curScript.name.equals(scriptFilename)) {
+                        script = curScript;
+                        break;
+                    }
+                }
+            }
+        }
+        
         Npc npc = new Npc(scene, new Vector3f(0, 0, 0), zoneName, meshFilename, script);
         npc.isItem = isItem;
         npcs.add(npc);
@@ -399,18 +455,25 @@ public class Zone {
 
     public Entity interact(Entity entity, Entity other, boolean canTake) {
 
+        // If there's an ongoing interaction make sure it is still valid.
         if (other != null) {
-
-            Npc npc = (Npc)other;
 
             // TODO: Make sure this NPC is in this zone.
 
-            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
-                interact(entity, npc);
+            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
+                interact(entity, other);
                 return other;
             }
 
-            endInteraction(entity, npc, false);
+            Script script = null;
+
+            if (other instanceof Trigger) {
+                script = ((Trigger)other).getScript();    
+            } else {
+                script = ((Npc)other).getScript();
+            }
+
+            endInteraction(entity, script, false);
             return null;
         }
 
@@ -438,6 +501,21 @@ public class Zone {
                     interact(entity, npc);
                     return null;
                 }
+            }
+        }
+
+        // Interact? (with Triggers)
+        for (int i = 0; i < triggers.size(); i++) {
+
+            Trigger trigger = triggers.get(i);
+
+            if (entitiesNear(entity, trigger, 0.25f, 0.25f)) {
+            
+                if (interact(entity, trigger)) {
+                    return trigger;
+                }
+
+                // Tried to interact but there was no script. Keep looking.
             }
         }
 
@@ -469,13 +547,19 @@ public class Zone {
 
         if (other != null) {
 
-            Npc npc = (Npc)other;
-
-            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
                 return other;
             }
 
-            interruptInteraction(entity, npc);
+            Script script = null;
+
+            if (other instanceof Trigger) {
+                script = ((Trigger)other).getScript();    
+            } else {
+                script = ((Npc)other).getScript();
+            }
+
+            interruptInteraction(entity, script);
             return null;
         }
 
@@ -591,12 +675,18 @@ public class Zone {
         return zoneHeading;
     }
 
-    public void interact(Entity entity, Npc npc) {
+    public boolean interact(Entity entity, Entity other) {
         
-        Script script = npc.getScript();
+        Script script = null;
+
+        if (other instanceof Trigger) {
+            script = ((Trigger)other).getScript();    
+        } else {
+            script = ((Npc)other).getScript();
+        }
 
         if (script == null) {
-            return;
+            return false;
         }
 
         // Grab the current command.
@@ -621,8 +711,58 @@ public class Zone {
                         break;
                     }
 
+                    //item.setVisible(false);
                     Avatar avatar = (Avatar)entity;
                     avatar.take(item);
+
+                    break;
+                }
+
+                // Check if the avatar's inventory contains an item.
+                case "cinv": {
+
+                    String[] inventoryNames = ((Avatar)entity).getInventoryNames();
+
+                    for (int i = 0; i < inventoryNames.length; i++) {
+                        if (inventoryNames[i].equals(args[1])) {
+                            // Found it.
+                            // Inline goto:
+                            script.nextCommand = Integer.parseInt(args[2]);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+                // Remove item from avatar's inventory.
+                case "rinv": {
+
+                    ((Avatar)entity).removeInventoryItem(args[1]);
+
+                    break;
+                }
+
+                case "akey": {
+
+                    ((Avatar)entity).addKey(args[1]);
+
+                    break;
+                }
+
+                case "ckey": {
+                    
+                    List<String> keys = ((Avatar)entity).getKeys();
+
+                    for (String key : keys) {
+
+                        if (key.equals(args[1])) {
+                            // Found it.
+                            // Inline goto:
+                            script.nextCommand = Integer.parseInt(args[2]);
+                            break;
+                        }
+                    }
 
                     break;
                 }
@@ -631,20 +771,20 @@ public class Zone {
                 case "take": {
 
                     Avatar avatar = (Avatar)entity;
-                    avatar.take(npc);
+                    avatar.take((Npc)other);
 
                     break;
                 }
 
                 case "talk":
-                    npc.talking = true;
+                    script.talking = true;
                     hud.showDialog(true);
                     hud.setDialogText(args[1]);
     
                     break outer;
 
                 case "eint":
-                    endInteraction(entity, npc, false);
+                    endInteraction(entity, script, false);
                     break outer;
 
                 case "goto":
@@ -658,15 +798,15 @@ public class Zone {
 
         if (prevCommand == script.nextCommand) {
             // We were at the end. Close any active dialog.
-            endInteraction(entity, npc, true);            
+            endInteraction(entity, script, true);            
         }
+
+        return true;
     }
 
-    public void interruptInteraction(Entity entity, Npc npc) {
+    public void interruptInteraction(Entity entity, Script script) {
         
-        Script script = npc.getScript();
-
-        if (npc.talking) {
+        if (script.talking) {
             
             hud.showDialog(false);
 
@@ -674,11 +814,9 @@ public class Zone {
         }
     }
     
-    public void endInteraction(Entity entity, Npc npc, boolean reset) {
+    public void endInteraction(Entity entity, Script script, boolean reset) {
         
-        Script script = npc.getScript();
-
-        npc.talking = false;
+        script.talking = false;
         
         hud.showDialog(false);
 

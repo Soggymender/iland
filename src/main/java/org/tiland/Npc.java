@@ -15,7 +15,6 @@ public class Npc extends Sprite {
     private Script script = null;
 
     public boolean isItem = false;
-    public  boolean talking = false;
 
     public Npc(Scene scene, Vector3f position, String home, String meshFilename, Script script) {
 

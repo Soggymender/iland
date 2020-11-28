@@ -87,13 +87,6 @@ public class Game implements SceneLoader.IEventHandler {
             else if (newZoneHeading < oldZoneHeading) {
                 camera.setHeading(-45.0f);
             }
-/*
-            if (count % 2 != 0) {
-                camera.setHeading(45.0f);
-            } else {
-                camera.setHeading(-45.0f);
-            }
-            */
         }
         
         count += 1;
@@ -248,6 +241,18 @@ public class Game implements SceneLoader.IEventHandler {
                 return zone.loadNpc(name, properties, true);
             }
 
+            else if (type.equals("up_trigger")) {
+                return zone.loadTrigger(properties, TriggerType.UP);
+            }            
+
+            else if (type.equals("down_trigger")) {
+                return zone.loadTrigger(properties, TriggerType.DOWN);
+            }            
+
+            else if (type.equals("touch_trigger")) {
+                return zone.loadTrigger(properties, TriggerType.TOUCH);
+            }            
+
         } else {
 
             String depth = properties.get("p_depth");
@@ -280,7 +285,8 @@ public class Game implements SceneLoader.IEventHandler {
 
         if (!(entity instanceof Door) &&
             !(entity instanceof Ladder) &&
-            !(entity instanceof Npc)) {
+            !(entity instanceof Npc) &&
+            !(entity instanceof Trigger)) {
             zone.addEntity(entity);
         }
 

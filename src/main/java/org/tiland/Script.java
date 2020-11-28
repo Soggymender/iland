@@ -12,6 +12,8 @@ public class Script {
     public int numCommands = 0;
     public int nextCommand = 0;
 
+    public boolean talking = false;
+
     public Script(String name) {
         this.name = name;
     

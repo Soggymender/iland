@@ -1,3 +1,0 @@
-take:
-eint:
-goto:0
