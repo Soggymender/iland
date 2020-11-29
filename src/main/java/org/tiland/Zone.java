@@ -501,7 +501,7 @@ public class Zone {
                     continue;
                 }
 
-                if (entitiesNear(entity, npc, 0.25f, 0.25f)) {
+                if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
                 
                     interact(entity, npc);
                     return null;
@@ -744,6 +744,22 @@ public class Zone {
                 case "rinv": {
 
                     ((Avatar)entity).inventory.removeInventoryItem(args[1], this);
+
+                    break;
+                }
+
+                // Check if the avatar is holding a specific item.
+                case "chld": {
+
+                    Npc heldItem = ((Avatar)entity).inventory.getHeldItem();
+                    if (heldItem != null){
+                        if (heldItem.getName().equals(args[1])) {
+                            // Found it.
+                            // Inline goto:
+                            script.nextCommand = Integer.parseInt(args[2]);
+                            break;
+                        }
+                    }
 
                     break;
                 }

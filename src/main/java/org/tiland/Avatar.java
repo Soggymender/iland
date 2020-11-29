@@ -32,7 +32,7 @@ public class Avatar extends Sprite {
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
     private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.01f);
-    private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.0f);
+    private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.1f);
 
     private Vector3f dirScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
@@ -49,7 +49,7 @@ public class Avatar extends Sprite {
 
     public void initialize(Scene scene) throws Exception {
 
-        setPosition(-0.1f, 1.0f, 0.01f);
+        setPosition(-0.1f, 1.0f, 0.00f);
 
         // Avatar placeholder.
         Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/tiland/models/avatar.fbx", "src/main/resources/tiland/textures/");
@@ -147,6 +147,8 @@ public class Avatar extends Sprite {
         // Enter automatic or interactive doors.
         if (zone.enterDoor(this, enter, crouch)) {
             enter = false;
+            crouch = false;
+            drop = false;
             return;
         }
 
@@ -227,8 +229,9 @@ public class Avatar extends Sprite {
             if (inventory.getHeldItem() != null) {
 
                 drop();
-                drop = false;
             }
+
+            drop = false;
         }
 
         if (crouch) {

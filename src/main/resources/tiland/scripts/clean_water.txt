@@ -1,5 +1,8 @@
-cinv:jar:3
+chld:jar1:4
+chld:jar2:6
 eint:
 goto:0
-rinv:jar
+rinv:jar1
+goto:7
+rinv:jar2
 ainv:clean_water_jar

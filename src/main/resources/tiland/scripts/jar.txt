@@ -1,0 +1,7 @@
+akey:jar_owner
+ckey:jar_owner:4
+eint:
+goto:0
+take:
+eint:
+goto:3

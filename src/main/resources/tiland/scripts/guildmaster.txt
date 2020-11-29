@@ -1,23 +1,37 @@
-talk:Ah, the young temple guard recruit.
-cinv:ros:5
+talk:I'm Lou, master of the diviner's guild.
+chld:ros:5
 talk:what brings you here?
 eint:
 goto:1
-talk:aren't you a bit young to be retiring?
+talk:A release from service? you look a bit young to be retiring already, but we are low on members at the moment.
 rinv:ros
-talk:if you wish to join the guild, there is a test.
-talk:find the two sources of water that supply the village.
-talk:i'll need proof. take these.
-ainv:jar
-cinv:clean water,dirty water:15
-talk:come back once you've found both water sources.
+talk:guild membership requires administration of a test.
+talk:find two sources of water and return with proof.
 eint:
-goto:11
+chld:clean water:15
+chld:dirty water:22
+talk:how is the test going?
+eint:
+goto:10
+talk:ah yes, this clean water will work perfectly.
 rinv:clean water
+eint:
+chld:dirty water, 29
+talk:you are half way done.
+eint:
+goto:18
+talk:this dirty water should do the trick.
 rinv:dirty water
-talk:ah, excellent work. the two water supplies are all that remains. 
-einv:
-talk:oh, right. you are now an official member of the diviner's guild. congratulations!
-talk:now, to finish my laundry.
-einv:
-talk:the temple priest will start you on your path.
+eint:
+chld:clean water, 29
+talk:you are half way done.
+eint:
+goto:25
+talk:so, you found both of the village water sources. that officially makes you the newest member of the diviner's guild!. 
+talk:did you notice how low the water levels are? The priest will want to talk to you about that.
+akey:diviner
+talk:but as for me, I should be getting back to my chores.
+eint:
+talk:i should be getting back to my chores. Dirty socks don't boil themselves you know.
+eint:
+goto:33
