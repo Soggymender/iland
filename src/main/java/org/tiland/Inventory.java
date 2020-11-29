@@ -29,8 +29,6 @@ public class Inventory {
 
         // Add it to the inventory.
         items.add(npc);
-
-        heldItem = npc;
     
         npc.flags.dynamic = false;
         npc.flags.collidable = false;
@@ -39,6 +37,8 @@ public class Inventory {
         npc.requestParent(null);
         npc.setZoneName(null);
 
+        hold(items.size() - 1);
+       
         return true;
     }
 
@@ -72,10 +72,20 @@ public class Inventory {
         items.remove(droppedItemIdx);
 
         if (holdNewest && heldItem == null && items.size() > 0) {
-            heldItem = items.get(items.size() - 1);
+            hold(items.size() - 1);
         }
 
         return droppedItem;
+    }
+
+    public void hold(int itemIdx) {
+
+        if (heldItem != null) {
+            heldItem.setVisible(false);
+        }
+
+        heldItem = items.get(itemIdx);
+        heldItem.setVisible(true);
     }
 
     public String[] getInventoryNames() {

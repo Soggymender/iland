@@ -17,6 +17,7 @@ public class Avatar extends Sprite {
     private Zone zone = null;
 
     public boolean crouch = false;
+    public boolean drop = false;
     public boolean enter = false;
     public boolean climb = false;
 
@@ -110,6 +111,7 @@ public class Avatar extends Sprite {
 
             if (keyboard.keyJustDown(GLFW_KEY_S)) {
                 crouch = true;
+                drop = true;
             }
 
             if (keyboard.keyJustUp(GLFW_KEY_S)) {
@@ -195,6 +197,7 @@ public class Avatar extends Sprite {
                             if (climbingEntity != null) {
                                 startClimbing();
                                 crouch = false;
+                                drop = false;
                             }
                         }
                     }
@@ -205,6 +208,7 @@ public class Avatar extends Sprite {
                 if (crouch && climbingEntity != null) {
                     stopClimbing();
                     crouch = false;
+                    drop = false;
                 }
             
 
@@ -218,25 +222,25 @@ public class Avatar extends Sprite {
             stopClimbing();
         }
 
-        if (crouch) {
-
-
+        if (drop) {
             // If holding something, drop it.
             if (inventory.getHeldItem() != null) {
 
                 drop();
-            //    crouch = false;
-            }// else {
+                drop = false;
+            }
+        }
 
-                // Can't move while crouching unless jumping or fall.
-                float yVel = getVelocity().y;
-                if (java.lang.Math.abs(yVel) == 0.0f) {
-                    moveVec.zero();
-                }
+        if (crouch) {
 
-                setScale(crouchScale);
-                //crouch = false;
-            //}
+            // Can't move while crouching unless jumping or fall.
+            float yVel = getVelocity().y;
+            if (java.lang.Math.abs(yVel) == 0.0f) {
+                moveVec.zero();
+            }
+
+            setScale(crouchScale);
+            //crouch = false;
         } else {
             setScale(standScale);
         }

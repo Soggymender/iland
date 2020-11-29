@@ -46,7 +46,12 @@ public class TiMain {
 
             while (!window.windowShouldClose()) {
 
-                elapsedTime = timer.getElapsedTime();
+                if (window.isFocused()) {
+                    elapsedTime = timer.getElapsedTime();
+                } else {
+                    timer.flush();
+                    elapsedTime = 0.0f;
+                };
 
                 // Input
                 input.input();
