@@ -1,3 +1,9 @@
 on_load
-    ckey:guard_offduty
+    ckey:guard_offduty:remove
+    eint:
+    goto:on_load
+
+remove
     rcol:
+    eint:
+    goto:on_load

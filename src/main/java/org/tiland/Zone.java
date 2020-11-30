@@ -27,6 +27,7 @@ public class Zone {
 
     public ArrayList<Script> scripts = new ArrayList<Script>();
 
+    public Avatar avatar;
     public List<Npc> npcs;
 
     public List<Door> doors;
@@ -68,6 +69,10 @@ public class Zone {
         this.hud = hud;
 
         loadScripts();
+    }
+
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
     }
 
     private void loadScripts() {
@@ -353,6 +358,23 @@ public class Zone {
     }
 
     public void addEntity(Entity entity) {
+
+        // Handle post-load processing.
+
+        // Mostly we don't care about entities that don't affect zone boundaries.
+        if ((entity instanceof Door) ||
+            (entity instanceof Ladder) ||
+            (entity instanceof Npc)) {
+                return;
+        }
+
+        // Try to run any script on_load labels, mostly for the purpose of restoring state data,
+        // but maybe for fancy scripted events on entry?.
+        if ((entity instanceof Trigger)) {
+
+            processScript((Entity)avatar, entity, "on_load");
+            return;
+        }
 
         expandBounds(entity.getPosition(), entity.getBBox());
     }
@@ -700,9 +722,12 @@ public class Zone {
             return false;
         }
 
-        // Goto label if specified.
+        // Goto label if specified. If the script doesn't have the label, don't process.
+        // This is for running things like on_load.
         if (label != null) {
-            script.gotoLabel(label);
+            if (!script.gotoLabel(label)) {
+                return false;
+            }
         }
 
         int prevCommand = script.nextCommand;
@@ -775,6 +800,7 @@ public class Zone {
                     break;
                 }
 
+                // Add a progress key.
                 case "akey": {
 
                     ((Avatar)entity).inventory.addKey(args[1]);
@@ -782,6 +808,7 @@ public class Zone {
                     break;
                 }
 
+                // Check a progress key.
                 case "ckey": {
                     
                     List<String> keys = ((Avatar)entity).inventory.getKeys();
@@ -800,17 +827,22 @@ public class Zone {
                     break;
                 }
 
+                // Remove collision.
                 case "rcol": {
                     
-                    // Find the named entity.
-                    // Remove collision.
-                    for (int i = 0; i < triggers.size(); i++) {
+                    if (args.length == 1) {
+                        other.flags.collidable = false;
+                    } else {
+                        // Find the named entity.
+                        // Remove collision.
+                        for (int i = 0; i < triggers.size(); i++) {
 
-                        Trigger trigger = triggers.get(i);
-                        if (trigger.getName().equals(args[1])) {
+                            Trigger trigger = triggers.get(i);
+                            if (trigger.getName().equals(args[1])) {
 
-                            trigger.flags.collidable = false;
-                            break;
+                                trigger.flags.collidable = false;
+                                break;
+                            }
                         }
                     }
 
@@ -826,6 +858,7 @@ public class Zone {
                     break;
                 }
 
+                // Start or continue dialog.
                 case "talk":
                     script.talking = true;
                     hud.showDialog(true);
@@ -833,6 +866,7 @@ public class Zone {
     
                     break outer;
 
+                // End interaction / Script processing.
                 case "eint":
                     endInteraction(entity, script, false);
                     break outer;

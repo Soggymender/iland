@@ -47,15 +47,17 @@ public class Script {
         numCommands++;
     }
 
-    public void gotoLabel(String label) {
+    public boolean gotoLabel(String label) {
 
         for (int i = 0; i < numCommands; i++) {
             String command = commands.get(i);
 
             if (command.equals(label)) {
                 nextCommand = i + 1;
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 }

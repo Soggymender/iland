@@ -48,6 +48,7 @@ public class Game implements SceneLoader.IEventHandler {
         zone = new Zone(scene, this, hud);
 
         avatar = new Avatar(scene, zone);
+        zone.setAvatar(avatar);
 
         camera = new GameCamera(window, avatar, zone);
 
@@ -283,13 +284,6 @@ public class Game implements SceneLoader.IEventHandler {
             }
         }
 
-        if (!(entity instanceof Door) &&
-            !(entity instanceof Ladder) &&
-            !(entity instanceof Npc) &&
-            !(entity instanceof Trigger)) {
-            zone.addEntity(entity);
-        }
-
         String collision = properties.get("p_collision");
         if (collision != null) {
             entity.flags.collidable = true;
@@ -300,5 +294,7 @@ public class Game implements SceneLoader.IEventHandler {
                 entity.flags.box_collision = true;
             }
         }
+
+        zone.addEntity(entity);
     }
 }
