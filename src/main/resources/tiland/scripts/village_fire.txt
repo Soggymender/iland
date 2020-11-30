@@ -1,6 +1,9 @@
-chld:meat:3
-eint:
-goto:0
-rinv:meat
-akey:cooked_meat
-rcol:barrier
+begin
+    chld:meat:cook_meat
+    eint:
+    goto:begin
+
+cook_meat
+    rinv:meat
+    akey:guard_offduty
+    rcol:barrier

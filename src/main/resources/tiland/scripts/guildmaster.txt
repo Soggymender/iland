@@ -1,37 +1,56 @@
-talk:I'm Lou, master of the diviner's guild.
-chld:ros:5
-talk:what brings you here?
-eint:
-goto:1
-talk:A release from service? you look a bit young to be retiring already, but we are low on members at the moment.
-rinv:ros
-talk:guild membership requires administration of a test.
-talk:find two sources of water and return with proof.
-eint:
-chld:clean water:15
-chld:dirty water:22
-talk:how is the test going?
-eint:
-goto:10
-talk:ah yes, this clean water will work perfectly.
-rinv:clean water
-eint:
-chld:dirty water, 29
-talk:you are half way done.
-eint:
-goto:18
-talk:this dirty water should do the trick.
-rinv:dirty water
-eint:
-chld:clean water, 29
-talk:you are half way done.
-eint:
-goto:25
-talk:so, you found both of the village water sources. that officially makes you the newest member of the diviner's guild!. 
-talk:did you notice how low the water levels are? The priest will want to talk to you about that.
-akey:diviner
-talk:but as for me, I should be getting back to my chores.
-eint:
-talk:i should be getting back to my chores. Dirty socks don't boil themselves you know.
-eint:
-goto:33
+begin
+    talk:I'm Lou, master of the diviner's guild.
+
+check_retire
+    chld:ros:retire
+    talk:what brings you here?
+    eint:
+    goto:check_retire
+
+retire
+    talk:A release from service? you look a bit young to be retiring already, but we are low on members at the moment.
+    rinv:ros
+    talk:guild membership requires administration of a test.
+    talk:find two sources of water and return with proof.
+    eint:
+
+check_either_water
+    chld:clean_water:accept_clean_water
+    chld:dirty_water:accept_dirty_water
+    talk:how is the test going?
+    eint:
+    goto:check_either_water
+
+accept_clean_water
+    talk:ah yes, this clean water will work perfectly.
+    rinv:clean water
+    eint:
+
+check_dirty_water
+    chld:dirty water, passed_test
+    talk:you are half way done.
+    eint:
+    goto:check_dirty_water
+
+accept_dirty_water
+    talk:this dirty water should do the trick.
+    rinv:dirty water
+    eint:
+
+check_clean_water
+    chld:clean water, passed_test
+    talk:you are half way done.
+    eint:
+    goto:check_clean_water
+
+passed_test
+    talk:so, you found both of the village water sources. that officially makes you the newest member of the diviner's guild!. 
+    talk:did you notice how low the water levels are? The priest will want to talk to you about that.
+    akey:diviner
+    talk:but as for me, I should be getting back to my chores.
+    eint:
+
+doing_laundry
+    talk:i should be getting back to my chores. Dirty socks don't boil themselves you know.
+    eint:
+    goto:doing_laundry

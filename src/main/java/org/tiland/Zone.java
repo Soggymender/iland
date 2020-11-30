@@ -458,19 +458,23 @@ public class Zone {
         // If there's an ongoing interaction make sure it is still valid.
         if (other != null) {
 
-            // TODO: Make sure this NPC is in this zone.
-
-            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
-                interact(entity, other);
-                return other;
-            }
-
             Script script = null;
 
             if (other instanceof Trigger) {
                 script = ((Trigger)other).getScript();    
             } else {
                 script = ((Npc)other).getScript();
+            }
+
+            // TODO: Make sure this NPC is in this zone.
+
+            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
+                processScript(entity, other, null);
+                if (script.talking) {
+                    return other;
+                } else {
+                    return null;
+                }
             }
 
             endInteraction(entity, script, false);
@@ -503,7 +507,7 @@ public class Zone {
 
                 if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
                 
-                    interact(entity, npc);
+                    processScript(entity, npc, null);
                     return null;
                 }
             }
@@ -516,7 +520,7 @@ public class Zone {
 
             if (entitiesNear(entity, trigger, 0.25f, 0.25f)) {
             
-                if (interact(entity, trigger)) {
+                if (processScript(entity, trigger, null)) {
                     return trigger;
                 }
 
@@ -540,8 +544,10 @@ public class Zone {
 
             if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
             
-                interact(entity, npc);
-                return npc;
+                processScript(entity, npc, null);
+                if (npc.getScript().talking) {
+                    return npc;
+                }
             }
         }
 
@@ -680,7 +686,7 @@ public class Zone {
         return zoneHeading;
     }
 
-    public boolean interact(Entity entity, Entity other) {
+    public boolean processScript(Entity entity, Entity other, String label) {
         
         Script script = null;
 
@@ -694,7 +700,10 @@ public class Zone {
             return false;
         }
 
-        // Grab the current command.
+        // Goto label if specified.
+        if (label != null) {
+            script.gotoLabel(label);
+        }
 
         int prevCommand = script.nextCommand;
 
@@ -732,7 +741,8 @@ public class Zone {
                         if (inventoryNames[i].equals(args[1])) {
                             // Found it.
                             // Inline goto:
-                            script.nextCommand = Integer.parseInt(args[2]);
+                            script.gotoLabel(args[2]);
+                            //script.nextCommand = Integer.parseInt(args[2]);
                             break;
                         }
                     }
@@ -756,7 +766,8 @@ public class Zone {
                         if (heldItem.getName().equals(args[1])) {
                             // Found it.
                             // Inline goto:
-                            script.nextCommand = Integer.parseInt(args[2]);
+                            script.gotoLabel(args[2]);
+                            //script.nextCommand = Integer.parseInt(args[2]);
                             break;
                         }
                     }
@@ -780,7 +791,8 @@ public class Zone {
                         if (key.equals(args[1])) {
                             // Found it.
                             // Inline goto:
-                            script.nextCommand = Integer.parseInt(args[2]);
+                            script.gotoLabel(args[2]);
+                            //script.nextCommand = Integer.parseInt(args[2]);
                             break;
                         }
                     }
@@ -826,17 +838,19 @@ public class Zone {
                     break outer;
 
                 case "goto":
-                    script.nextCommand = Integer.parseInt(args[1]);
+                    script.gotoLabel(args[1]);
+                    //script.nextCommand = Integer.parseInt(args[1]);
                     break;
                     
                 default:
-                    break outer;
+                    // Most likely a label. Skip it.
+                    break;
             }
         }
 
         if (prevCommand == script.nextCommand) {
             // We were at the end. Close any active dialog.
-            endInteraction(entity, script, true);            
+            endInteraction(entity, script, true);         
         }
 
         return true;

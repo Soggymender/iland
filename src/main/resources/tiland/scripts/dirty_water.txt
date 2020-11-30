@@ -1,8 +1,15 @@
-chld:jar1:4
-chld:jar2:6
-eint:
-goto:0
-rinv:jar1
-goto:7
-rinv:jar2
-ainv:dirty_water_jar
+begin
+    chld:jar1:remove_jar1
+    chld:jar2:remove_jar2
+    eint:
+    goto:begin
+
+remove_jar1
+    rinv:jar1
+    goto:fill_jar
+
+remove_jar2
+    rinv:jar2
+
+fill_jar
+    ainv:dirty_water_jar

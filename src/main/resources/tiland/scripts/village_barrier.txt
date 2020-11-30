@@ -1,3 +1,3 @@
-on_load:
-ckey:cooked_meat
-rcol:
+on_load
+    ckey:guard_offduty
+    rcol:

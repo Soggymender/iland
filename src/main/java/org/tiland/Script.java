@@ -28,7 +28,13 @@ public class Script {
             String st;
             while ((st = br.readLine()) != null) {
 
-                addCommand(st);
+                // Toss whitespaces.
+                if (!st.isBlank()) {
+
+                    st = st.replace("\t", "");
+                    st = st.trim();
+                    addCommand(st);
+                }
             }
         } catch(Exception e) {
 
@@ -39,5 +45,17 @@ public class Script {
 
         commands.add(command);
         numCommands++;
+    }
+
+    public void gotoLabel(String label) {
+
+        for (int i = 0; i < numCommands; i++) {
+            String command = commands.get(i);
+
+            if (command.equals(label)) {
+                nextCommand = i + 1;
+                break;
+            }
+        }
     }
 }
