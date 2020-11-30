@@ -1,0 +1,6 @@
+chld:meat:3
+eint:
+goto:0
+rinv:meat
+akey:cooked_meat
+rcol:barrier

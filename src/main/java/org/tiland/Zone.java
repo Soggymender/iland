@@ -788,6 +788,23 @@ public class Zone {
                     break;
                 }
 
+                case "rcol": {
+                    
+                    // Find the named entity.
+                    // Remove collision.
+                    for (int i = 0; i < triggers.size(); i++) {
+
+                        Trigger trigger = triggers.get(i);
+                        if (trigger.getName().equals(args[1])) {
+
+                            trigger.flags.collidable = false;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
                 // Take an existing item from the zone.
                 case "take": {
 
