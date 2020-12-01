@@ -62,6 +62,46 @@ public class Scene {
         shaderToMeshMap = new HashMap<>();
     }
 
+    public Entity findEntity(String name) {
+
+        if (name == null || name.length() == 0) {
+            return null;
+        }
+
+        Entity result = null;
+
+        for (int i = 0; i < entities.size(); i++) {
+            result = findEntity(entities.get(i), name);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private Entity findEntity(Entity entity, String name) {
+
+        if (entity.getName().equals(name)) {
+            return entity;
+        }
+
+        Entity result = null;
+
+        if (entity.children == null) {
+            return null;
+        }
+        
+        for (Entity child : entity.children) {
+            result = findEntity(child, name);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
     public void addEntity(Entity entity) {
 
         if (!entities.contains(entity)) {

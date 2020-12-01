@@ -730,6 +730,10 @@ public class Zone {
             }
         }
 
+        // The target starts as other (the script bearer). But "star" may change it to another entity
+        // in order to manipulate it "remotely". 
+        Entity target = other;
+
         int prevCommand = script.nextCommand;
 
         outer:
@@ -827,12 +831,25 @@ public class Zone {
                     break;
                 }
 
+                // Set destination.
+                case "dest": {
+
+                    // Find and set the specified destination.
+                    Entity destEntity = scene.findEntity(args[1]);
+                    ((Npc)target).setDestinationEntity(destEntity);
+
+                    break;
+                }
+
                 // Remove collision.
                 case "rcol": {
                     
-                    if (args.length == 1) {
-                        other.flags.collidable = false;
-                    } else {
+                    if (target != null) {
+                        target.flags.collidable = false;
+                    }
+                    
+                    /*
+                    else {
                         // Find the named entity.
                         // Remove collision.
                         for (int i = 0; i < triggers.size(); i++) {
@@ -845,6 +862,25 @@ public class Zone {
                             }
                         }
                     }
+                    */
+
+                    break;
+                }
+
+                // Set the target for following commands replacing other until the end of call.
+                case "star": {
+                    
+                    if (args.length == 1) {
+                        // Empty, reset target to other:
+                        target = other;
+                    } else {
+                        // TODO: ??? Note that Blender may have dumped a .001 etc on to the entity, and the loader
+                        // only strips that off for certain types - mostly non level geometry. So you might not find those.
+                        Entity result = scene.findEntity(args[1]);
+                        if (result != null) {
+                            target = result;
+                        }
+                    }
 
                     break;
                 }
@@ -853,7 +889,7 @@ public class Zone {
                 case "take": {
 
                     Avatar avatar = (Avatar)entity;
-                    avatar.take((Npc)other);
+                    avatar.take((Npc)target);
 
                     break;
                 }

@@ -6,4 +6,7 @@ begin
 cook_meat
     rinv:meat
     akey:guard_offduty
-    rcol:barrier
+    star:barrier
+    rcol:
+    star:village_guard
+    dest:fire

@@ -1,5 +1,6 @@
 package org.tiland;
 
+import org.engine.scene.Entity;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
@@ -13,6 +14,8 @@ public class Npc extends Sprite {
     private String zoneName;
 
     private Script script = null;
+
+    private Entity destEntity = null;
 
     public boolean isItem = false;
 
@@ -53,11 +56,18 @@ public class Npc extends Sprite {
         this.script = script;
     }
 
+    public void setDestinationEntity(Entity destEntity) {
+        this.destEntity = destEntity;
+    }
+
     @Override
     public void update(float interval) {
 
-    
+        if (destEntity != null) {
 
+            // Set moveVec to approach the destination object.
+
+        }
 
         super.update(interval);
 
