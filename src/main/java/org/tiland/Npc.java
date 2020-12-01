@@ -1,9 +1,10 @@
 package org.tiland;
 
-import org.engine.scene.Entity;
+import org.engine.core.BoundingBox;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
+import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
 import org.joml.*;
@@ -19,9 +20,13 @@ public class Npc extends Sprite {
 
     public boolean isItem = false;
 
-    public Npc(Scene scene, Vector3f position, String home, String meshFilename, Script script) {
+    private Zone zone = null;
+
+    public Npc(Scene scene, Zone zone, Vector3f position, String home, String meshFilename, Script script) {
 
         super(scene);
+
+        this.zone = zone;
 
         moveVec = new Vector2f();
         flags.dynamic = false;
@@ -58,18 +63,41 @@ public class Npc extends Sprite {
 
     public void setDestinationEntity(Entity destEntity) {
         this.destEntity = destEntity;
+
+        flags.dynamic = true;
+        flags.collidable = true;
     }
 
     @Override
     public void update(float interval) {
 
+        moveVec.zero();
+
         if (destEntity != null) {
 
-            // Set moveVec to approach the destination object.
+            // TODO: Shut off dynamic and collidable once the destination is reached.
 
+            // Set moveVec to approach the destination object.
+            Vector3f posDelta = new Vector3f(destEntity.getPosition());
+            posDelta.sub(position);
+
+            moveVec.x = java.lang.Math.max(-1, java.lang.Math.min(posDelta.x,1));
+            moveVec.y = 0.0f;
         }
 
         super.update(interval);
+
+        BoundingBox bounds = zone.getAvatarBounds();
+
+        // TODO: There's a bug here because frameVelocity will show a larger value than what was effectively applied.
+        // But it should only matter if a collision happens that needs to be resolved while trying to pass the boundary.
+        if (position.x + bBox.min.x < bounds.min.x) {
+            position.x = bounds.min.x - bBox.min.x;
+        }
+
+        if (position.x +bBox.max.x > bounds.max.x) {
+            position.x = bounds.max.x - bBox.max.x;
+        }
 
         /*
         if (flags.dynamic) {

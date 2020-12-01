@@ -261,7 +261,7 @@ public class Zone {
             }
         }
 
-        Npc npc = new Npc(scene, new Vector3f(0, 5, 0), zoneName, meshFilename, script);
+        Npc npc = new Npc(scene, this, new Vector3f(0, 5, 0), zoneName, meshFilename, script);
         npc.isItem = isItem;
         npcs.add(npc);
         
@@ -346,7 +346,7 @@ public class Zone {
             }
         }
         
-        Npc npc = new Npc(scene, new Vector3f(0, 0, 0), zoneName, meshFilename, script);
+        Npc npc = new Npc(scene, this, new Vector3f(0, 0, 0), zoneName, meshFilename, script);
         npc.isItem = isItem;
         npcs.add(npc);
         

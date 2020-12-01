@@ -9,4 +9,4 @@ cook_meat
     star:barrier
     rcol:
     star:village_guard
-    dest:fire
+    dest:dest_fireside
