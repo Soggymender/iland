@@ -1,0 +1,8 @@
+begin
+    talk:oh, hello.
+
+loop
+    talk:if you are looking for the well keeper, he has gone looking for a key that he lost.
+    talk:he's likely below at the cistern, but they don't let civilians down there.
+    eint:
+    goto:loop
