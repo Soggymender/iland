@@ -122,6 +122,12 @@ public class Zone {
 
         requestedZoneName = "";
 
+        Entity entity = scene.findEntity(requestedDoorName);
+        if (entity != null) {
+            setAvatarStart(entity.getPosition());
+            return;
+        }
+
         if (!requestedDoorName.isEmpty()) {
 
             for (int i = 0; i < doors.size(); i++) {
@@ -939,7 +945,11 @@ public class Zone {
                     script.gotoLabel(args[1]);
                     //script.nextCommand = Integer.parseInt(args[1]);
                     break;
-                    
+                  
+                case "zone":
+                    requestZone(args[1], args[2]);
+                    break;
+
                 default:
                     // Most likely a label. Skip it.
                     break;

@@ -1,0 +1,4 @@
+begin
+    zone:forest:left_exit
+    eint:
+    goto:begin
