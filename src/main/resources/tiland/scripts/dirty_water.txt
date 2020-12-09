@@ -13,3 +13,9 @@ remove_jar2
 
 fill_jar
     ainv:dirty_water_jar
+    eint:
+    goto:no_more
+
+no_more
+    eint:
+    goto:no_more    

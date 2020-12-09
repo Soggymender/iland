@@ -15,35 +15,37 @@ retire
     eint:
 
 check_either_water
-    chld:clean_water:accept_clean_water
-    chld:dirty_water:accept_dirty_water
+    chld:clean_water_jar:accept_clean_water
+    chld:dirty_water_jar:accept_dirty_water
     talk:how is the test going?
     eint:
     goto:check_either_water
 
 accept_clean_water
     talk:ah yes, this clean water will work perfectly.
-    rinv:clean water
+    rinv:clean_water_jar
     eint:
 
 check_dirty_water
-    chld:dirty water, passed_test
+    chld:dirty_water_jar:passed_test
     talk:you are half way done.
     eint:
     goto:check_dirty_water
 
 accept_dirty_water
     talk:this dirty water should do the trick.
-    rinv:dirty water
+    rinv:dirty_water_jar
     eint:
 
 check_clean_water
-    chld:clean water, passed_test
+    chld:clean_water_jar, passed_test
     talk:you are half way done.
     eint:
     goto:check_clean_water
 
 passed_test
+    rinv:clean_water_jar
+    rinv:dirty_water_jar
     talk:so, you found both of the village water sources. that officially makes you the newest member of the diviner's guild!. 
     talk:did you notice how low the water levels are? The priest will want to talk to you about that.
     akey:diviner

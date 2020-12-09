@@ -67,6 +67,8 @@ public class Avatar extends Sprite {
         Vector3f avatarStart = new Vector3f(zone.avatarStart);
         avatarStart.z = getPosition().z;
         
+        stopClimbing();
+
         setPosition(avatarStart);
 
         // Attach to a climbable surface?
@@ -144,6 +146,21 @@ public class Avatar extends Sprite {
             }
         }
 
+        if (enter) {
+            interactEntity = zone.interact(this, interactEntity, !inventory.isFull());
+            if (interactEntity != null) {
+                enter = false;
+
+                // Don't continue interactions with items.
+                // We just need to recognize them so we don't pick up in front of a door and enter with the same input.
+                if (interactEntity instanceof Npc && ((Npc)interactEntity).isItem) {
+                    interactEntity = null;
+                }
+
+                return;
+            }
+        }
+
         // Enter automatic or interactive doors.
         if (zone.enterDoor(this, enter, crouch)) {
             enter = false;
@@ -152,13 +169,6 @@ public class Avatar extends Sprite {
             return;
         }
 
-        if (enter) {
-            interactEntity = zone.interact(this, interactEntity, !inventory.isFull());
-            if (interactEntity != null) {
-                enter = false;
-                return;
-            }
-        }
         enter = false;
 
         if (interactEntity != null) {
@@ -172,6 +182,7 @@ public class Avatar extends Sprite {
                 climbingEntity = zone.climb(this);
                 if (climbingEntity != null) {
                     startClimbing();
+                    drop = false;
                 }
             }
 
@@ -228,7 +239,12 @@ public class Avatar extends Sprite {
             // If holding something, drop it.
             if (inventory.getHeldItem() != null) {
 
-                drop();
+                // Don't allow drop on top of ladders.
+                //if (zone.onLadder(this) == null) {
+                
+                if (!(support instanceof Ladder)) {
+                    drop();
+                } 
             }
 
             drop = false;

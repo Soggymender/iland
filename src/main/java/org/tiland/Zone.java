@@ -301,6 +301,13 @@ public class Zone {
         door.isFront = frontDoor;
         door.isTrigger = isTrigger;
 
+        String state = properties.get("p_state");
+        if (state != null && state.length() != 0) {
+            if (state.equals("closed")) {
+                door.setState(DoorState.CLOSED);
+            }
+        }
+
         doors.add(door);
 
         return door;
@@ -454,6 +461,11 @@ public class Zone {
                     continue;
                 }
 
+                if (door.getState() == DoorState.CLOSED) {
+                    door.setState(DoorState.OPENNING);
+                    continue;
+                }
+
                 targetZone = door.targetZone;
                 targetDoor = door.targetDoor;
             
@@ -530,7 +542,8 @@ public class Zone {
                 if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
                 
                     processScript(entity, npc, null);
-                    return null;
+                    // The caller shouldn't hold on to this as an interaction.
+                    return npc;
                 }
             }
         }
@@ -540,7 +553,7 @@ public class Zone {
 
             Trigger trigger = triggers.get(i);
 
-            if (entitiesNear(entity, trigger, 0.25f, 0.25f)) {
+            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
             
                 if (processScript(entity, trigger, null)) {
                     return trigger;
@@ -607,6 +620,21 @@ public class Zone {
  
             // Over ladder.
             if (entitiesOverlap(entity, ladder, 0.5f, 0.5f)) {
+                return ladder;
+            }
+        }
+
+        return null;
+    }
+
+    public Entity onLadder(Entity entity) {
+
+        for (int i = 0; i < ladders.size(); i++) {
+
+            Ladder ladder = ladders.get(i);
+ 
+            // Over ladder.
+            if (entitiesOverlap(entity, ladder, 0.5f, 0.01f)) {
                 return ladder;
             }
         }
@@ -918,10 +946,10 @@ public class Zone {
             }
         }
 
-        if (prevCommand == script.nextCommand) {
-            // We were at the end. Close any active dialog.
-            endInteraction(entity, script, true);         
-        }
+    //    if (prevCommand == script.nextCommand) {
+    //        // We were at the end. Close any active dialog.
+    //        endInteraction(entity, script, true);         
+    //    }
 
         return true;
     }
