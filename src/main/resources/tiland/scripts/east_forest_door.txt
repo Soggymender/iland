@@ -1,4 +1,22 @@
 begin
+    csta:locked:locked
+    csta:open:enter
+    rsta:openning
+    eint:
+    goto:begin
+
+locked
+    chld:ros:unlock
+    eint:
+    goto:locked
+
+unlock
+    rinv:ros
+    rsta:unlock
+    eint:
+    goto:begin
+
+enter
     zone:forest:left_exit
     eint:
     goto:begin

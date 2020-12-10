@@ -64,6 +64,9 @@ public class Entity {
     public Flags oldFlags = null;
     public Flags flags = null;
 
+    public String stateName = "none";
+    public String requestedStateName = "none";
+
     public Entity() {
 
         name = "none";
@@ -376,5 +379,13 @@ public class Entity {
                 support = other;
             }
         }
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void requestState(String state) {
+        requestedStateName = state;
     }
 }

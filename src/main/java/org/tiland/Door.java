@@ -3,15 +3,15 @@ package org.tiland;
 import org.engine.scene.Entity;
 
 enum DoorState {
-    NONE,
-    OPEN,
-    CLOSED,
-    OPENNING
+    none,
+    open,
+    closed,
+    openning
 };
 
 public class Door extends Entity {
 
-    public DoorState state = DoorState.OPEN;
+    public DoorState state = DoorState.open;
 
     public String targetZone;
     public String targetDoor;
@@ -22,15 +22,20 @@ public class Door extends Entity {
     @Override
     public void update(float interval) {
 
-        if (state == DoorState.OPEN) {
+        // Check for requested state change.
+        if (!requestedStateName.equals(stateName)) {
+            setState(DoorState.valueOf(requestedStateName));
+        }
+
+        if (state == DoorState.open) {
             return;
         }
 
         switch (state) {
 
-            case OPENNING:
+            case openning:
                 setRotation(0, 45, 0);
-                setState(DoorState.OPEN);
+                setState(DoorState.open);
                 break;
 
             default:
@@ -42,6 +47,7 @@ public class Door extends Entity {
 
     public void setState(DoorState state) {
         this.state = state;
+        super.stateName = state.name();
     }
 
     public DoorState getState() {

@@ -280,6 +280,7 @@ public class Zone {
 
         String scriptFilename = properties.get("p_script") + ".txt";
 
+
         // Find the script for this NPC.
         Script script = null;
         if (scriptFilename != null && scriptFilename.length() > 0) {
@@ -291,7 +292,17 @@ public class Zone {
             }
         }
 
-        Trigger trigger = new Trigger(script, type);
+        Trigger trigger = new Trigger(scene, script, type);
+
+        String lock = properties.get("p_lock");
+        if (lock != null && lock.length() != 0) {
+            trigger.setLockEntityName(lock);
+        }
+
+        String state = properties.get("p_state");
+        if (state != null && state.length() != 0) {
+            trigger.requestState(state);
+        }
 
         triggers.add(trigger);
 
@@ -310,7 +321,7 @@ public class Zone {
         String state = properties.get("p_state");
         if (state != null && state.length() != 0) {
             if (state.equals("closed")) {
-                door.setState(DoorState.CLOSED);
+                door.setState(DoorState.closed);
             }
         }
 
@@ -459,7 +470,9 @@ public class Zone {
 
             // If this is a trigger door, and we entered through it, and we're no longer overlapping with it
             // clear it out, allowing re-entry.
-            boolean enteredFromHere = door.getName().equals(requestedDoorName);
+            // But, if the requestedZoneName is also set, then we are in the process of leaving this zone and the door name
+            // is for the next zone not this one.
+            boolean enteredFromHere = requestedZoneName.length() == 0 && door.getName().equals(requestedDoorName);
 
             if (entitiesOverlap(entity, door, 0.5f, 0.95f)) {
 
@@ -467,8 +480,8 @@ public class Zone {
                     continue;
                 }
 
-                if (door.getState() == DoorState.CLOSED) {
-                    door.setState(DoorState.OPENNING);
+                if (door.getState() == DoorState.closed) {
+                    door.setState(DoorState.openning);
                     continue;
                 }
 
@@ -947,9 +960,21 @@ public class Zone {
                     break;
                   
                 case "zone":
-                    requestZone(args[1], args[2]);
+                    requestZone(new String(args[1]), new String(args[2]));
                     break;
 
+                // Check the entity state string for equality.
+                case "csta":
+                    if (target.getStateName().equals(args[1])) {
+                        script.gotoLabel(args[2]);
+                    }
+
+                    break;
+
+                case "rsta":
+                    target.requestState(args[1]);
+                    break;
+                
                 default:
                     // Most likely a label. Skip it.
                     break;
