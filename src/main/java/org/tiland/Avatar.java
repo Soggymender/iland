@@ -16,10 +16,12 @@ public class Avatar extends Sprite {
 
     private Zone zone = null;
 
+    public boolean interactUp = false;
+    public boolean climb = false;
+
+    public boolean interactDown = false;
     public boolean crouch = false;
     public boolean drop = false;
-    public boolean enter = false;
-    public boolean climb = false;
 
     public boolean climbing = false;
     public Entity climbingEntity = null;
@@ -81,6 +83,21 @@ public class Avatar extends Sprite {
     @Override
     public void input(Input input) {
 
+        /*
+        jump
+            space
+        crouch
+            down
+        drop
+            down
+        climb
+            up
+        enter
+            up
+        interact / pickvup
+            up
+        */
+
         Keyboard keyboard = input.getKeyboard();
 
         moveVec.zero();
@@ -111,7 +128,12 @@ public class Avatar extends Sprite {
             }
         } else {
 
+            if (keyboard.keyJustDown(GLFW_KEY_W)) {
+                interactUp = true;
+            }
+
             if (keyboard.keyJustDown(GLFW_KEY_S)) {
+                interactDown = true;
                 crouch = true;
                 drop = true;
             }
@@ -120,14 +142,9 @@ public class Avatar extends Sprite {
                 crouch = false;
             }
 
-            // Grab something.
             if (keyboard.keyDown(GLFW_KEY_W)) {
                 climb = true;
             }
-        }
-
-        if (keyboard.keyJustDown(GLFW_KEY_W)) {
-            enter = true;
         }
 
         if (moveVec.length() > 0.0f) {
@@ -146,10 +163,10 @@ public class Avatar extends Sprite {
             }
         }
 
-        if (enter) {
-            interactEntity = zone.interact(this, interactEntity, !inventory.isFull());
+        if (interactUp) {
+            interactEntity = zone.interactAll(this, interactEntity, !inventory.isFull());
             if (interactEntity != null) {
-                enter = false;
+                interactUp = false;
 
                 // Don't continue interactions with items.
                 // We just need to recognize them so we don't pick up in front of a door and enter with the same input.
@@ -162,14 +179,16 @@ public class Avatar extends Sprite {
         }
 
         // Enter automatic or interactive doors.
-        if (zone.enterDoor(this, enter, crouch)) {
-            enter = false;
+        if (zone.enterDoor(this, interactUp, interactDown)) {
+            interactUp = false;
+            interactDown = false;
             crouch = false;
             drop = false;
             return;
         }
 
-        enter = false;
+        interactUp = false;
+        interactDown = false;
 
         if (interactEntity != null) {
             interactEntity = zone.validateInteraction(this, interactEntity);
@@ -240,8 +259,6 @@ public class Avatar extends Sprite {
             if (inventory.getHeldItem() != null) {
 
                 // Don't allow drop on top of ladders.
-                //if (zone.onLadder(this) == null) {
-                
                 if (!(support instanceof Ladder)) {
                     drop();
                 } 
@@ -257,10 +274,12 @@ public class Avatar extends Sprite {
             if (java.lang.Math.abs(yVel) == 0.0f) {
                 moveVec.zero();
             }
+            frictionScalar = 0.2f;
 
             setScale(crouchScale);
             //crouch = false;
         } else {
+            frictionScalar = 1.0f;
             setScale(standScale);
         }
 

@@ -506,108 +506,71 @@ public class Zone {
         return false;
     }
 
-    public Entity interact(Entity entity, Entity other, boolean canTake) {
+    public Entity interactAll(Entity entity, Entity other, boolean canTake) {
 
-        // If there's an ongoing interaction make sure it is still valid.
+        Entity result = null;
+
         if (other != null) {
-
-            Script script = null;
-
-            if (other instanceof Trigger) {
-                script = ((Trigger)other).getScript();    
-            } else {
-                script = ((Npc)other).getScript();
-            }
-
-            // TODO: Make sure this NPC is in this zone.
-
-            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
-                processScript(entity, other, null);
-                if (script.talking) {
-                    return other;
-                } else {
-                    return null;
-                }
-            }
-
-            endInteraction(entity, script, false);
-            return null;
+            return continueInteraction(entity, other);
         }
 
         // Take?
         if (canTake) {
-            for (int i = 0; i < npcs.size(); i++) {
-
-                Npc npc = npcs.get(i);
-
-                if (!npc.getVisible()) {
-                    continue;
-                }
-
-                // This is probably already being carried.
-                if (npc.getZone() == null) {
-                    continue;
-                }
-
-                // Can't interact with NPCs in other zones.
-                if (!npc.getZone().equals(zoneName)) {
-                    continue;
-                }
-
-                if (!npc.isItem) {
-                    continue;
-                }
-
-                if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
-                
-                    processScript(entity, npc, null);
-                    // The caller shouldn't hold on to this as an interaction.
-                    return npc;
-                }
-            }
+            result = take(entity, other);
+            if (result != null) 
+                return result;
         }
 
-        // Interact? (with Triggers)
-        for (int i = 0; i < triggers.size(); i++) {
-
-            Trigger trigger = triggers.get(i);
-
-            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
-            
-                if (processScript(entity, trigger, null)) {
-                    return trigger;
-                }
-
-                // Tried to interact but there was no script. Keep looking.
-            }
+        result = interactWithTrigger(entity, other);
+        if (result != null) {
+            return result;
         }
 
-        // Talk?
-        for (int i = 0; i < npcs.size(); i++) {
-
-            Npc npc = npcs.get(i);
-            if (npc.isItem) {
-                continue;
-            }
-
-            // Can't interact with NPCs in other zones.
-            if (!npc.getZone().equals(zoneName)) {
-                continue;
-            }
-
-
-            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
-            
-                processScript(entity, npc, null);
-                if (npc.getScript().talking) {
-                    return npc;
-                }
-            }
-        }
+        result = talk(entity, other);
+        if (result != null) 
+            return result;
 
         return null;
     } 
-    
+
+    public boolean canContinueInteraction(Entity entity, Entity other) {
+        if (other == null)
+            return false;
+
+        return true;
+    }
+
+    /*
+    Move an in-progress interaction forward.
+    */
+    private Entity continueInteraction(Entity entity, Entity other)
+    {
+        if (!canContinueInteraction(entity, other))
+            return null;
+
+        Script script = null;
+
+        if (other instanceof Trigger) {
+            script = ((Trigger)other).getScript();    
+        } else {
+            script = ((Npc)other).getScript();
+        }
+
+        // TODO: Make sure this NPC is in this zone.
+
+        if (entitiesNear(entity, other, 1.0f, 1.0f)) {
+            processScript(entity, other, null);
+            if (script.talking) {
+                return other;
+            } else {
+                return null;
+            }
+        }
+
+        endInteraction(entity, script, false);
+        return null;
+    }
+
     public Entity validateInteraction(Entity entity, Entity other) {
 
         if (other != null) {
@@ -630,6 +593,88 @@ public class Zone {
 
         return null;
     }     
+
+    public Entity take(Entity entity, Entity other) {
+
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+
+            if (!npc.getVisible()) {
+                continue;
+            }
+
+            // This is probably already being carried.
+            if (npc.getZone() == null) {
+                continue;
+            }
+
+            // Can't interact with NPCs in other zones.
+            if (!npc.getZone().equals(zoneName)) {
+                continue;
+            }
+
+            if (!npc.isItem) {
+                continue;
+            }
+
+            if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
+            
+                processScript(entity, npc, null);
+                // The caller shouldn't hold on to this as an interaction.
+                return npc;
+            }
+        }
+
+        return null;
+    }
+
+    public Entity interactWithTrigger(Entity entity, Entity other) {
+
+        // Interact? (with Triggers)
+        for (int i = 0; i < triggers.size(); i++) {
+
+            Trigger trigger = triggers.get(i);
+
+            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
+            
+                if (processScript(entity, trigger, null)) {
+                    return trigger;
+                }
+
+                // Tried to interact but there was no script. Keep looking.
+            }
+        }
+
+        return null;
+    }
+
+    Entity talk(Entity entity, Entity other) {
+
+        // Talk?
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+            if (npc.isItem) {
+                continue;
+            }
+
+            // Can't interact with NPCs in other zones.
+            if (!npc.getZone().equals(zoneName)) {
+                continue;
+            }
+
+            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+            
+                processScript(entity, npc, null);
+                if (npc.getScript().talking) {
+                    return npc;
+                }
+            }
+        }
+
+        return null;
+    }
 
     public Entity climb(Entity entity) {
 

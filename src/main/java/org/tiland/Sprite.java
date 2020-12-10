@@ -25,6 +25,8 @@ public class Sprite extends Entity {
     float gravity = 10.0f;
     float gravityScalar = 1.0f;
 
+    float frictionScalar = 1.0f;
+
     public Sprite(Scene scene) {
 
         this.scene = scene;
@@ -76,7 +78,7 @@ public class Sprite extends Entity {
 
                 float newMoveLength = moveLength;
 
-                newMoveLength -= moveDrag * interval;
+                newMoveLength -= moveDrag * frictionScalar * interval;
                 if (newMoveLength < 0.0f) {
                     newMoveLength = 0.0f;
                 }
