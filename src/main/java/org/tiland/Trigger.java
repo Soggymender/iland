@@ -80,6 +80,10 @@ public class Trigger extends Entity {
 
             case unlock:
                 
+                if (lockEntity == null) {
+                    lockEntity = scene.findEntity(lockEntityName);
+                }
+
                 if (lockEntity != null) {
                     lockEntity.setVisible(false);
                     requestState(TriggerState.closed.toString());
