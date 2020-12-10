@@ -1,29 +1,5 @@
-on_load
-    ckey:east_forest_door:on_load_unlock
-    eint:
-    goto:begin
-
-on_load_unlock
-    rsta:unlock
-    eint:
-    goto:begin
-
 begin
-    csta:locked:locked
     csta:open:enter
-    rsta:openning
-    eint:
-    goto:begin
-
-locked
-    chld:ros:unlock
-    eint:
-    goto:locked
-
-unlock
-    rinv:ros
-    akey:east_forest_door
-    rsta:unlock
     eint:
     goto:begin
 
