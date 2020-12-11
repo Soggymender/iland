@@ -1,10 +1,10 @@
 begin
-    chld:meat:cook_meat
+    chld:turnip:cook_turnip
     eint:
     goto:begin
 
-cook_meat
-    rinv:meat
+cook_turnip
+    rinv:turnip
     akey:guard_offduty
     star:barrier
     rcol:

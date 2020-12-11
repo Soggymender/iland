@@ -38,7 +38,7 @@ accept_dirty_water
     eint:
 
 check_clean_water
-    chld:clean_water_jar, passed_test
+    chld:clean_water_jar:passed_test
     talk:you are half way done.
     eint:
     goto:check_clean_water

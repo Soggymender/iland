@@ -1,7 +1,7 @@
 begin
     talk:hey, don't bother me, i'm busy guarding this ladder.
     eint:
-    talk:they only hire the biggest npcs to guard things like ladders. how'd I get so big? lots of protien I guess...
+    talk:they only hire the biggest npcs to guard things like ladders. how'd I get so big? lots of veggies I guess...
     talk:there's no way they'd ever hire a little twerp like you to guard things. besides, you'd probably just go up and down the ladder all day.
     eint:
     talk:no way i'm letting you by. and don't even THINK about coming back at night. don't you know it never gets dark here?
@@ -16,6 +16,6 @@ onduty
     goto:onduty
 
 offduty
-    talk:SOMEONE made me lunch. I don't care what they say - there are still a few decent people around.
+    talk:SOMEONE made me roasted turnips!. I don't care what they say - there are still a few decent people around.
     eint:
     goto:offduty
