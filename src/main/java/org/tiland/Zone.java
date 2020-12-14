@@ -426,7 +426,7 @@ public class Zone {
         cameraBounds.max.y = avatarBounds.max.y;
         cameraBounds.min.y = avatarBounds.min.y;
 
-        float fov = 60.0f; // TODO: pull this from the camera.
+        float fov = 53.5f; // TODO: pull this from the camera.
         float camz = 4.25f; // TODO: look this up too.
 
         float halfFov = (float)java.lang.Math.toRadians(fov);

@@ -283,19 +283,28 @@ public class Avatar extends Sprite {
             setScale(standScale);
         }
 
-        super.update(interval);
 
         BoundingBox bounds = zone.getAvatarBounds();
 
         // TODO: There's a bug here because frameVelocity will show a larger value than what was effectively applied.
         // But it should only matter if a collision happens that needs to be resolved while trying to pass the boundary.
-        if (position.x + bBox.min.x < bounds.min.x) {
+        if (position.x + bBox.min.x <= bounds.min.x && moveVec.x < 0.0f) {
             position.x = bounds.min.x - bBox.min.x;
+            
+            velocity.mul(0, 1, 0);
+            moveAccel.mul(0, 1);
+            moveVec.zero();
         }
 
-        if (position.x +bBox.max.x > bounds.max.x) {
+        if (position.x +bBox.max.x >= bounds.max.x && moveVec.x > 0.0f) {
             position.x = bounds.max.x - bBox.max.x;
+
+            velocity.mul(0, 1, 0);
+            moveAccel.mul(0, 1);
+            moveVec.zero();
         }
+
+        super.update(interval);
 
         updateHeldItem();
     }

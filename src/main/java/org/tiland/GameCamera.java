@@ -33,7 +33,7 @@ public class GameCamera extends Camera {
 
         this.target = target;
 
-        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
+        targetOffset = new Vector3f(0.0f, 2.45f, 250.0f);
 
         this.zone = zone;
 
@@ -44,8 +44,8 @@ public class GameCamera extends Camera {
 
         bounds = new BoundingBox();
 
-        bounds.min.x = -5;
-        bounds.max.x =  5;
+        bounds.min.x = -1;
+        bounds.max.x =  1;
     }
 
     @Override

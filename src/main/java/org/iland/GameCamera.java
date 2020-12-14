@@ -31,6 +31,8 @@ public class GameCamera extends Camera {
         followPivot = new Vector3f(0.0f, 2.0f, 0.0f);
         followOffset = new Vector3f(0.0f, 0.0f, 5.0f);
         followRotation = new Vector3f(0.0f, 0.0f, 0.0f);
+
+     //   setViewport(0, 0, 640, 480, true);
     }
 
     private static boolean once = false;
@@ -64,7 +66,7 @@ public class GameCamera extends Camera {
         if (!once) {
             follow(interval);
         }
-      
+
         super.update(interval);
     }
 
