@@ -766,6 +766,7 @@ public class Zone {
         Vector3f xVec = new Vector3f(entityBPos);
         float dist;
 
+        xVec.z = 0.0f;
         xVec.sub(entityAPos);
         xVec.y = 0.0f;
 
@@ -776,6 +777,7 @@ public class Zone {
         }
 
         Vector3f yVec = new Vector3f(entityBPos);
+        yVec.z = 0.0f;
         yVec.sub(entityAPos);
         yVec.x = 0.0f;
 

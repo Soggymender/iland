@@ -33,8 +33,8 @@ public class Avatar extends Sprite {
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.01f);
-    private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.1f);
+    private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.05f);
+    private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.5f);
 
     private Vector3f dirScale = new Vector3f(1.0f, 1.0f, 1.0f);
 

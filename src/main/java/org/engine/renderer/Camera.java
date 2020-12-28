@@ -10,7 +10,7 @@ public class Camera extends Entity {
 
     private static final float FOV = (float)java.lang.Math.toRadians(1.0f);
     private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 100.0f;
+    private static final float Z_FAR = 50.0f;
 
     private boolean centerOrtho = false;
 

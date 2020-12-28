@@ -98,14 +98,14 @@ public class GameCamera extends Camera {
 
             if (heading < 0.0f) {
 
-                heading = heading + interval * 100.0f;
+                heading = heading + interval * 10.0f;
 
                 if (heading > 0.0f) {
                     heading = 0.0f;
                 }
             } else {
 
-                heading = heading - interval * 100.0f;
+                heading = heading - interval * 10.0f;
 
                 if (heading < 0.0f) {
                     heading = 0.0f;
