@@ -8,8 +8,8 @@ import org.engine.renderer.Viewport;
 
 public class Camera extends Entity {
 
-    private static final float FOV = (float)java.lang.Math.toRadians(1.0f);
-    private static final float Z_NEAR = 0.01f;
+    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
+    private static final float Z_NEAR = -100.0f;//0.01f;
     private static final float Z_FAR = 100.0f;
 
     private boolean centerOrtho = false;
@@ -68,7 +68,7 @@ public class Camera extends Entity {
         viewMatrix.identity();
 
         
-        viewMatrix.scale(0.1f);
+    //    viewMatrix.scale(0.1f);
 
         viewMatrix.translate(-position.x, -position.y, -position.z);
         viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
@@ -132,7 +132,7 @@ public class Camera extends Entity {
             float windowWidth = window.getWidth();
             float windowHeight = window.getHeight();
 
-            viewport.set(0, 0, windowWidth, windowHeight, Z_NEAR, Z_FAR, FOV);
+            viewport.set(0, 0, windowWidth, windowHeight, Z_NEAR, Z_FAR, FOV, true);
 
           //  window.setResized(false);
         }

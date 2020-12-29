@@ -33,7 +33,7 @@ public class GameCamera extends Camera {
 
         this.target = target;
 
-        targetOffset = new Vector3f(0.0f, 2.45f, 250.0f);
+        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
 
         this.zone = zone;
 
@@ -44,8 +44,8 @@ public class GameCamera extends Camera {
 
         bounds = new BoundingBox();
 
-        bounds.min.x = -1;
-        bounds.max.x =  1;
+        bounds.min.x = -5;
+        bounds.max.x =  5;
     }
 
     @Override
@@ -192,9 +192,9 @@ public class GameCamera extends Camera {
     @Override
     public void updateViewMatrix() {
 
-        viewMatrix.identity();
+        viewMatrix.identity();        
         
-        viewMatrix.scale(0.1f);
+        viewMatrix.scale(150.0f, 150.0f, 1.0f);
 
         Vector3f targetPos = new Vector3f(target.getPosition());
         targetPos.y = 0.0f;
@@ -209,5 +209,6 @@ public class GameCamera extends Camera {
 
         viewMatrix.translate(-targetPos.x, 0.0f, -targetPos.z);
         //viewMatrix.translate(-position.x, -position.y, -position.z);
+
     }    
 }

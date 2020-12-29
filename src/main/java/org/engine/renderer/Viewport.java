@@ -37,19 +37,22 @@ public class Viewport {
         this.zNear = zNear;
         this.zFar = zFar;
         this.fov = fov;
+
+       // centerOrtho = true;
         this.centerOrtho = centerOrtho;
 
         glViewport((int)x, (int)y, (int)width, (int)height);
-
+    
         updatePerspectiveProjectionMatrix(fov, width, height, zNear, zFar);
 
         if (centerOrtho) {
-            updateOrthoProjectionMatrix(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+            updateOrthoProjectionMatrix(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, zNear, zFar);
         } else {
-            updateOrthoProjectionMatrix(0, width, 0, height);
+            updateOrthoProjectionMatrix(0, width, 0, height, zNear, zFar);
         }
 
-        selectProjectionMatrix(perspectiveMatrix);
+        selectProjectionMatrix(orthoMatrix);
+        //selectProjectionMatrix(perspectiveMatrix);
     }
 
     public final Matrix4f updatePerspectiveProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
@@ -59,9 +62,9 @@ public class Viewport {
         return perspectiveMatrix;
     }
     
-    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top) {
+    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar) {
         orthoMatrix.identity();
-        orthoMatrix.setOrtho2D(left, right, bottom, top);
+        orthoMatrix.setOrtho(left, right, bottom, top, zNear, zFar);
         return orthoMatrix;
     }
 

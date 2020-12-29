@@ -100,8 +100,8 @@ public class Window {
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.15f, 0.0f);
 
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+      //  glEnable(GL_CULL_FACE);
+     //   glCullFace(GL_NONE);// GL_BACK);
 
         glEnable(GL_DEPTH_TEST);
 
