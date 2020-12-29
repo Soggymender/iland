@@ -82,11 +82,11 @@ public class Game implements SceneLoader.IEventHandler {
         if (zone.enteredByDoor()) {
 
             if (newZoneHeading > oldZoneHeading) {
-                camera.setHeading(45.0f);
+                camera.setHeading(90.0f);
             }
 
             else if (newZoneHeading < oldZoneHeading) {
-                camera.setHeading(-45.0f);
+                camera.setHeading(-90.0f);
             }
         }
         
@@ -149,6 +149,8 @@ public class Game implements SceneLoader.IEventHandler {
         }
        
         hud.input(input);
+
+        camera.input(input);
 
         scene.input(input);
     }

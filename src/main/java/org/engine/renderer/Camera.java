@@ -10,12 +10,12 @@ public class Camera extends Entity {
 
     private static final float FOV = (float)java.lang.Math.toRadians(1.0f);
     private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 50.0f;
+    private static final float Z_FAR = 100.0f;
 
     private boolean centerOrtho = false;
 
-    Matrix4f viewMatrix;
-    Viewport viewport;
+    protected Matrix4f viewMatrix;
+    protected Viewport viewport;
 
     public boolean autoResize = false;
 
@@ -70,8 +70,8 @@ public class Camera extends Entity {
         
         viewMatrix.scale(0.1f);
 
-        viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
         viewMatrix.translate(-position.x, -position.y, -position.z);
+        viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
 
 
     }
