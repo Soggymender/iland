@@ -254,7 +254,7 @@ public class SceneLoader {
             specular = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
-        Material material = new Material(ambient, diffuse, specular, 1.0f);
+        Material material = new Material(ambient, diffuse, specular, 0.0f);
         material.setTexture(texture);
         materials.add(material);
     }

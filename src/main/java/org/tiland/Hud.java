@@ -89,25 +89,25 @@ public class Hud {
     public void startFadeIn() {
         desFadeValue = 0.0f;
         fadeTime = 0.0f;
-        fade.setVisible(true);
+    //    fade.setVisible(true);
     }
 
     public void startFadeOut() {
         desFadeValue = 1.0f;
         fadeTime = 0.0f;
-        fade.setVisible(true);
+    //    fade.setVisible(true);
     }
 
     public void setFadeIn() {
         curFadeValue = 1.0f;
         desFadeValue = 0.0f;
-        fade.setVisible(true);
+    //    fade.setVisible(true);
     }
 
     public void setFadeOut() {
         curFadeValue = 1.0f;
         desFadeValue = 1.0f;
-        fade.setVisible(false);
+    //    fade.setVisible(false);
     }
 
     public void showDialog(boolean show) {

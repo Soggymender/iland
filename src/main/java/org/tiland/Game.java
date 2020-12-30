@@ -5,10 +5,15 @@ import java.util.Map;
 
 import org.engine.scene.*;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.joml.Matrix4f;
 
 import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.Utilities;
+import org.engine.core.Math;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Game implements SceneLoader.IEventHandler {
 
@@ -33,6 +38,10 @@ public class Game implements SceneLoader.IEventHandler {
     Shader tileShader = null;
 
     int count = 0;
+
+    DirectionalLight directionalLight;
+
+    float heading;
 
     //private TileMap tileMap = null;
 
@@ -123,15 +132,14 @@ public class Game implements SceneLoader.IEventHandler {
         mapScene.setSceneLighting(sceneLighting);
 
         // Ambient Light
-     //   sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
+        sceneLighting.setAmbientLight(new Vector3f(0.5f, 0.5f, 0.5f));
 
         // Directional Light
-        float lightIntensity = 0.75f;
-        Vector3f lightPosition = new Vector3f(0.0f, 0, 1);
-        sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
-
-
-
+        float lightIntensity = 1.0f;//0.75f;
+        Vector3f lightDirection = new Vector3f(0.0f, 0.0f, 1.0f);
+        directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        
+        sceneLighting.setDirectionalLight(directionalLight);
     }
 
     public void shutdown() {
@@ -181,20 +189,26 @@ public class Game implements SceneLoader.IEventHandler {
             fpsSamples = 0;
         }
 
-       float fps = 1.0f / interval;
-       accumulator += interval;
-       fpsTotal += fps;
-       fpsSamples++;
+        float fps = 1.0f / interval;
+        accumulator += interval;
+        fpsTotal += fps;
+        fpsSamples++;
 
-       ;//avatar.takePendingItem();
-       scene.update(interval);
+        //avatar.takePendingItem();
+        scene.update(interval);
 
         // Update the camera last so that the targets transform is up to date and already simulated.
         camera.update(interval);
-      //  map.getCamera().update(interval);
+        //  map.getCamera().update(interval);
 
+        // Lights are old skool non-entities. Manually transform this one by the camera view matrix for now.
+        Vector3f dir3 = directionalLight.getDirection();
+        dir3.set(0.0f, 0.0f, 1.0f);
 
-       mapScene.update(interval);
+        Matrix4f viewMat = new Matrix4f(camera.getViewMatrix());
+        viewMat.transformDirection(dir3);
+       
+        mapScene.update(interval);
     }
 
     public void render(float interval) {

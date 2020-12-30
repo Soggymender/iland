@@ -53,7 +53,7 @@ public class Npc extends Sprite {
         }
 
         Texture texture = npcMesh[0].getMaterial().getTexture();
-        Material material = new Material(texture, 1.0f);
+        Material material = new Material(texture, 0.0f);
         npcMesh[0].setMaterial(material);
 
         setMeshes(npcMesh);

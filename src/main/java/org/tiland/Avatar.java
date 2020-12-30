@@ -56,7 +56,7 @@ public class Avatar extends Sprite {
         // Avatar placeholder.
         Mesh[] avatarMesh = SceneLoader.loadMesh("src/main/resources/tiland/models/avatar.fbx", "src/main/resources/tiland/textures/");
         Texture texture = avatarMesh[0].getMaterial().getTexture();
-        Material material = new Material(texture, 1.0f);
+        Material material = new Material(texture, 0.0f);
         avatarMesh[0].setMaterial(material);
 
         setMeshes(avatarMesh);

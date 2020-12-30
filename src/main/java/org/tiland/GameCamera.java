@@ -8,6 +8,8 @@ import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class GameCamera extends Camera {
 
     Zone zone = null;
@@ -65,7 +67,8 @@ public class GameCamera extends Camera {
         }
         */
 
-        //heading = heading + (float)input.getMouse().getScroll().y;
+        if (input.getKeyboard().keyDown(GLFW_KEY_C))
+            heading = heading + (float)input.getMouse().getScroll().y;
 
     }
 
@@ -165,6 +168,7 @@ public class GameCamera extends Camera {
         clippedTargetPos.y += targetOffset.y;
         position.set(clippedTargetPos);
         
+        /*
         if (heading != 0.0f) {
 
             if (heading < 0.0f) {
@@ -182,8 +186,11 @@ public class GameCamera extends Camera {
                     heading = 0.0f;
                 }
             }
-        }
+        }*/
 
+
+        
+        heading = heading % 360.0f;
         rotation.y = -Math.toRadians(heading);
 
         super.update(interval);
