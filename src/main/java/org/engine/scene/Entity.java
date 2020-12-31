@@ -40,6 +40,7 @@ public class Entity {
     private String name = new String();
 
     private Mesh[] meshes;
+    private int layer = 0;
 
     protected Vector3f position;
     protected Vector3f rotation;
@@ -171,6 +172,14 @@ public class Entity {
         return parent.findRoot();
     }
 
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+    
     public Vector3f getPosition() {
         return position;
     }

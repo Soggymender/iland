@@ -126,14 +126,35 @@ public class SceneRenderer {
         // Opaque
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
         
-        for (Shader shader : mapShaders.keySet()) {
+        // Need to make multiple passes with a z clear between each.
+        // Count how many entities are on other layes to draw in future passes so we know
+        // preemptively when we are done.
+        int curLayer = 0;
+        int numLayersRemaining = 0;
+        boolean zDirty = false;
 
-            // Get the meshes that use this shader.
-            List<Mesh> meshList = mapShaders.get(shader);
+        do {
 
-            renderShaderMeshes(camera, shader, scene, meshList, false);
+            numLayersRemaining = 0;
 
-        }
+            if (zDirty) {
+                glClear(GL_DEPTH_BUFFER_BIT);
+                zDirty = false;
+            }
+
+            for (Shader shader : mapShaders.keySet()) {
+
+                // Get the meshes that use this shader.
+                List<Mesh> meshList = mapShaders.get(shader);
+
+                numLayersRemaining += renderShaderMeshes(curLayer, camera, shader, scene, meshList, false);
+
+            }
+
+            zDirty = true;
+            curLayer++;
+
+        } while (numLayersRemaining > 0);
         
         glDepthMask(false);
    //     glClear(GL_DEPTH_BUFFER_BIT);
@@ -144,14 +165,16 @@ public class SceneRenderer {
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(camera, shader, scene, meshList, true);
+            renderShaderMeshes(0, camera, shader, scene, meshList, true);
 
         }
         
         glDepthMask(true);
     }
 
-    private void renderShaderMeshes(Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
+    private int renderShaderMeshes(int curLayer, Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
+
+        int numRemainingLayers = 0;
 
         shader.bind();
 
@@ -173,7 +196,7 @@ public class SceneRenderer {
 
             uniformManager.setMeshUniforms(mesh);
 
-            mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
+            numRemainingLayers += mesh.renderList(curLayer, mapMeshes.get(mesh), (Entity entity) -> {
 
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
@@ -184,6 +207,8 @@ public class SceneRenderer {
         }
 
         shader.unbind();
+
+        return numRemainingLayers;
     }
 
     private void setLightingUniforms(Camera camera, Shader shader, Scene scene) {

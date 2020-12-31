@@ -63,6 +63,7 @@ public class Avatar extends Sprite {
 
         flags.billboard = true;
 
+        setLayer(1);
         scene.addEntity(this);
     }
 

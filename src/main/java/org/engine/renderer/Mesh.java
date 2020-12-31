@@ -235,19 +235,30 @@ public class Mesh {
         endRender();
     }
 
-    public void renderList(List<Entity> entities, Consumer<Entity> consumer) {
+    public int renderList(int curLayer, List<Entity> entities, Consumer<Entity> consumer) {
     
+        int numRemainingLayers = 0;
+
         beginRender();
 
         for (Entity entity : entities) {
     
             if (entity.getVisible() && entity.getParentVisible()) {
-                consumer.accept(entity);
-                glDrawElements(primitiveType, getVertexCount(), GL_UNSIGNED_INT, 0);
+    
+                int layer = entity.getLayer();
+                if (layer > curLayer) {
+                    numRemainingLayers++;
+                } else if (layer == curLayer) {
+
+                    consumer.accept(entity);
+                    glDrawElements(primitiveType, getVertexCount(), GL_UNSIGNED_INT, 0);
+                }
             }   
         }
 
         endRender();
+
+        return numRemainingLayers;
     }
 
     public void deleteBuffers() {
