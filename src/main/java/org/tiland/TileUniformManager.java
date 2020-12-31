@@ -29,7 +29,7 @@ public class TileUniformManager implements IUniformManager {
 
         shader.createPointLightListUniform("pointLights", SceneRenderer.MAX_POINT_LIGHTS);
         shader.createSpotLightListUniform("spotLights", SceneRenderer.MAX_SPOT_LIGHTS);
-        shader.createDirectionalLightUniform("directionalLight");
+        shader.createDirectionalLightListUniform("directionalLights", SceneRenderer.MAX_DIRECTIONAL_LIGHTS);
 
         shader.createUniform("depth");
     }
@@ -52,7 +52,7 @@ public class TileUniformManager implements IUniformManager {
 
         Matrix4f viewMatrix = camera.getViewMatrix();
 
-        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix, false);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
 
         if (entity instanceof Tile) {

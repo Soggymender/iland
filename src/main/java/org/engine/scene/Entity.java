@@ -22,6 +22,7 @@ public class Entity {
         public boolean renderable = false;
         public boolean visible = true;
         public boolean parentVisible = true;
+        public boolean billboard = false;
 
         protected Flags() {
 

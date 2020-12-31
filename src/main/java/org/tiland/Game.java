@@ -138,8 +138,13 @@ public class Game implements SceneLoader.IEventHandler {
         float lightIntensity = 1.0f;//0.75f;
         Vector3f lightDirection = new Vector3f(0.0f, 0.0f, 1.0f);
         directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        sceneLighting.addDirectionalLight(directionalLight);
+
         
-        sceneLighting.setDirectionalLight(directionalLight);
+        directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        directionalLight.flags.viewSpace = false;
+        sceneLighting.addDirectionalLight(directionalLight);
+
     }
 
     public void shutdown() {
@@ -201,13 +206,14 @@ public class Game implements SceneLoader.IEventHandler {
         camera.update(interval);
         //  map.getCamera().update(interval);
 
+        /*
         // Lights are old skool non-entities. Manually transform this one by the camera view matrix for now.
         Vector3f dir3 = directionalLight.getDirection();
         dir3.set(0.0f, 0.0f, 1.0f);
 
         Matrix4f viewMat = new Matrix4f(camera.getViewMatrix());
         viewMat.transformDirection(dir3);
-       
+       */
         mapScene.update(interval);
     }
 

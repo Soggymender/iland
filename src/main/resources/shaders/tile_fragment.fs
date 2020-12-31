@@ -2,6 +2,7 @@
 
 const int MAX_POINT_LIGHTS = 5;
 const int MAX_SPOT_LIGHTS = 5;
+const int MAX_DIRECTIONAL_LIGHTS = 2;
 
 in vec2 outTexCoord;
 in vec3 mvVertexNormal;
@@ -54,7 +55,7 @@ uniform float specularPower;
 uniform Material material;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
-uniform DirectionalLight directionalLight;
+uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 
 uniform float depth;
 
@@ -139,7 +140,13 @@ void main()
 {
     setupColors(material, outTexCoord);
 
-    vec4 diffuseSpecularComp = calcDirectionalLight(directionalLight, mvVertexPos, mwVertexPos, mvVertexNormal);
+    vec4 diffuseSpecularComp;
+    
+    for (int i = 0; i < 1/*MAX_DIRECTIONAL_LIGHTS*/; i++) {
+        if (directionalLights[i].intensity > 0) {
+            diffuseSpecularComp += calcDirectionalLight(directionalLights[i], mvVertexPos, mwVertexPos, mvVertexNormal);
+        }
+    }
 
     for (int i = 0; i < MAX_POINT_LIGHTS; i++)
     {

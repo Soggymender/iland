@@ -43,7 +43,7 @@ public class SkyboxUniformManager implements IUniformManager {
         viewMatrix.m31(0);
         viewMatrix.m32(0);
 
-        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix, false);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
         shader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
 

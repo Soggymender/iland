@@ -18,8 +18,15 @@ public class Transform {
 
     private static Matrix4f orthoModelMatrix = new Matrix4f();
 
-    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix, boolean billboard) {
         Vector3f rotation = entity.getRotation();
+
+        if (billboard) {
+
+            Vector3f viewRotation = new Vector3f();
+            viewMatrix.getEulerAnglesZYX(viewRotation);
+            rotation.y = viewRotation.y;
+        }
 
         modelMatrix.identity().translate(entity.getPosition()).
                 rotateX(-rotation.x).

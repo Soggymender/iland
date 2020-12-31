@@ -20,6 +20,7 @@ public class SceneRenderer {
 
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
+    public static final int MAX_DIRECTIONAL_LIGHTS = 2;
 
     private Shader defaultShader;
     private Shader skyboxShader;
@@ -236,14 +237,22 @@ public class SceneRenderer {
             shader.setUniform("spotLights", currSpotLight, i);
         }
 
-        // Get a copy of the directional light object and transform its position to view coordinates
-        if (sceneLighting.getDirectionalLight() != null) {
-            DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
+        List<DirectionalLight> directionalLights = sceneLighting.getDirectionalLights();
 
-            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-            //dir.mul(viewMatrix);
-            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
-            shader.setUniform("directionalLight", currDirLight);
+        for (int i = 0; i < directionalLights.size(); i++) {
+
+            DirectionalLight light = directionalLights.get(i);
+
+            // Get a copy of the directional light object and transform its position to view coordinates
+            DirectionalLight currDirLight = new DirectionalLight(light);
+
+            if (currDirLight.flags.viewSpace) {
+                Vector4f dir = new Vector4f(currDirLight.getDirection(), 0.0f);
+                dir.mul(viewMatrix);
+                currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            }
+                
+            shader.setUniform("directionalLights", currDirLight, i);
         }
     }
 }

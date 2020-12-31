@@ -74,6 +74,12 @@ public class Shader {
         createUniform(uniformName + ".cutoff");
     }
 
+    public void createDirectionalLightListUniform(String uniformName, int size) throws Exception {
+        for (int i = 0; i < size; i++) {
+            createDirectionalLightUniform(uniformName + "[" + i + "]");
+        }
+    }
+
     public void createDirectionalLightUniform(String uniformName) throws Exception {
         createUniform(uniformName + ".color");
         createUniform(uniformName + ".direction");
@@ -149,6 +155,10 @@ public class Shader {
         setUniform(uniformName + ".pl", spotLight.getPointLight());
         setUniform(uniformName + ".conedir", spotLight.getConeDirection());
         setUniform(uniformName + ".cutoff", spotLight.getCutOff());
+    }
+
+    public void setUniform(String uniformName, DirectionalLight directionalLight, int pos) {
+        setUniform(uniformName + "[" + pos + "]", directionalLight);
     }
 
     public void setUniform(String uniformName, DirectionalLight dirLight) {

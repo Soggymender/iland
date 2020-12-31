@@ -61,6 +61,8 @@ public class Avatar extends Sprite {
 
         setMeshes(avatarMesh);
 
+        flags.billboard = true;
+
         scene.addEntity(this);
     }
 
