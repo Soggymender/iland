@@ -80,6 +80,10 @@ public class Text extends UiElement {
             maxLineWidth += charWidth * scale;
         }
 
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+
         float startX = rectTrans.globalRect.xMin;
         float startY = rectTrans.globalRect.yMin;
 
@@ -160,32 +164,32 @@ public class Text extends UiElement {
                 // Build a character tile composed by two triangles
 
                 // Left Top vertex
-                positions.add(startX); // x
-                positions.add(startY); //y
+                positions.add(startX - halfWidth); // x
+                positions.add(startY - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add(charStartX / texWidth);
                 textCoords.add(0.0f);
                 indices.add(i * VERTICES_PER_QUAD);
 
                 // Left Bottom vertex
-                positions.add(startX); // x
-                positions.add(startY - texHeight * scale); //y
+                positions.add(startX - halfWidth); // x
+                positions.add(startY - texHeight * scale - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((float) charStartX / texWidth);
                 textCoords.add(1.0f);
                 indices.add(i * VERTICES_PER_QUAD + 1);
 
                 // Right Bottom vertex
-                positions.add(startX + charWidth * scale); // x
-                positions.add(startY - texHeight * scale); //y
+                positions.add(startX + charWidth * scale - halfWidth); // x
+                positions.add(startY - texHeight * scale - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((charStartX + charWidth) / texWidth);
                 textCoords.add(1.0f);
                 indices.add(i * VERTICES_PER_QUAD + 2);
 
                 // Right Top vertex
-                positions.add(startX + charWidth * scale); // x
-                positions.add(startY); //y
+                positions.add(startX + charWidth * scale - halfWidth); // x
+                positions.add(startY - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((charStartX + charWidth) / texWidth);
                 textCoords.add(0.0f);

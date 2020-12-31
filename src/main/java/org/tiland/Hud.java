@@ -43,8 +43,10 @@ public class Hud {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
 
         canvas = new Canvas(window, new Vector2f(720, 480));
-        
+        canvas.setDepth(99.0f);
+
         fade = new Panel(canvas, canvas, new Rect(0, 0, 0, 0, true), new Rect(0, 0, 1, 1), new Vector2f(0, 0));
+        fade.setName("fade");
 
         mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 100), new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
      
@@ -60,7 +62,7 @@ public class Hud {
         fpsText.xJustifyCenter = false;
 
         fade.setVisible(false);
-        fade.setDepth(1.0f);
+       // fade.setDepth(1.0f);
 
         mapPanel.setVisible(true);
         mapPanel.setColor(new Color(0, 0, 0, 0.5f));
@@ -89,25 +91,25 @@ public class Hud {
     public void startFadeIn() {
         desFadeValue = 0.0f;
         fadeTime = 0.0f;
-    //    fade.setVisible(true);
+        fade.setVisible(true);
     }
 
     public void startFadeOut() {
         desFadeValue = 1.0f;
         fadeTime = 0.0f;
-    //    fade.setVisible(true);
+        fade.setVisible(true);
     }
 
     public void setFadeIn() {
         curFadeValue = 1.0f;
         desFadeValue = 0.0f;
-    //    fade.setVisible(true);
+        fade.setVisible(true);
     }
 
     public void setFadeOut() {
         curFadeValue = 1.0f;
         desFadeValue = 1.0f;
-    //    fade.setVisible(false);
+        fade.setVisible(false);
     }
 
     public void showDialog(boolean show) {

@@ -432,8 +432,8 @@ public class Zone {
         float halfFov = (float)java.lang.Math.toRadians(fov);
 
         // Shift this bounds to the right  to account for FOV.
-        cameraBounds.min.x += halfFov * camz;
-        cameraBounds.max.x -= halfFov * camz;
+        cameraBounds.min.x += 4.5;//halfFov * camz;
+        cameraBounds.max.x -= 4.5;//halfFov * camz;
     }
 
     public BoundingBox getAvatarBounds() {

@@ -215,33 +215,36 @@ public class UiElement extends Entity {
         float[] texCoords = new float[4 * 2];
         int[] indices = new int[6];
 
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
         // Top left
-        positions[0] = rectTrans.screenRect.xMin;
-        positions[1] = rectTrans.screenRect.yMax;
+        positions[0] = rectTrans.screenRect.xMin - halfWidth;
+        positions[1] = rectTrans.screenRect.yMax - halfHeight;
         positions[2] = depth;
 
         texCoords[0] = 0.0f;
         texCoords[1] = 0.0f;
 
         // Top right
-        positions[3] = rectTrans.screenRect.xMax;
-        positions[4] = rectTrans.screenRect.yMax;
+        positions[3] = rectTrans.screenRect.xMax - halfWidth;
+        positions[4] = rectTrans.screenRect.yMax - halfHeight;
         positions[5] = depth;
 
         texCoords[2] = 1.0f;
         texCoords[3] = 0.0f;
 
         // Bottom right
-        positions[6] = rectTrans.screenRect.xMax;
-        positions[7] = rectTrans.screenRect.yMin;
+        positions[6] = rectTrans.screenRect.xMax - halfWidth;
+        positions[7] = rectTrans.screenRect.yMin - halfHeight;
         positions[8] = depth;
 
         texCoords[4] = 1.0f;
         texCoords[5] = 1.0f;
 
         // Bottom left
-        positions[9] = rectTrans.screenRect.xMin;
-        positions[10] = rectTrans.screenRect.yMin;
+        positions[9] = rectTrans.screenRect.xMin - halfWidth;
+        positions[10] = rectTrans.screenRect.yMin - halfHeight;
         positions[11] = depth;
 
         texCoords[6] = 0.0f;
