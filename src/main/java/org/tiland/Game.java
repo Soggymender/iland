@@ -259,6 +259,10 @@ public class Game implements SceneLoader.IEventHandler {
                 return zone.loadDoor(properties, false, true);
             }
 
+            else if (type.equals("front_exit")) {
+                return zone.loadDoor(properties, true, true);
+            }
+
             else if (type.equals("ladder")) {
                 return zone.loadLadder(properties);
             }
