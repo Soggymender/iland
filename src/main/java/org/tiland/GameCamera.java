@@ -10,6 +10,8 @@ import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import javax.lang.model.util.ElementScanner6;
+
 public class GameCamera extends Camera {
 
     Zone zone = null;
@@ -93,6 +95,7 @@ public class GameCamera extends Camera {
         clippedTargetPos.y += targetOffset.y;
         position.set(clippedTargetPos);
         
+        /*
         if (heading != 0.0f) {
 
             if (heading < 0.0f) {
@@ -111,9 +114,17 @@ public class GameCamera extends Camera {
                 }
             }
         }
+        */
         
-        rotation.y = -Math.toRadians(heading);
+        if (zone.transition.headingTransition()) {
 
+            float p = zone.transition.getTransitionPercent();
+
+            rotation.y = -Math.toRadians(heading * (1.0f - p));
+        } else
+            rotation.y = 0.0f;
+    //    rotation.y = -Math.toRadians(heading);
+    
         super.update(interval);
     }
 

@@ -23,6 +23,8 @@ public class Zone {
     String requestedZoneName = new String();
     String requestedDoorName = new String();
 
+    ZoneTransition transition = new ZoneTransition();
+
     Vector3f avatarStart;
 
     public ArrayList<Script> scripts = new ArrayList<Script>();
@@ -69,6 +71,10 @@ public class Zone {
         this.hud = hud;
 
         loadScripts();
+    }
+
+    public void update(float interval) {
+        transition.update(interval);
     }
 
     public void setAvatar(Avatar avatar) {
@@ -317,6 +323,10 @@ public class Zone {
         door.targetDoor = properties.get("p_target_object");
         door.isFront = frontDoor;
         door.isTrigger = isTrigger;
+
+        if (frontDoor) {
+            door.setLayer(3);
+        }
 
         String state = properties.get("p_state");
         if (state != null && state.length() != 0) {
@@ -1055,5 +1065,5 @@ public class Zone {
         if (reset) {
             script.nextCommand = 0;
         }
-    }    
+    }  
 }

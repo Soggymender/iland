@@ -76,6 +76,10 @@ public class Avatar extends Sprite {
 
         setPosition(avatarStart);
 
+        velocity.mul(0, 1, 0);
+        moveAccel.mul(0, 1);
+        moveVec.zero();
+
         // Attach to a climbable surface?
         climbingEntity = zone.climb(this);
         if (climbingEntity != null) {
@@ -101,9 +105,12 @@ public class Avatar extends Sprite {
             up
         */
 
-        Keyboard keyboard = input.getKeyboard();
-
         moveVec.zero();
+
+        if (zone.transition.blockInput())
+            return;
+  
+        Keyboard keyboard = input.getKeyboard();
 
         if (keyboard.keyDown(GLFW_KEY_A)){
             moveVec.x = -1;
@@ -353,6 +360,7 @@ public class Avatar extends Sprite {
     public void take(Npc npc) {
 
         if (inventory.take(npc, zone)) {
+            npc.setLayer(2);
             updateHeldItem();
         }
     }

@@ -87,17 +87,22 @@ public class Game implements SceneLoader.IEventHandler {
         float newZoneHeading = zone.getMapHeading(); 
 
         avatar.goToStart();
-        
+
         if (zone.enteredByDoor()) {
 
             if (newZoneHeading > oldZoneHeading) {
+                zone.transition.startHeadingTransition();
                 camera.setHeading(90.0f);
             }
 
             else if (newZoneHeading < oldZoneHeading) {
+                zone.transition.startHeadingTransition();
                 camera.setHeading(-90.0f);
             }
         }
+        
+        if (!zone.transition.headingTransition()) 
+            zone.transition.startPanTransition();
         
         count += 1;
 
@@ -174,6 +179,8 @@ public class Game implements SceneLoader.IEventHandler {
         if (!zone.getRequestedZone().isEmpty()) {
             startZone();
         }
+
+        zone.update(interval);
 
         hud.update(interval);
 
