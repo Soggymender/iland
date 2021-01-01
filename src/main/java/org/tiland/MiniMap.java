@@ -74,6 +74,17 @@ public class MiniMap {
         return camera;
     }
 
+    public boolean getZoneOffset(String name, Vector3f offset) {
+      
+        MapZone mapZone = mapZones.get(name);
+        if (mapZone != null) {
+            offset = mapZone.offset;
+            return true;
+        }  
+
+        return false;
+    }
+
     public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {  
  
         MapZone mapZone = mapZones.get(name);
@@ -204,10 +215,10 @@ public class MiniMap {
 
         float rad = Math.toRadians(heading);
 
-        pos1.rotateY(rad);
-        pos2.rotateY(rad);
-        pos3.rotateY(rad);
-        pos4.rotateY(rad);
+        //pos1.rotateY(rad);
+        //pos2.rotateY(rad);
+        //pos3.rotateY(rad);
+        //pos4.rotateY(rad);
 
         pos1.x += offset.x;
         pos1.y += offset.y;
@@ -250,7 +261,7 @@ public class MiniMap {
         targetPos.add(offset);
 
         camera.setPosition(targetPos);
-        camera.setRotation(0, rad - camRad, 0);
+        //camera.setRotation(0, rad - camRad, 0);
 
         updateZoneSketches();
         updateLocationSketch();
