@@ -20,7 +20,6 @@ public class Zone {
     Vector3f zoneOffset = new Vector3f();
     float zoneHeading;
 
-    Vector3f exitPos = new Vector3f();
     String requestedZoneName = new String();
     String requestedDoorName = new String();
 
@@ -460,8 +459,6 @@ public class Zone {
         String targetZone = null;
         String targetDoor = null;
 
-        Door enteredDoor = null;
-
         for (int i = 0; i < doors.size(); i++) {
 
             Door door = doors.get(i);
@@ -501,8 +498,6 @@ public class Zone {
                 targetZone = door.targetZone;
                 targetDoor = door.targetDoor;
             
-                enteredDoor = door;
-
                 break;
             } else {
                 if (enteredFromHere) {
@@ -514,8 +509,6 @@ public class Zone {
         if (targetZone != null) {
             
             requestZone(targetZone, targetDoor);
-
-            exitPos = new Vector3f(enteredDoor.getPosition());
 
             return true;
         }
@@ -817,15 +810,6 @@ public class Zone {
 
     public float getMapHeading() {
         return zoneHeading;
-    }
-
-    public Vector3f getExitPos() {
-
-        Vector3f absExitPos = new Vector3f(exitPos);
-
-        absExitPos.x += 0.0f - avatarBounds.min.x;
-        
-        return absExitPos;
     }
 
     public boolean processScript(Entity entity, Entity other, String label) {

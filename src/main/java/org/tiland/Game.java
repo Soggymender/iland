@@ -81,8 +81,6 @@ public class Game implements SceneLoader.IEventHandler {
         hud.startFadeIn();
 
         float oldZoneHeading = zone.getMapHeading();
-        Vector3f oldZoneOffset = new Vector3f(zone.getMapOffset());
-        Vector3f oldZoneExitPos = zone.getExitPos();
 
         zone.loadRequestedZone();
 
@@ -108,38 +106,8 @@ public class Game implements SceneLoader.IEventHandler {
         
         count += 1;
 
-        Vector3f mapOffset = new Vector3f();
-
-        if (map.getZoneOffset(zone.getName(), mapOffset))  {
-
-            zone.zoneOffset = mapOffset;
-
-        } else {
-
-            //mapScene.addEntity(zone.zoneRoot);
-            mapOffset.set(oldZoneOffset);
-
-            oldZoneExitPos.y = 0.0f;
-            oldZoneExitPos.z = 0.0f;
-
-            mapOffset.add(oldZoneExitPos);
-            
-            // As long as this isn't the starting zone, add a gap between minimap segments.
-            if (mapOffset.length() > 0.0f) {
-                Vector3f gap = new Vector3f();
-                if (zone.getMapHeading() == 0.0f)
-                    gap.set(4.0f, 0.0f, 0.0f);
-                else
-                    gap.set(0.0f, 0.0f, -4.0f);
-                
-                mapOffset.add(gap);
-            }
-
-            zone.zoneOffset = mapOffset;
-
-            map.addZone(zone.getName(), mapOffset, zone.getMapHeading(), zone.getAvatarBounds());
-        }
-
+        //mapScene.addEntity(zone.zoneRoot);
+        map.addZone(zone.getName(), zone.getMapOffset(), zone.getMapHeading(), zone.getAvatarBounds());
         map.enterZone(zone.getName());
     }
 
