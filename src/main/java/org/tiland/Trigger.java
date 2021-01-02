@@ -50,7 +50,7 @@ public class Trigger extends Entity {
         switch (state) {
 
             case openning:
-                setRotation(0, 45, 0);
+                setRotation(0, 115, 0);
                 setState(TriggerState.open);
                 break;
 
