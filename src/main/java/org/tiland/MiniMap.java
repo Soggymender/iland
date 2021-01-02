@@ -250,7 +250,7 @@ public class MiniMap {
         targetPos.add(offset);
 
         camera.setPosition(targetPos);
-        camera.setRotation(0, rad - camRad, 0);
+        //camera.setRotation(0, rad - camRad, 0);
 
         updateZoneSketches();
         updateLocationSketch();

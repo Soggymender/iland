@@ -36,6 +36,7 @@ public class Zone {
     public List<Ladder> ladders;
     public List<Trigger> triggers;
 
+    String boundsName = null;
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
 
@@ -128,6 +129,25 @@ public class Zone {
 
         requestedZoneName = "";
 
+        // If the zone metadata specified a specific bounds object, get it and bash the bounds to its
+        // extents instead of using all zone entities.
+        if (boundsName != null) {
+
+            Entity entity = scene.findEntity(boundsName);
+            if (entity != null) {
+
+                avatarBounds.reset();
+                cameraBounds.reset();
+
+                avatarBounds.min.x = 9999.0f;
+                avatarBounds.min.y = 9999.0f;
+                avatarBounds.max.x = -9999.0f;
+                avatarBounds.max.y = -9999.0f;
+
+                expandBounds(entity.getPosition(), entity.getBBox());
+            }
+        }
+
         Entity entity = scene.findEntity(requestedDoorName);
         if (entity != null) {
             setAvatarStart(entity.getPosition());
@@ -194,6 +214,8 @@ public class Zone {
 
         triggers.clear();
 
+        boundsName = null;
+
         avatarBounds.reset();
         cameraBounds.reset();
 
@@ -210,6 +232,8 @@ public class Zone {
 
     public void setMetadata(Map<String, String>properties) {
     
+        boundsName = properties.get("p_bounds");
+
         String offsetString = properties.get("p_offset");
         if (offsetString.length() > 0) {
             String[] coords = offsetString.split(",");
