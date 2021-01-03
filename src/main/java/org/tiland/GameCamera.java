@@ -37,7 +37,8 @@ public class GameCamera extends Camera {
 
         this.target = target;
 
-        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
+//        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
+        targetOffset = new Vector3f(0.0f, 0.75f, 4.25f);
 
         this.zone = zone;
 
@@ -77,7 +78,7 @@ public class GameCamera extends Camera {
         Vector3f targetPos = target.getPosition();
 
         Vector3f clippedTargetPos = new Vector3f(targetPos);
-        clippedTargetPos.y = 0.0f;
+        //clippedTargetPos.y = 0.0f;
         clippedTargetPos.z = 0.0f;
 
         BoundingBox bounds = zone.getCameraBounds();
@@ -89,6 +90,14 @@ public class GameCamera extends Camera {
         }
         if (clippedTargetPos.x > bounds.max.x + 0.1f) {
             clippedTargetPos.x = bounds.max.x + 0.1f;
+        }
+
+        // Try some fancy Y clipping.
+        if (clippedTargetPos.y < bounds.min.y + 0.9f) {
+            clippedTargetPos.y = bounds.min.y + 0.9f;
+        }
+        if (clippedTargetPos.y > bounds.max.y - 4.0f) {
+            clippedTargetPos.y = bounds.max.y - 4.0f;
         }
 
         clippedTargetPos.x += targetOffset.x;
@@ -142,11 +151,11 @@ public class GameCamera extends Camera {
         fromTarget.sub(targetPos);
 
 
-        viewMatrix.translate(0.0f, 0.0f, -targetOffset.z);
+        viewMatrix.translate(0.0f, -targetOffset.y, -targetOffset.z);
         viewMatrix.translate(-fromTarget.x, -fromTarget.y, -fromTarget.z);
         viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
 
-        viewMatrix.translate(-targetPos.x, 0.0f, -targetPos.z);
+        viewMatrix.translate(-targetPos.x, -targetPos.y, -targetPos.z);
         //viewMatrix.translate(-position.x, -position.y, -position.z);
 
     }    
