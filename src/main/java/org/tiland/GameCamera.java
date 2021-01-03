@@ -78,6 +78,7 @@ public class GameCamera extends Camera {
         Vector3f targetPos = target.getPosition();
 
         Vector3f clippedTargetPos = new Vector3f(targetPos);
+        clippedTargetPos.add(target.frameVelocity);
         //clippedTargetPos.y = 0.0f;
         clippedTargetPos.z = 0.0f;
 

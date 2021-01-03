@@ -29,10 +29,12 @@ public class Avatar extends Sprite {
     public Entity interactEntity = null;
 
     public Inventory inventory = new Inventory();
+    public Indicators indicators = null;
 
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
+    private Vector3f indicatorOffset = new Vector3f(0.0f, 1.0f, 0.0f);
     private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.05f);
     private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.5f);
 
@@ -47,6 +49,8 @@ public class Avatar extends Sprite {
         moveVec = new Vector2f();
 
         initialize(scene);
+
+        indicators = new Indicators(scene);
     }
 
     public void initialize(Scene scene) throws Exception {
@@ -317,6 +321,7 @@ public class Avatar extends Sprite {
         super.update(interval);
 
         updateHeldItem();
+        updateIndicators();
     }
 
     private void updateHeldItem() {
@@ -337,6 +342,26 @@ public class Avatar extends Sprite {
         offset.add(position);
 
         heldItem.setPosition(offset);
+    }
+
+    private void updateIndicators() {
+
+        Sprite indicator = indicators.getActiveIndicator();
+        if (indicator == null) {
+            return;
+        }
+
+        Vector3f offset = new Vector3f(indicatorOffset);
+
+     //   if (crouch) {
+       //      offset.mul(crouchScale);
+      //  }
+
+        offset.mul(dirScale);
+        offset.add(position);
+        offset.add(frameVelocity);
+
+        indicator.setPosition(offset);
     }
 
     public void startClimbing() {
