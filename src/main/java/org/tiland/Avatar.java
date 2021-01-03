@@ -177,6 +177,19 @@ public class Avatar extends Sprite {
             }
         }
 
+        indicators.deactivateIndicator();
+
+        if (interactEntity == null) {
+
+            if (!zone.transition.blockInput()) {
+    
+                if (zone.checkUpInteraction(this))
+                    indicators.activateUpIndicator();
+                //else if (zone.checkDownInteraction(this))
+                //  indicators.activateDownIndicator();
+            }
+        }
+
         if (interactUp) {
             interactEntity = zone.interactAll(this, interactEntity, !inventory.isFull());
             if (interactEntity != null) {

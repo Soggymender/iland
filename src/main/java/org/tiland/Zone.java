@@ -478,6 +478,46 @@ public class Zone {
         return cameraBounds;
     }
 
+    public boolean canEnterDoor(Entity entity, boolean useBack, boolean useFront) {
+
+        for (int i = 0; i < doors.size(); i++) {
+
+            Door door = doors.get(i);
+
+            // If there was no interaction, skip doors that require it / are not triggers.
+            if (!door.isTrigger) {
+                if (!useFront && !useBack) {
+                    continue;
+                }
+
+                if (door.isFront && !useFront) {
+                    continue;
+                }
+
+                if (!door.isFront && !useBack) {
+                    continue;
+                }
+            }
+
+            // If this is a trigger door, and we entered through it, and we're no longer overlapping with it
+            // clear it out, allowing re-entry.
+            // But, if the requestedZoneName is also set, then we are in the process of leaving this zone and the door name
+            // is for the next zone not this one.
+            boolean enteredFromHere = requestedZoneName.length() == 0 && door.getName().equals(requestedDoorName);
+
+            if (entitiesOverlap(entity, door, 0.5f, 0.95f)) {
+
+                if (enteredFromHere && door.isTrigger) {
+                    continue;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean enterDoor(Entity entity, boolean useBack, boolean useFront) {
 
         String targetZone = null;
@@ -536,6 +576,24 @@ public class Zone {
 
             return true;
         }
+
+        return false;
+    }
+
+    public boolean checkUpInteraction(Entity entity) {
+
+        // Take?
+        if (canTake(entity))
+            return true;
+
+        if (canInteractWithTrigger(entity))
+            return true;
+
+        if (canTalk(entity))
+            return true;
+
+        if (canEnterDoor(entity, true, false))
+            return true;
 
         return false;
     }
@@ -628,6 +686,38 @@ public class Zone {
         return null;
     }     
 
+    public boolean canTake(Entity entity) {
+
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+
+            if (!npc.getVisible()) {
+                continue;
+            }
+
+            // This is probably already being carried.
+            if (npc.getZone() == null) {
+                continue;
+            }
+
+            // Can't interact with NPCs in other zones.
+            if (!npc.getZone().equals(zoneName)) {
+                continue;
+            }
+
+            if (!npc.isItem) {
+                continue;
+            }
+
+            if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public Entity take(Entity entity, Entity other) {
 
         for (int i = 0; i < npcs.size(); i++) {
@@ -663,6 +753,21 @@ public class Zone {
         return null;
     }
 
+    public boolean canInteractWithTrigger(Entity entity) {
+
+        // Interact? (with Triggers)
+        for (int i = 0; i < triggers.size(); i++) {
+
+            Trigger trigger = triggers.get(i);
+
+            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public Entity interactWithTrigger(Entity entity, Entity other) {
 
         // Interact? (with Triggers)
@@ -681,6 +786,30 @@ public class Zone {
         }
 
         return null;
+    }
+
+    boolean canTalk(Entity entity) {
+
+        // Talk?
+        for (int i = 0; i < npcs.size(); i++) {
+
+            Npc npc = npcs.get(i);
+            if (npc.isItem) {
+                continue;
+            }
+
+            // Can't interact with NPCs in other zones.
+            if (!npc.getZone().equals(zoneName)) {
+                continue;
+            }
+
+            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+                return true;
+
+            }
+        }
+
+        return false;
     }
 
     Entity talk(Entity entity, Entity other) {
