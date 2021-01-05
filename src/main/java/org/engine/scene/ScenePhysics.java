@@ -151,6 +151,14 @@ public class ScenePhysics {
                 if (a.resolutionVec.y != 0) {
                     a.velocity.y = 0;
                 }
+
+                if (a.children != null) {
+                        
+                    for (Entity child : a.children) {
+                        child.position.add(a.resolutionVec);
+                        //child.frameVelocity.add(a.resolutionVec);
+                    }
+                }
             }
 
             a.position.add(a.frameVelocity);

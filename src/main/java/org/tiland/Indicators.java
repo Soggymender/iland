@@ -15,13 +15,13 @@ public class Indicators {
 
     Sprite activeIndicator = null;
 
-	public Indicators(Scene scene) throws Exception  {
+	public Indicators(Scene scene, Avatar avatar) throws Exception  {
 
-        upIndicator = LoadIndicator(scene, "src/main/resources/tiland/models/icon_up.fbx");
-        downIndicator = LoadIndicator(scene, "src/main/resources/tiland/models/icon_down.fbx");
+        upIndicator = LoadIndicator(scene, avatar, "src/main/resources/tiland/models/icon_up.fbx");
+        downIndicator = LoadIndicator(scene, avatar, "src/main/resources/tiland/models/icon_down.fbx");
     }
 
-    Sprite LoadIndicator(Scene scene, String meshFilename) throws Exception {
+    Sprite LoadIndicator(Scene scene, Avatar avatar, String meshFilename) throws Exception {
 
         Sprite indicator = new Sprite(scene);
         
@@ -38,6 +38,7 @@ public class Indicators {
         indicator.flags.dynamic = false;
 
         indicator.setLayer(3);
+        indicator.setParent(avatar);
         scene.addEntity(indicator);
         indicator.setVisible(false);
         

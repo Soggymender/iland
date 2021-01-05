@@ -50,7 +50,7 @@ public class Avatar extends Sprite {
 
         initialize(scene);
 
-        indicators = new Indicators(scene);
+        indicators = new Indicators(scene, this);
     }
 
     public void initialize(Scene scene) throws Exception {
@@ -178,7 +178,7 @@ public class Avatar extends Sprite {
         }
 
         indicators.deactivateIndicator();
-
+        
         if (interactEntity == null) {
 
             if (!zone.transition.blockInput() && !zone.transition.headingTransition() && this.support != null) {
