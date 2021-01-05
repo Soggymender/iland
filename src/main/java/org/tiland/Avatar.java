@@ -34,7 +34,7 @@ public class Avatar extends Sprite {
     private Vector3f crouchScale = new Vector3f(1.0f, 0.5f, 1.0f);
     private Vector3f standScale = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    private Vector3f indicatorOffset = new Vector3f(0.0f, 1.0f, 0.0f);
+    private Vector3f indicatorOffset = new Vector3f(0.0f, 1.0f, 1.0f);
     private Vector3f holdOffset = new Vector3f(-0.1f, 0.15f, 0.05f);
     private Vector3f dropOffset = new Vector3f(-0.1f, 0.0f, 0.5f);
 
@@ -181,16 +181,17 @@ public class Avatar extends Sprite {
 
         if (interactEntity == null) {
 
-            if (!zone.transition.blockInput()) {
+            if (!zone.transition.blockInput() && !zone.transition.headingTransition() && this.support != null) {
     
-                if (zone.checkUpInteraction(this))
+                if (zone.checkUpInteraction(this)) {
                     indicators.activateUpIndicator();
-                //else if (zone.checkDownInteraction(this))
-                //  indicators.activateDownIndicator();
+                    
+                } else if (zone.checkDownInteraction(this))
+                  indicators.activateDownIndicator();
             }
         }
 
-        if (interactUp) {
+        if (interactUp && support != null) {
             interactEntity = zone.interactAll(this, interactEntity, !inventory.isFull());
             if (interactEntity != null) {
                 interactUp = false;
@@ -206,7 +207,7 @@ public class Avatar extends Sprite {
         }
 
         // Enter automatic or interactive doors.
-        if (zone.enterDoor(this, interactUp, interactDown)) {
+        if (support != null && zone.enterDoor(this, interactUp, interactDown)) {
             interactUp = false;
             interactDown = false;
             crouch = false;

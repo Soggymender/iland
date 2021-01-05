@@ -15,6 +15,21 @@ import org.engine.scene.SceneLoader;
 import org.tiland.Trigger.*;
 
 public class Zone {
+    
+    final float maxTalkX = 1.0f;
+    final float maxTalkY = 1.0f;
+
+    final float maxTakeX = 0.25f;
+    final float maxTakeY = 0.5f;
+
+    final float maxEnterX = 0.5f;
+    final float maxEnterY = 0.95f;
+
+    final float maxClimbX = 0.5f;
+    final float maxClimbY = 0.5f;
+
+    final float maxTriggerX = 0.25f;
+    final float maxTriggerY = 0.25f;
 
     String zoneName;
     Vector3f zoneOffset = new Vector3f();
@@ -505,9 +520,9 @@ public class Zone {
             // is for the next zone not this one.
             boolean enteredFromHere = requestedZoneName.length() == 0 && door.getName().equals(requestedDoorName);
 
-            if (entitiesOverlap(entity, door, 0.5f, 0.95f)) {
+            if (entitiesOverlap(entity, door, maxEnterX, maxEnterY)) {
 
-                if (enteredFromHere && door.isTrigger) {
+                if (door.isTrigger) {
                     continue;
                 }
 
@@ -548,7 +563,7 @@ public class Zone {
             // is for the next zone not this one.
             boolean enteredFromHere = requestedZoneName.length() == 0 && door.getName().equals(requestedDoorName);
 
-            if (entitiesOverlap(entity, door, 0.5f, 0.95f)) {
+            if (entitiesOverlap(entity, door, maxEnterX, maxEnterY)) {
 
                 if (enteredFromHere && door.isTrigger) {
                     continue;
@@ -593,6 +608,14 @@ public class Zone {
             return true;
 
         if (canEnterDoor(entity, true, false))
+            return true;
+
+        return false;
+    }
+
+    public boolean checkDownInteraction(Entity entity) {
+
+        if (canEnterDoor(entity, false, true))
             return true;
 
         return false;
@@ -650,7 +673,7 @@ public class Zone {
 
         // TODO: Make sure this NPC is in this zone.
 
-        if (entitiesNear(entity, other, 1.0f, 1.0f)) {
+        if (entitiesNear(entity, other, maxTalkX, maxTalkY)) {
             processScript(entity, other, null);
             if (script.talking) {
                 return other;
@@ -667,7 +690,7 @@ public class Zone {
 
         if (other != null) {
 
-            if (entitiesNear(entity, other, 1.0f, 1.0f)) {
+            if (entitiesNear(entity, other, maxTalkX, maxTalkY)) {
                 return other;
             }
 
@@ -710,7 +733,7 @@ public class Zone {
                 continue;
             }
 
-            if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
+            if (entitiesNear(entity, npc, maxTakeX, maxTakeY)) {
                 return true;
             }
         }
@@ -742,7 +765,7 @@ public class Zone {
                 continue;
             }
 
-            if (entitiesNear(entity, npc, 0.25f, 0.5f)) {
+            if (entitiesNear(entity, npc, maxTakeX, maxTakeY)) {
             
                 processScript(entity, npc, null);
                 // The caller shouldn't hold on to this as an interaction.
@@ -760,7 +783,7 @@ public class Zone {
 
             Trigger trigger = triggers.get(i);
 
-            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
+            if (entitiesOverlap(entity, trigger, maxTriggerX, maxTriggerY)) {
                 return true;
             }
         }
@@ -775,7 +798,7 @@ public class Zone {
 
             Trigger trigger = triggers.get(i);
 
-            if (entitiesOverlap(entity, trigger, 0.25f, 0.25f)) {
+            if (entitiesOverlap(entity, trigger, maxTriggerX, maxTriggerY)) {
             
                 if (processScript(entity, trigger, null)) {
                     return trigger;
@@ -803,7 +826,7 @@ public class Zone {
                 continue;
             }
 
-            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+            if (entitiesNear(entity, npc, maxTalkX, maxTalkY)) {
                 return true;
 
             }
@@ -827,7 +850,7 @@ public class Zone {
                 continue;
             }
 
-            if (entitiesNear(entity, npc, 1.0f, 1.0f)) {
+            if (entitiesNear(entity, npc, maxTalkX, maxTalkY)) {
             
                 processScript(entity, npc, null);
                 if (npc.getScript().talking) {
@@ -846,22 +869,7 @@ public class Zone {
             Ladder ladder = ladders.get(i);
  
             // Over ladder.
-            if (entitiesOverlap(entity, ladder, 0.5f, 0.5f)) {
-                return ladder;
-            }
-        }
-
-        return null;
-    }
-
-    public Entity onLadder(Entity entity) {
-
-        for (int i = 0; i < ladders.size(); i++) {
-
-            Ladder ladder = ladders.get(i);
- 
-            // Over ladder.
-            if (entitiesOverlap(entity, ladder, 0.5f, 0.01f)) {
+            if (entitiesOverlap(entity, ladder, maxClimbX, maxClimbY)) {
                 return ladder;
             }
         }
