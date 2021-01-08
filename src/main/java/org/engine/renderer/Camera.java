@@ -4,7 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import org.engine.scene.Entity;
-import org.engine.renderer.Viewport;
 
 public class Camera extends Entity {
 
@@ -12,7 +11,7 @@ public class Camera extends Entity {
     private static final float Z_NEAR = -100.0f;//0.01f;
     private static final float Z_FAR = 100.0f;
 
-    private boolean centerOrtho = false;
+    //private boolean centerOrtho = false;
 
     protected Matrix4f viewMatrix;
     protected Viewport viewport;

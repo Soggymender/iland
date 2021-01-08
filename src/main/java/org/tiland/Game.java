@@ -5,15 +5,10 @@ import java.util.Map;
 
 import org.engine.scene.*;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
-import org.joml.Matrix4f;
 
 import org.engine.input.*;
 import org.engine.renderer.*;
 import org.engine.Utilities;
-import org.engine.core.Math;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Game implements SceneLoader.IEventHandler {
 

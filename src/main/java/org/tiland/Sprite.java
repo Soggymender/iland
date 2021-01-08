@@ -141,7 +141,7 @@ public class Sprite extends Entity {
                 moveAccel.y = 0.0f;
             }
 
-            Vector3f pos = getPosition();
+           // Vector3f pos = getPosition();
         
             // Clip to y = 0 until collision works.
         //    if (pos.y <= -0.4f && !jump && moveSpeed.y < 0.0f) {

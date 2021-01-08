@@ -24,7 +24,7 @@ public class Text extends UiElement {
 
     public Text(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
 
-        super(canvas, parent, rect, anchor, pivot);
+        super(canvas, parent, rect, 0, anchor, pivot);
 
         flags.forwardsInput = false;
         flags.acceptsInput = false;
@@ -255,6 +255,6 @@ public class Text extends UiElement {
      //   }
 
         buildMesh();
-        getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
+        getMesh().getMaterial().setDiffuseColor(new Vector4f(0, 0, 0, 0.7f));
     }
 }

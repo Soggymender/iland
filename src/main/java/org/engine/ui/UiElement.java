@@ -11,6 +11,17 @@ import org.engine.renderer.Shader;
 import org.engine.renderer.Mesh;
 import org.engine.scene.Entity;
 
+class MeshData {
+
+    public int vertexCount = 0;
+    public float[] positions;
+    public int positionsCount = 0;
+    public float[] texCoords;
+    public int texCoordsCount = 0;
+    public int[] indices;
+    public int indexCount = 0;
+}
+
 public class UiElement extends Entity {
 
     protected class Flags {
@@ -20,6 +31,7 @@ public class UiElement extends Entity {
         protected boolean dirty = true; // Everything starts dirty so it'll do an initial update after construction.
     }
 
+    protected float cornerRadius = 0;
     protected RectTransform rectTrans;
     protected Material material;
 
@@ -39,7 +51,7 @@ public class UiElement extends Entity {
         material.setShader(defaultGuiShader);
     }
 
-    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
+    public UiElement(Canvas canvas, Entity parent, Rect rect, float cornerRadius, Rect anchor, Vector2f pivot) throws Exception {
 
         super();
 
@@ -51,6 +63,8 @@ public class UiElement extends Entity {
         rectTrans.pivot.set(pivot);
 
         rectTrans.rect.set(rect);
+
+        this.cornerRadius = cornerRadius;
 
         rectTrans.anchor.set(anchor);
 
@@ -204,65 +218,199 @@ public class UiElement extends Entity {
 
     private void buildMesh() {
 
+        if (cornerRadius > 0) {
+            buildRoundedMesh();
+            return;
+        }
+
         Mesh mesh = getMesh();
         if (mesh != null) {
             mesh.deleteBuffers();
         }
 
-        float depth = rectTrans.getDepth();
+        MeshData meshData = new MeshData();
 
-        float[] positions = new float[4 * 3];
-        float[] texCoords = new float[4 * 2];
-        int[] indices = new int[6];
+        meshData.positions = new float[4 * 3];
+        meshData.texCoords = new float[4 * 2];
+        meshData.indices = new int[6];
+
+        Rect rect = new Rect(rectTrans.screenRect.xMin, rectTrans.screenRect.yMin, rectTrans.screenRect.xMax, rectTrans.screenRect.yMax, true);
+
+        addMeshRect(rect, meshData);
+
+        float[] normals = new float[0];
+
+        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+        mesh.setMaterial(material);
+
+        setMesh(mesh);
+    }
+
+    private void buildRoundedMesh() {
+
+        Mesh mesh = getMesh();
+        if (mesh != null) {
+            mesh.deleteBuffers();
+        }
+
+        MeshData meshData = new MeshData();
+
+        int numSegments = 4;
+        int numCornerPositions = (1 + numSegments + 1) * 3 * 4;
+        int numCornerTexCoords = (1 + numSegments + 1) * 2 * 4;
+        int numCornerIndices = (numSegments + 1) * 3 * 4;
+
+        meshData.positions = new float[4 * 3 * 3 + numCornerPositions];
+        meshData.texCoords = new float[4 * 2 * 3 + numCornerTexCoords];
+        meshData.indices = new int[6 * 3 + numCornerIndices];
+
+        Rect rect;
+        
+        // Bottom slice.
+        rect = new Rect(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMin, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin + cornerRadius, true);
+        addMeshRect(rect, meshData);
+
+        // Middle slice.
+        rect = new Rect(rectTrans.screenRect.xMin, rectTrans.screenRect.yMin + cornerRadius, rectTrans.screenRect.xMax, rectTrans.screenRect.yMax - cornerRadius, true);
+        addMeshRect(rect, meshData);
+
+        // Top slice.
+        rect = new Rect(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax, true);
+        addMeshRect(rect, meshData);
+
+        addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -180.0f, -90.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -90.0f, 0.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,  90.0f, 180.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,   0.0f, 90.0f, numSegments, meshData);
+
+        float[] normals = new float[0];
+
+        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+        mesh.setMaterial(material);
+
+        setMesh(mesh);
+    }
+
+    private void addMeshRect(Rect rect, MeshData meshData) {
+
+        float depth = rectTrans.getDepth();
 
         float halfWidth = canvas.workingResolution.x / 2.0f;
         float halfHeight = canvas.workingResolution.y / 2.0f;
 
-        // Top left
-        positions[0] = rectTrans.screenRect.xMin - halfWidth;
-        positions[1] = rectTrans.screenRect.yMax - halfHeight;
-        positions[2] = depth;
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
 
-        texCoords[0] = 0.0f;
-        texCoords[1] = 0.0f;
+        // Top left
+        meshData.positions[pc + 0] = rect.xMin - halfWidth;
+        meshData.positions[pc + 1] = rect.yMax - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
 
         // Top right
-        positions[3] = rectTrans.screenRect.xMax - halfWidth;
-        positions[4] = rectTrans.screenRect.yMax - halfHeight;
-        positions[5] = depth;
+        meshData.positions[pc + 3] = rect.xMax - halfWidth;
+        meshData.positions[pc + 4] = rect.yMax - halfHeight;
+        meshData.positions[pc + 5] = depth;
 
-        texCoords[2] = 1.0f;
-        texCoords[3] = 0.0f;
+        meshData.texCoords[tc + 2] = 1.0f;
+        meshData.texCoords[tc + 3] = 0.0f;
 
         // Bottom right
-        positions[6] = rectTrans.screenRect.xMax - halfWidth;
-        positions[7] = rectTrans.screenRect.yMin - halfHeight;
-        positions[8] = depth;
+        meshData.positions[pc + 6] = rect.xMax - halfWidth;
+        meshData.positions[pc + 7] = rect.yMin - halfHeight;
+        meshData.positions[pc + 8] = depth;
 
-        texCoords[4] = 1.0f;
-        texCoords[5] = 1.0f;
+        meshData.texCoords[tc + 4] = 1.0f;
+        meshData.texCoords[tc + 5] = 1.0f;
 
         // Bottom left
-        positions[9] = rectTrans.screenRect.xMin - halfWidth;
-        positions[10] = rectTrans.screenRect.yMin - halfHeight;
-        positions[11] = depth;
+        meshData.positions[pc + 9] = rect.xMin - halfWidth;
+        meshData.positions[pc + 10] = rect.yMin - halfHeight;
+        meshData.positions[pc + 11] = depth;
 
-        texCoords[6] = 0.0f;
-        texCoords[7] = 1.0f;
+        meshData.texCoords[tc + 6] = 0.0f;
+        meshData.texCoords[tc + 7] = 1.0f;
 
-        indices[0] = 1;
-        indices[1] = 0;
-        indices[2] = 3;
+        meshData.indices[ic + 0] = vc + 1;
+        meshData.indices[ic + 1] = vc + 0;
+        meshData.indices[ic + 2] = vc + 3;
 
-        indices[3] = 3;
-        indices[4] = 2;
-        indices[5] = 1;
+        meshData.indices[ic + 3] = vc + 3;
+        meshData.indices[ic + 4] = vc + 2;
+        meshData.indices[ic + 5] = vc + 1;
+ 
+        meshData.vertexCount += 4;
+        meshData.positionsCount += 12;
+        meshData.texCoordsCount += 8;
+        meshData.indexCount += 6;
+    }
 
-        float[] normals = new float[0];
+    private void addMeshCorner(float x, float y, float radius, float startAngle, float endAngle, int numSegments, MeshData meshData) {
 
-        mesh = new Mesh(Mesh.TRIANGLES, positions, texCoords, normals, indices);
-        mesh.setMaterial(material);
+        float depth = rectTrans.getDepth();
 
-        setMesh(mesh);
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
+
+        // Add the pivot.
+        int pivotIdx = vc;
+
+        meshData.positions[pc + 0] = x - halfWidth;
+        meshData.positions[pc + 1] = y - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
+
+        vc++;
+        pc += 3;
+        tc += 2;
+    
+
+        float angle = startAngle;
+        float segmentAngle = (endAngle - startAngle) / numSegments;
+
+        for (int i = 0; i < numSegments + 1; i++) {
+
+            float rads = (float)Math.toRadians(angle);
+            float posX = cornerRadius * (float)Math.cos(rads);
+            float posY = cornerRadius * (float)Math.sin(rads);
+
+            meshData.positions[pc + 0] = x + posX - halfWidth;
+            meshData.positions[pc + 1] = y - posY - halfHeight;
+            meshData.positions[pc + 2] = depth;
+
+            meshData.texCoords[tc + 0] = 0.0f;
+            meshData.texCoords[tc + 1] = 0.0f;
+
+            // Add a triangle as long as this isn't the first position.
+            if (i > 0) {
+
+                meshData.indices[ic + 0] = pivotIdx;
+                meshData.indices[ic + 1] = vc - 1;
+                meshData.indices[ic + 2] = vc;        
+            }
+
+            vc++;
+            pc += 3;
+            tc += 2;
+            ic += 3;
+
+            angle += segmentAngle;
+        }
+
+        meshData.vertexCount = vc;
+        meshData.positionsCount = pc;
+        meshData.texCoordsCount = tc;
+        meshData.indexCount = ic;
     }
 }

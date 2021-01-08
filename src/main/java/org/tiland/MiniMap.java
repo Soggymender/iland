@@ -1,9 +1,6 @@
 package org.tiland;
 
-import java.lang.Math.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.joml.Vector3f;
@@ -240,7 +237,7 @@ public class MiniMap {
         targetPos.y = gameCamera.getPosition().y;
     
         float rad = Math.toRadians(heading);
-        float camRad = Math.toRadians(gameCamera.getHeading());
+        //float camRad = Math.toRadians(gameCamera.getHeading());
 
         // Minimap rooms pivot around their left edge.
         targetPos.sub(origin);

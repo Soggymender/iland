@@ -1,5 +1,6 @@
 package org.iland;
 
+/*
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.core.Timer;
@@ -8,6 +9,7 @@ import org.engine.renderer.Window;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneRenderer;
 import org.engine.sketch.Sketch;
+*/
 
 public class Main {
 /*

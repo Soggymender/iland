@@ -216,13 +216,6 @@ public class Scene {
         }
     }
 
-    private void addEntitiesMeshes(Entity[] entities) {
-
-        for (Entity entity : entities) {
-            addEntityMeshes(entity);
-        }
-    }
-
     public SceneLighting getSceneLighting() {
         return sceneLighting;
     }

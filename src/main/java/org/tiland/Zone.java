@@ -12,8 +12,6 @@ import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
 
-import org.tiland.Trigger.*;
-
 public class Zone {
     
     final float maxTalkX = 1.0f;
@@ -273,7 +271,7 @@ public class Zone {
 
             String npcName = npc.getName();
             String npcHome = npc.getHome();
-            String npcZone = npc.getZone();
+            //String npcZone = npc.getZone();
 
             if (npcName != null && npcHome != null)  {
                 if (npcName.equals(name) && npcHome.equals(zoneName)) {
@@ -475,10 +473,10 @@ public class Zone {
         cameraBounds.max.y = avatarBounds.max.y;
         cameraBounds.min.y = avatarBounds.min.y;
 
-        float fov = 53.5f; // TODO: pull this from the camera.
-        float camz = 4.25f; // TODO: look this up too.
+        //float fov = 53.5f; // TODO: pull this from the camera.
+        //float camz = 4.25f; // TODO: look this up too.
 
-        float halfFov = (float)java.lang.Math.toRadians(fov);
+        //float halfFov = (float)java.lang.Math.toRadians(fov);
 
         // Shift this bounds to the right  to account for FOV.
         cameraBounds.min.x += 4.5;//halfFov * camz;
@@ -518,8 +516,7 @@ public class Zone {
             // clear it out, allowing re-entry.
             // But, if the requestedZoneName is also set, then we are in the process of leaving this zone and the door name
             // is for the next zone not this one.
-            boolean enteredFromHere = requestedZoneName.length() == 0 && door.getName().equals(requestedDoorName);
-
+    
             if (entitiesOverlap(entity, door, maxEnterX, maxEnterY)) {
 
                 if (door.isTrigger) {
@@ -929,10 +926,10 @@ public class Zone {
     public boolean entitiesNear(Entity entityA, Entity entityB, float xMinDistance, float yMinDistance) {
 
         Vector3f entityAPos = entityA.getPosition();
-        BoundingBox entityABox = entityA.getBBox();
+        //BoundingBox entityABox = entityA.getBBox();
 
         Vector3f entityBPos = entityB.getPosition();
-        BoundingBox entityBBox = entityB.getBBox();
+        //BoundingBox entityBBox = entityB.getBBox();
 
         Vector3f xVec = new Vector3f(entityBPos);
         float dist;
@@ -999,7 +996,7 @@ public class Zone {
         // in order to manipulate it "remotely". 
         Entity target = other;
 
-        int prevCommand = script.nextCommand;
+        //int prevCommand = script.nextCommand;
 
         outer:
         while (script.nextCommand < script.numCommands) {

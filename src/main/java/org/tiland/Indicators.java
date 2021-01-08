@@ -1,12 +1,10 @@
 package org.tiland;
 
-import org.joml.Vector3f;
 import org.engine.renderer.Material;
 import org.engine.renderer.Mesh;
 import org.engine.renderer.Texture;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
-import org.tiland.Sprite;
 
 public class Indicators {
    

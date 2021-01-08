@@ -34,7 +34,7 @@ public class SceneLoader {
 
         AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
         if (aiScene == null) {
-            String error = aiGetErrorString();
+            //String error = aiGetErrorString();
             return;
             //throw new Exception(error);
         }

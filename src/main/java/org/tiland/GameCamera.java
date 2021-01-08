@@ -8,10 +8,6 @@ import org.engine.renderer.Window;
 import org.engine.input.*;
 import org.joml.*;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-import javax.lang.model.util.ElementScanner6;
-
 public class GameCamera extends Camera {
 
     Zone zone = null;
