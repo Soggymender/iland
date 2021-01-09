@@ -269,6 +269,8 @@ public class Mesh {
             glDeleteBuffers(vboId);
         }
 
+        vboIdList = null;
+
         glBindVertexArray(0);
         glDeleteVertexArrays(vaoId);
     }

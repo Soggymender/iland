@@ -1159,8 +1159,11 @@ public class Zone {
                 // Start or continue dialog.
                 case "talk":
                     script.talking = true;
-                    hud.showDialog(true);
                     hud.setDialogText(args[1]);
+
+                    // Set this every frame in case the camera moves.
+                    hud.setDialogTarget(target.getPosition());
+                    hud.showDialog(true);
     
                     break outer;
 

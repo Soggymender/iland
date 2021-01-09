@@ -5,6 +5,7 @@ import java.awt.Font;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.engine.core.Rect;
+import org.joml.Vector3f;
 import org.joml.Vector2f;
 
 import org.engine.input.*;
@@ -51,6 +52,8 @@ public class Hud {
         mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 100), 0, new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
      
         dialog = new Panel(canvas,  canvas, new Rect(20, 20, 400, 100), 20, new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
+        dialog.setTailSize(50, 80);
+      
         dialogText = new Text(canvas, dialog, new Rect(10, 5, -5, 5, true), new Rect(0, 0, 1, 1), new Vector2f(0, 1), "0.0", fontTexture);;
 
         bPanel = new Panel(canvas,  canvas, new Rect(50, 50, -50, -50, true), 0, new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
@@ -114,6 +117,11 @@ public class Hud {
 
     public void showDialog(boolean show) {
         dialog.setVisible(show);
+    }
+
+    public void setDialogTarget(Vector3f target) {
+        
+        dialog.setTailTarget(new Vector2f(target.x, target.y));
     }
 
     public void setDialogText(String text) {

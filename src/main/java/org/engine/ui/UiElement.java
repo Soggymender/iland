@@ -29,10 +29,18 @@ public class UiElement extends Entity {
         protected boolean acceptsInput = false;
         protected boolean buildsMesh = false;
         protected boolean dirty = true; // Everything starts dirty so it'll do an initial update after construction.
+        protected boolean rebuild = false;
+
+        protected boolean hasTail = false;
     }
 
     protected float cornerRadius = 0;
     protected RectTransform rectTrans;
+
+    protected float tailWidth = 20.0f;
+    protected float tailHeight = 20.0f;
+    protected Vector2f tailTarget = null;
+
     protected Material material;
 
     protected Canvas canvas = null;
@@ -87,6 +95,19 @@ public class UiElement extends Entity {
         rectTrans.anchor = anchor;
     }
 
+    public void setTailSize(float width, float height) {
+        tailWidth = width;
+        tailHeight = height;
+    }
+
+    public void setTailTarget(Vector2f target) {
+        flags.hasTail = true;
+        tailTarget = target;
+
+       // flags.rebuild = true;
+        buildMesh();
+    }
+
     public float getDepth() {
         return rectTrans.getDepth();
     }
@@ -133,7 +154,7 @@ public class UiElement extends Entity {
     @Override
     public void update(float interval) {
 
-        if (!flags.dirty) {
+        if (!flags.dirty && !flags.rebuild) {
             super.update(interval);
             return;
         }
@@ -207,11 +228,13 @@ public class UiElement extends Entity {
         
 
         // If the screen rect didn't change, the children don't need to be updated.
-        if (rectTrans.screenRect.equals(oldScreenRect)) {
+        if (rectTrans.screenRect.equals(oldScreenRect) && !flags.rebuild) {
             return;
         }
 
         if (flags.buildsMesh) {
+            flags.rebuild = false;
+
             buildMesh();
         }
     }
@@ -255,14 +278,21 @@ public class UiElement extends Entity {
 
         MeshData meshData = new MeshData();
 
-        int numSegments = 4;
-        int numCornerPositions = (1 + numSegments + 1) * 3 * 4;
-        int numCornerTexCoords = (1 + numSegments + 1) * 2 * 4;
-        int numCornerIndices = (numSegments + 1) * 3 * 4;
+        int numSegments = 3;
 
-        meshData.positions = new float[4 * 3 * 3 + numCornerPositions];
-        meshData.texCoords = new float[4 * 2 * 3 + numCornerTexCoords];
-        meshData.indices = new int[6 * 3 + numCornerIndices];
+        int numPositions = (1 + numSegments + 1) * 3 * 4;
+        int numTexCoords = (1 + numSegments + 1) * 2 * 4;
+        int numIndices = (numSegments + 1) * 3 * 4;
+
+        if (flags.hasTail) {
+            numPositions += 9;
+            numTexCoords += 6;
+            numIndices += 3;
+        }
+
+        meshData.positions = new float[4 * 3 * 3 + numPositions];
+        meshData.texCoords = new float[4 * 2 * 3 + numTexCoords];
+        meshData.indices = new int[6 * 3 + numIndices];
 
         Rect rect;
         
@@ -278,14 +308,25 @@ public class UiElement extends Entity {
         rect = new Rect(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax, true);
         addMeshRect(rect, meshData);
 
+                // Add tail.
+                if (flags.hasTail) {
+                    addMeshTail(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin, tailWidth, tailHeight, tailTarget, meshData);
+                }
+        
+        // Add corners.
         addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -180.0f, -90.0f, numSegments, meshData);
         addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -90.0f, 0.0f, numSegments, meshData);
         addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,  90.0f, 180.0f, numSegments, meshData);
         addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,   0.0f, 90.0f, numSegments, meshData);
 
+
         float[] normals = new float[0];
 
-        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+        if (mesh == null) 
+            mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+        else
+            mesh.set(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+
         mesh.setMaterial(material);
 
         setMesh(mesh);
@@ -412,5 +453,51 @@ public class UiElement extends Entity {
         meshData.positionsCount = pc;
         meshData.texCoordsCount = tc;
         meshData.indexCount = ic;
+    }
+
+    private void addMeshTail(float xMin, float xMax, float yMin, float tailWidth, float tailHeight, Vector2f tailTarget, MeshData meshData) {
+
+        float depth = rectTrans.getDepth();
+
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
+
+        // Top left
+        meshData.positions[pc + 0] = xMax - tailWidth - halfWidth;
+        meshData.positions[pc + 1] = yMin - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
+
+        // Top right
+        meshData.positions[pc + 3] = xMax - halfWidth;
+        meshData.positions[pc + 4] = yMin - halfHeight;
+        meshData.positions[pc + 5] = depth;
+
+        meshData.texCoords[tc + 2] = 1.0f;
+        meshData.texCoords[tc + 3] = 0.0f;
+
+        // Bottom right
+        meshData.positions[pc + 6] = xMax - halfWidth;
+        meshData.positions[pc + 7] = yMin - tailHeight - halfHeight;
+        meshData.positions[pc + 8] = depth;
+
+        meshData.texCoords[tc + 4] = 1.0f;
+        meshData.texCoords[tc + 5] = 1.0f;
+
+        meshData.indices[ic + 0] = vc + 0;
+        meshData.indices[ic + 1] = vc + 1;
+        meshData.indices[ic + 2] = vc + 2;
+ 
+        meshData.vertexCount += 3;
+        meshData.positionsCount += 9;
+        meshData.texCoordsCount += 6;
+        meshData.indexCount += 3;
     }
 }
