@@ -8,6 +8,9 @@ import org.engine.core.Rect;
 import org.joml.Vector3f;
 import org.joml.Vector2f;
 
+import org.engine.core.Transform;
+import org.engine.renderer.Camera;
+import org.engine.scene.Entity;
 import org.engine.input.*;
 import org.engine.renderer.Color;
 import org.engine.renderer.FontTexture;
@@ -21,12 +24,15 @@ import org.engine.renderer.Window;
 
 public class Hud {
 
+    public Camera camera;
     private Canvas canvas;
     private Panel bPanel;
 
     private Panel mapPanel;
     private Panel dialog;
+    private Panel dialogOutline;
     private Text dialogText;
+    private Entity dialogEntity;
 
     private Panel fade;
     private float curFadeValue = 0.0f;
@@ -51,8 +57,9 @@ public class Hud {
 
         mapPanel = new Panel(canvas, canvas, new Rect(-220, 20, 200, 100), 0, new Rect(1, 0, 0, 0),       new Vector2f(0, 0));
      
-        dialog = new Panel(canvas,  canvas, new Rect(20, 20, 400, 100), 20, new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
-        dialog.setTailSize(50, 80);
+        dialogOutline = new Panel(canvas,  canvas, new Rect(17, 17, 406, 106), 20, new Rect(0, 0, 0, 0),       new Vector2f(0, 0));
+        dialog        = new Panel(canvas,  dialogOutline, new Rect(3, 3, -6, -6), 20, new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
+        dialog.setTailSize(80, 80);
       
         dialogText = new Text(canvas, dialog, new Rect(10, 5, -5, 5, true), new Rect(0, 0, 1, 1), new Vector2f(0, 1), "0.0", fontTexture);;
 
@@ -71,8 +78,12 @@ public class Hud {
         mapPanel.setColor(new Color(0, 0, 0, 0.5f));
     
 
-        dialog.setVisible(false);
-        dialog.setColor(new Color(1, 0, 0, 1));
+        dialog.setVisible(true);
+        dialog.setColor(new Color(1, 1, 1, 1));
+
+        dialogOutline.setVisible(false);
+        dialogOutline.setColor(new Color(0.15f, 0.15f, 0.15f, 1));
+
 
         dialogText.xJustifyCenter = false;
         dialogText.yJustifyCenter = false;
@@ -115,12 +126,16 @@ public class Hud {
         fade.setVisible(false);
     }
 
-    public void showDialog(boolean show) {
-        dialog.setVisible(show);
+    public void showDialog(Entity entity, boolean show) {
+        dialogEntity = entity;
+            
+        dialogOutline.setVisible(show);
+
+        if (show)
+            updateDialogTarget();
     }
 
     public void setDialogTarget(Vector3f target) {
-        
         dialog.setTailTarget(new Vector2f(target.x, target.y));
     }
 
@@ -168,5 +183,22 @@ public class Hud {
         }
 
         fade.setColor(new Color(0.0f, 0.0f, 0.0f, curFadeValue));
+
+        updateDialogTarget();
+    }
+
+    private void updateDialogTarget() {
+        
+        // Update the dialog entity.
+        if (dialogOutline.getVisible()) {
+
+            Vector3f targetPos = new Vector3f(dialogEntity.getPosition());
+            targetPos.y += 1.25f;
+            targetPos.z = 0.0f;
+    
+            targetPos = Transform.project(targetPos, camera);
+
+            setDialogTarget(targetPos);
+        }
     }
 }

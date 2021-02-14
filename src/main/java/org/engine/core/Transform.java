@@ -55,6 +55,39 @@ public class Transform {
         return orthoModelMatrix;
     }
 
+    public static Vector3f project(Vector3f point, Camera camera) {
+
+        Vector3f result = new Vector3f();
+
+        Viewport viewport = camera.getViewport();
+        
+        Matrix4f view = new Matrix4f(camera.getViewMatrix());
+        Matrix4f projection = viewport.getSelectedProjectionMatrix();
+
+
+
+
+
+
+        Matrix4f modelMatrix = new Matrix4f();
+        modelMatrix.identity().translate(point);
+
+        Matrix4f modelViewMatrix = new Matrix4f(view);
+        modelViewMatrix.mul(modelMatrix);
+
+        Vector4f vec = new Vector4f();
+
+        vec = vec.mul(modelViewMatrix);
+
+        vec.w = 1.0f / vec.w;
+
+        result.x = vec.x * vec.w;
+        result.y = vec.y * vec.w;
+        result.z = vec.z * vec.w;
+
+        return result;
+    }
+
     public static Vector3f unproject(Vector3f point, Camera camera) {
 
         Vector3f result = new Vector3f();

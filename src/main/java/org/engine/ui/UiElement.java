@@ -457,6 +457,8 @@ public class UiElement extends Entity {
 
     private void addMeshTail(float xMin, float xMax, float yMin, float tailWidth, float tailHeight, Vector2f tailTarget, MeshData meshData) {
 
+        float tailOffset = tailWidth * 0.65f;
+
         float depth = rectTrans.getDepth();
 
         float halfWidth = canvas.workingResolution.x / 2.0f;
@@ -468,7 +470,7 @@ public class UiElement extends Entity {
         int ic = meshData.indexCount;
 
         // Top left
-        meshData.positions[pc + 0] = xMax - tailWidth - halfWidth;
+        meshData.positions[pc + 0] = xMax - tailWidth - tailOffset - halfWidth;
         meshData.positions[pc + 1] = yMin - halfHeight;
         meshData.positions[pc + 2] = depth;
 
@@ -476,7 +478,7 @@ public class UiElement extends Entity {
         meshData.texCoords[tc + 1] = 0.0f;
 
         // Top right
-        meshData.positions[pc + 3] = xMax - halfWidth;
+        meshData.positions[pc + 3] = xMax - tailOffset - halfWidth;
         meshData.positions[pc + 4] = yMin - halfHeight;
         meshData.positions[pc + 5] = depth;
 
@@ -484,8 +486,42 @@ public class UiElement extends Entity {
         meshData.texCoords[tc + 3] = 0.0f;
 
         // Bottom right
-        meshData.positions[pc + 6] = xMax - halfWidth;
-        meshData.positions[pc + 7] = yMin - tailHeight - halfHeight;
+//        meshData.positions[pc + 6] = xMax - halfWidth;
+//        meshData.positions[pc + 7] = yMin - tailHeight - halfHeight;
+
+        float tailStartX = meshData.positions[pc + 0] + halfWidth + ((meshData.positions[pc + 3] - meshData.positions[pc + 0]) / 2.0f);
+        float tailStartY = yMin;// - halfHeight; 
+
+        Vector2f tailDir = new Vector2f(tailTarget.x, tailTarget.y + 1.65f);
+
+        tailDir.sub(new Vector2f(tailStartX, tailStartY - tailHeight));        
+
+
+        float tailY = tailTarget.y + 0.65f;
+        //if ((yMin - halfHeight) - tailY < tailHeight)
+        //    tailY = tailHeight;
+
+        /*
+        Create vector to target
+        Find intersect point at tailHeight
+        
+        x = y/m - b/m
+        
+        y = mx + b
+        b = y - mx
+        */
+
+        float slope = tailDir.y / tailDir.x;
+
+        float yIntercept = tailStartY - (slope * tailStartX);
+
+        float x = ((tailStartY - tailHeight)/ slope) - (yIntercept / slope);
+
+
+
+        meshData.positions[pc + 6] = x - halfWidth;
+        meshData.positions[pc + 7] = yMin - halfHeight - tailHeight;// - halfHeight;
+
         meshData.positions[pc + 8] = depth;
 
         meshData.texCoords[tc + 4] = 1.0f;

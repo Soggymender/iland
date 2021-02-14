@@ -7,14 +7,16 @@ import java.util.Map;
 
 import org.joml.Vector3f;
 
+import org.engine.renderer.Camera;
 import org.engine.core.BoundingBox;
+import org.engine.core.Transform;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 import org.engine.scene.SceneLoader;
 
 public class Zone {
     
-    final float maxTalkX = 1.0f;
+    final float maxTalkX = 0.75f;
     final float maxTalkY = 1.0f;
 
     final float maxTakeX = 0.25f;
@@ -52,6 +54,8 @@ public class Zone {
     String boundsName = null;
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
+
+    public Camera camera;
 
     Scene scene = null;
     SceneLoader.IEventHandler sceneLoader;
@@ -937,7 +941,7 @@ public class Zone {
         xVec.z = 0.0f;
         xVec.sub(entityAPos);
         xVec.y = 0.0f;
-
+    
         dist = xVec.length();
 
         if (dist > xMinDistance) {
@@ -1160,10 +1164,9 @@ public class Zone {
                 case "talk":
                     script.talking = true;
                     hud.setDialogText(args[1]);
-
+            
                     // Set this every frame in case the camera moves.
-                    hud.setDialogTarget(target.getPosition());
-                    hud.showDialog(true);
+                    hud.showDialog(target, true);
     
                     break outer;
 
@@ -1211,7 +1214,7 @@ public class Zone {
         
         if (script.talking) {
             
-            hud.showDialog(false);
+            hud.showDialog(null, false);
 
             script.nextCommand--;
         }
@@ -1221,7 +1224,7 @@ public class Zone {
         
         script.talking = false;
         
-        hud.showDialog(false);
+        hud.showDialog(null, false);
 
         if (reset) {
             script.nextCommand = 0;
