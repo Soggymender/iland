@@ -135,15 +135,29 @@ public class Probe extends Entity {
     gridSketch.clear();
     int lines = 10;
 
+        Color color = new Color();
+        Color whiteComp = new Color();
+
         for (int z = 0; z <= lines; z++) {
 
             float half = (float)lines * 0.5f;
             float width = (float)lines;
 
-            gridSketch.addLines(Color.LIGHTGREY, gridPos.x + (float)z - half, 0.0f, gridPos.z + 0.0f - half, gridPos.x + (float)z - half, 0.0f, gridPos.z + width - half);
-            gridSketch.addLines(Color.LIGHTGREY, gridPos.x + 0.0f - half, 0.0f, gridPos.z + (float)z - half, gridPos.x + width - half, 0.0f, gridPos.z + (float)z - half);
-        }
+            float middle = (float)lines / 2.0f;
+            float colorPos = (java.lang.Math.abs((float)z - middle)) / middle; 
 
+            color.set(Color.LIGHTGREY);
+            color.mul(1.0f - colorPos);
+            
+            whiteComp.set(Color.WHITE);
+            whiteComp.mul(colorPos);
+
+            color.add(whiteComp);
+
+            gridSketch.addLines(color, gridPos.x + (float)z - half, 0.0f, gridPos.z + 0.0f - half, gridPos.x + (float)z - half, 0.0f, gridPos.z + width - half);
+         
+            gridSketch.addLines(color, gridPos.x + 0.0f - half, 0.0f, gridPos.z + (float)z - half, gridPos.x + width - half, 0.0f, gridPos.z + (float)z - half);
+        }
 
         // Add ring.
         int numSegments = 20;

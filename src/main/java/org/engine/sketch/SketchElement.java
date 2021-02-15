@@ -15,9 +15,11 @@ import org.engine.scene.Entity;
 public class SketchElement extends Entity {
 
     List<Float> lines = null;
+    List<Float> colors = null;
 
     protected class Flags {
         protected boolean dirty = true; // Everything starts dirty so it'll do an initial update after construction.
+        protected boolean colored = false;
     }
 
     protected Material material;
@@ -32,6 +34,7 @@ public class SketchElement extends Entity {
         }
         
         lines = new ArrayList<Float>();
+        colors = new ArrayList<Float>();
 
         // Use a new material instance so the color can be modified.
         material = new Material(Color.BLACK, 1.0f);
@@ -44,10 +47,12 @@ public class SketchElement extends Entity {
 
     public void clear() {
         lines.clear();
+        colors.clear();
 
         // Should this set flags.dirty = true? yes?
     }
 
+    /*
     public void addLines(Vector4f color, Float ...coords) {
 
         material.setAmbientColor(color);
@@ -58,6 +63,30 @@ public class SketchElement extends Entity {
         }
 
         flags.dirty = true;
+    }
+    */
+
+    // TODO: When adding lines check if they are individually colored. If so, shore up the colors array
+    // with the correct number.
+
+    public void addLines(Vector4f color, Float ...coords) {
+    
+        for (float coord : coords ) {
+            lines.add(coord);
+        }
+
+        // Each point specifies a 3f color. It will be stored in the mesh as a normal since the usual vertex
+        // format does not support per vertex color, and sketch lines do not support normals.
+        for (int i = 0; i < coords.length / 3; i++) {
+            colors.add(color.x);
+            colors.add(color.y);
+            colors.add(color.z);
+
+            // Alpha channel doesn't fit in 3f normal. Use Material alpha, or add a color channel to vertex format.
+        }
+
+        flags.dirty = true;
+        flags.colored = true;
     }
 
     @Override
@@ -85,6 +114,15 @@ public class SketchElement extends Entity {
         float[] texCoords = new float[posCount * 2];
         int[] indices = new int[posCount * 2];
 
+        // Sketch Element may store color data as mesh normals - if colored lines were added.
+        float[] normals;
+        
+        if (flags.colored) {
+            normals = new float[posCount * 3];
+        } else {
+            normals = new float[0];
+        }
+
         int indexCount = 0;
 
         for (int i = 0; i < lines.size(); i += 3 ) {
@@ -98,10 +136,15 @@ public class SketchElement extends Entity {
 
             // 2 indices per line. Makes it easy to draw line segments.
             // These are maybe just for debugging, so they don't need to be overly optimized at the moment.
-            indices[indexCount] = indexCount++; 
+            indices[indexCount] = indexCount++;
         }
 
-        float[] normals = new float[0];
+        if (flags.colored) {
+
+            for (int i = 0; i < colors.size(); i++) {
+                normals[i] = colors.get(i);
+            }
+        }
 
         if (mesh == null) {
             mesh = new Mesh(Mesh.LINES, positions, texCoords, normals, indices);

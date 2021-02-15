@@ -44,5 +44,5 @@ void main()
 {
     setupColors(material, outTexCoord);
 
-    fragColor = ambientC;
+    fragColor = vec4(mvVertexNormal, 1.0f);
 }
