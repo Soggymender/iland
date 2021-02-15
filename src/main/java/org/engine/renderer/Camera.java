@@ -7,9 +7,9 @@ import org.engine.scene.Entity;
 
 public class Camera extends Entity {
 
-    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
-    private static final float Z_NEAR = -100.0f;//0.01f;
-    private static final float Z_FAR = 100.0f;
+    float FOV = (float)java.lang.Math.toRadians(60.0f);
+    float Z_NEAR = -100.0f;
+    float Z_FAR = 100.0f;
 
     //private boolean centerOrtho = false;
 
@@ -49,6 +49,14 @@ public class Camera extends Entity {
         viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV, centerOrtho);
     }
 
+    public void setViewportEx(float zNear, float zFar, boolean ortho) {
+
+        Z_NEAR = zNear;
+        Z_FAR = zFar;
+
+        viewport.useOrtho = ortho;
+    }
+
     public Viewport getViewport() {
         return viewport;
     }
@@ -69,8 +77,8 @@ public class Camera extends Entity {
         
     //    viewMatrix.scale(0.1f);
 
-        viewMatrix.translate(-position.x, -position.y, -position.z);
         viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
+        viewMatrix.translate(-position.x, -position.y, -position.z);
 
 
     }

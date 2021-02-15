@@ -1,4 +1,4 @@
-package org.iland;
+package org.niland;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -15,7 +15,8 @@ public class Main {
 
             // Create the "services" that we need.
 
-            Window window = new Window("Game", 720, 480, false);
+            Window window = new Window("niland", 720, 480, false);
+            window.setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
             // Create the input devices.
             Mouse mouse = new Mouse(window);

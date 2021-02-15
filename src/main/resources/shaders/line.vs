@@ -13,16 +13,27 @@ uniform mat4 projectionMatrix;
 
 void main()
 {
+/*
+   vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mvPos;
+    outTexCoord = texCoord;
+    mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
+    mvVertexPos = mvPos.xyz;
+    mwVertexPos = position.xyz;
+}
+*/
+
+
     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mvPos;
     
     // Draw over everything. Snap to near z plane.
-    gl_Position /= gl_Position.w;
-    gl_Position.z = 0.01f;
+ //   gl_Position /= gl_Position.w;
+ //   gl_Position.z = 0.01f;
     
     outTexCoord = texCoord;
     mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
     mvVertexPos = mvPos.xyz;
-    mvVertexPos.z = 0.01f;
+    //mvVertexPos.z = 0.01f;
 
 }

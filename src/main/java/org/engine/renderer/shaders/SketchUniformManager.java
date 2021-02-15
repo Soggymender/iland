@@ -57,6 +57,6 @@ public class SketchUniformManager implements IUniformManager {
     }
 
     public boolean getUseDepthTest() {
-        return false;
+        return true;
     }
 }

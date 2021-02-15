@@ -10,6 +10,7 @@ public class Viewport {
     public float zNear, zFar;
     public float fov;
 
+    boolean useOrtho = true;
     private Matrix4f selectedProjectionMatrix;
 
     private Matrix4f perspectiveMatrix;
@@ -51,8 +52,11 @@ public class Viewport {
             updateOrthoProjectionMatrix(0, width, 0, height, zNear, zFar);
         }
 
-        selectProjectionMatrix(orthoMatrix);
-        //selectProjectionMatrix(perspectiveMatrix);
+        if (useOrtho) {
+            selectProjectionMatrix(orthoMatrix);
+        } else {
+            selectProjectionMatrix(perspectiveMatrix);
+        }
     }
 
     public final Matrix4f updatePerspectiveProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {

@@ -31,6 +31,8 @@ public class GameCamera extends Camera {
 
         super(window);
 
+        setViewportEx(-100.0f, 100.0f, true);
+
         this.target = target;
 
 //        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
