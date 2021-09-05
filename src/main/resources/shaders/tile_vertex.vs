@@ -1,9 +1,9 @@
 #version 330
 
 layout (location =0) in vec3 position;
-layout (location =2) in vec4 color;
-layout (location =3) in vec2 texCoord;
-layout (location =4) in vec3 vertexNormal;
+layout (location =1) in vec4 color;
+layout (location =2) in vec2 texCoord;
+layout (location =3) in vec3 vertexNormal;
 
 out vec2 outTexCoord;
 out vec3 mvVertexNormal;

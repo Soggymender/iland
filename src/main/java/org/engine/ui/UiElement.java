@@ -284,16 +284,19 @@ public class UiElement extends Entity {
         int numSegments = 3;
 
         int numPositions = (1 + numSegments + 1) * 3 * 4;
+        int numColors = (1 + numSegments + 1) * 4 * 4;
         int numTexCoords = (1 + numSegments + 1) * 2 * 4;
         int numIndices = (numSegments + 1) * 3 * 4;
 
         if (flags.hasTail) {
             numPositions += 9;
+            numColors += 12;
             numTexCoords += 6;
             numIndices += 3;
         }
 
         meshData.positions = new float[4 * 3 * 3 + numPositions];
+        meshData.colors = new float[4 * 4 * 3 + numColors];
         meshData.texCoords = new float[4 * 2 * 3 + numTexCoords];
         meshData.indices = new int[6 * 3 + numIndices];
 
