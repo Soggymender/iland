@@ -53,6 +53,7 @@ public class Text extends UiElement {
         }
 
         List<Float> positions = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
         List<Float> textCoords = new ArrayList<>();
         float[] normals   = new float[0];
         List<Integer> indices   = new ArrayList<>();
@@ -198,6 +199,13 @@ public class Text extends UiElement {
                 // Add indices por left top and bottom right vertices
                 indices.add(i * VERTICES_PER_QUAD);
                 indices.add(i * VERTICES_PER_QUAD + 2);
+
+                for (int j = 0; j < 4; j++) {
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                }
             //}
 
             if (characters[i] == ' ') {
@@ -208,15 +216,16 @@ public class Text extends UiElement {
         }
 
         float[] posArr = Utilities.listToArray(positions);
+        float[] colArr = Utilities.listToArray(colors);
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
 
         if (mesh == null) {
-            mesh = new Mesh(Mesh.TRIANGLES, posArr, textCoordsArr, normals, indicesArr);
+            mesh = new Mesh(Mesh.TRIANGLES, posArr, colArr, textCoordsArr, normals, indicesArr);
             setMesh(mesh);
             mesh.setMaterial(material);
         } else {
-            mesh.set(Mesh.TRIANGLES,posArr, textCoordsArr, normals, indicesArr);
+            mesh.set(Mesh.TRIANGLES, posArr, colArr, textCoordsArr, normals, indicesArr);
         }
         
         return mesh;

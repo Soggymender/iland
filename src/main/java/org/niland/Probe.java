@@ -23,6 +23,7 @@ import org.engine.core.Math;
 public class Probe extends Entity {
 
     private Vector3f moveDir;
+    private Vector3f moveDirRaw;
 
     private float speed = 3.5f;
 
@@ -35,6 +36,7 @@ public class Probe extends Entity {
     public Probe(Scene scene) throws Exception {
 
         moveDir = new Vector3f(0.0f, 0.0f, 0.0f);
+        moveDirRaw = new Vector3f(0.0f, 0.0f, 0.0f);
 
         moveDirSketch = new SketchElement(null);
         xIndicatorSketch = new SketchElement(null);
@@ -60,7 +62,9 @@ public class Probe extends Entity {
     public void input(Input input) {
 
         moveDir.set(0, 0, 0);
+        moveDirRaw.set(0, 0, 0);
 
+        Mouse mouse = input.getMouse();
         Keyboard keyboard = input.getKeyboard();
 
         if (keyboard.keyDown(GLFW_KEY_W) ) {
@@ -81,25 +85,35 @@ public class Probe extends Entity {
 
         if (moveDir.length() > 0.0f) {
             moveDir.normalize();
-        }
+            moveDirRaw.set(moveDir);
+        } else {
+            if (!mouse.middleButtonPressed()) {
 
-        
+                moveDirRaw.x = mouse.getDisplayVec().x;
+                moveDirRaw.z = mouse.getDisplayVec().y;
+
+                if (moveDirRaw.length() >= 1.0f) {
+                    
+
+                    moveDir.set(moveDirRaw);
+                    moveDir.mul(0.5f);
+                }
+            } 
+        }
     }
 
     public void update(float interval, Camera camera, Terrain terrain) {
 
         // Move
+        if (moveDir.length() > 0.0f) {
+            //moveDir.rotateY(-cameraRotation.y);
 
-        float offsetX = moveDir.x * speed * interval;
-    //   float offsetY = moveDir.y * speed * interval;
-        float offsetZ = moveDir.z * speed * interval;
+            Vector3f cameraRotation = camera.getRotation();
 
-        Vector3f cameraRotation = camera.getRotation();
+            moveDir.rotateY(cameraRotation.y);
 
-        moveDir.rotateY(cameraRotation.y);
-
-        position.x += moveDir.x * speed * interval;
-        position.z += moveDir.z * speed * interval;
+            position.x += moveDir.x * speed * interval;
+            position.z += moveDir.z * speed * interval;
 
 
 
@@ -108,12 +122,10 @@ public class Probe extends Entity {
 
         // Turn
 
-        if (moveDir.length() > 0.0f) {
-            //moveDir.rotateY(-cameraRotation.y);
 
+            moveDirRaw = moveDirRaw.normalize();
 
-
-            float angY = Math.forward.angleSigned(moveDir, Math.up);
+            float angY = Math.forward.angleSigned(moveDirRaw, Math.up);
 
             rotation.y = -angY;
         }
@@ -133,18 +145,24 @@ public class Probe extends Entity {
     gridPos.z = (float)java.lang.Math.floor(position.z);
 
     gridSketch.clear();
-    int lines = 10;
+    int lines = 20;
 
         Color color = new Color();
         Color whiteComp = new Color();
+
+        Vector3f start = new Vector3f();
+        Vector3f middle = new Vector3f();
+        Vector3f end = new Vector3f();
 
         for (int z = 0; z <= lines; z++) {
 
             float half = (float)lines * 0.5f;
             float width = (float)lines;
 
-            float middle = (float)lines / 2.0f;
-            float colorPos = (java.lang.Math.abs((float)z - middle)) / middle; 
+            float offset;
+
+            offset = position.z - gridPos.z;
+            float colorPos = (java.lang.Math.abs((float)z - half)) / half; 
 
             color.set(Color.LIGHTGREY);
             color.mul(1.0f - colorPos);
@@ -154,9 +172,35 @@ public class Probe extends Entity {
 
             color.add(whiteComp);
 
-            gridSketch.addLines(color, gridPos.x + (float)z - half, 0.0f, gridPos.z + 0.0f - half, gridPos.x + (float)z - half, 0.0f, gridPos.z + width - half);
-         
-            gridSketch.addLines(color, gridPos.x + 0.0f - half, 0.0f, gridPos.z + (float)z - half, gridPos.x + width - half, 0.0f, gridPos.z + (float)z - half);
+            start.set(gridPos.x + (float)z - half, gridPos.y, gridPos.z + 0.0f - half);
+            end.set(gridPos.x + (float)z - half, gridPos.y, gridPos.z + width - half);
+            middle.set(end);
+            middle.sub(start);
+            middle.mul(0.5f);
+            middle.add(start);
+
+            gridSketch.addLines(Color.WHITE, color, start.x, start.y, start.z, middle.x, middle.y, middle.z);
+            gridSketch.addLines(Color.WHITE, color, end.x, end.y, end.z, middle.x, middle.y, middle.z);
+/*
+            float colorPos = (java.lang.Math.abs((float)z - half)) / half; 
+
+            color.set(Color.LIGHTGREY);
+            color.mul(1.0f - colorPos);
+            
+            whiteComp.set(Color.WHITE);
+            whiteComp.mul(colorPos);
+
+            color.add(whiteComp);
+*/
+            start.set(gridPos.x + 0.0f - half, gridPos.y, gridPos.z + (float)z - half);
+            end.set(gridPos.x + width - half, gridPos.y, gridPos.z + (float)z - half);
+            middle.set(end);
+            middle.sub(start);
+            middle.mul(0.5f);
+            middle.add(start);
+
+            gridSketch.addLines(Color.WHITE, color, start.x, start.y, start.z, middle.x, middle.y, middle.z);
+            gridSketch.addLines(Color.WHITE, color, end.x, end.y, end.z, middle.x, middle.y, middle.z);
         }
 
         // Add ring.

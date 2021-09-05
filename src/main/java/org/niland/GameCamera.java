@@ -33,8 +33,9 @@ public class GameCamera extends Camera {
 
         followPivot = new Vector3f(0.0f, 0.5f, 0.0f);
         followOffset = new Vector3f(0.0f, 0.0f, 5.0f);
-        followRotation = new Vector3f(0.0f, 0.0f, 0.0f);
+        followRotation = new Vector3f(Math.toRadians(-50.0f), 0.0f, 0.0f);
 
+        rotation.x = 45.0f;//Math.toRadians(45.0f);
      //   setViewport(0, 0, 640, 480, true);
     }
 
@@ -56,17 +57,21 @@ public class GameCamera extends Camera {
             return;
         }
 
-        rotVec = mouse.getDisplayVec();
+        if (mouse.middleButtonPressed()) {
+            rotVec = mouse.getDisplayVec();
 
-        rotVec.x *= MOUSE_SENSITIVITY;
-        rotVec.y *= MOUSE_SENSITIVITY;
+            rotVec.x *= MOUSE_SENSITIVITY;
+            rotVec.y *= MOUSE_SENSITIVITY;
+        } else {
+            rotVec.zero();
+        }
     }
 
     @Override
     public void update(float interval) {
 
-        followRotation.x += rotVec.x * interval;
-        followRotation.y += rotVec.y * interval;
+        followRotation.x += rotVec.y * interval;
+        followRotation.y += rotVec.x * interval;
 
         // Cap look up & down.
         followRotation.x = java.lang.Math.max(followRotation.x, Math.toRadians(-90.0f));

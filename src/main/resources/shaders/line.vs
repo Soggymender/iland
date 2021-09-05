@@ -1,11 +1,13 @@
 #version 330
 
 layout (location =0) in vec3 position;
-layout (location =1) in vec2 texCoord;
-layout (location =2) in vec3 vertexNormal;
+layout (location =1) in vec4 color;
+layout (location =2) in vec2 texCoord;
+layout (location =3) in vec3 vertexNormal;
 
 out vec2 outTexCoord;
 out vec3 mvVertexNormal;
+out vec4 mvVertexColor;
 out vec3 mvVertexPos;
 
 uniform mat4 modelViewMatrix;
@@ -21,5 +23,6 @@ void main()
 
     // Storing 3f color in vertex normal.
     mvVertexNormal = vertexNormal.xyz;
+    mvVertexColor = color;
     mvVertexPos = mvPos.xyz;
 }

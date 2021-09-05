@@ -36,19 +36,20 @@ public class Mesh {
 
     boolean hasPositions = false;
     float[] positions;
+    float[] colors;
     private BoundingBox bbox;
 
-    public Mesh(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices) {
+    public Mesh(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
 
-        this(primitiveType, positions, textCoords, normals, indices, new BoundingBox());
+        this(primitiveType, positions, colors, textCoords, normals, indices, new BoundingBox());
     }
 
-    public Mesh(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
-        set(primitiveType, positions, textCoords, normals, indices, bbox);
+    public Mesh(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
+        set(primitiveType, positions, colors, textCoords, normals, indices, bbox);
     }
 
   
-    public void set(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices) {
+    public void set(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
         
         
 
@@ -59,10 +60,10 @@ public class Mesh {
             }
         }
 
-        set(primitiveType, positions, textCoords, normals, indices, bbox);
+        set(primitiveType, positions, colors, textCoords, normals, indices, bbox);
     }
 
-    public void set(int primitiveType, float[] positions, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
+    public void set(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
         
         // TODO: bbox is not being auto-sized.
 
@@ -70,6 +71,7 @@ public class Mesh {
         FloatBuffer textCoordsBuffer = null;
         FloatBuffer vecNormalsBuffer = null;
         IntBuffer indicesBuffer = null;
+        FloatBuffer colBuffer = null;
 
         boolean newMesh = vboIdList == null;
 
@@ -106,23 +108,26 @@ public class Mesh {
             glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
-            // Texture Coordinates VBO
+
+
+            // Color VBO
+            this.colors = colors;
+
             if (newMesh) {
                 vboId = glGenBuffers();
-                vboIdList.add(vboId);
-                
+                vboIdList.add(vboId);                
             } else {
                 vboId = vboIdList.get(1);
             }
 
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
-            textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
-            textCoordsBuffer.put(textCoords).flip();
-            glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+            colBuffer = MemoryUtil.memAllocFloat(colors.length);
+            colBuffer.put(colors).flip();
+            glBufferData(GL_ARRAY_BUFFER, colBuffer, GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
 
-            // Normal VBO
+            // Texture Coordinates VBO
             if (newMesh) {
                 vboId = glGenBuffers();
                 vboIdList.add(vboId);
@@ -133,10 +138,26 @@ public class Mesh {
 
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
+            textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
+            textCoordsBuffer.put(textCoords).flip();
+            glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
+            glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
+
+            // Normal VBO
+            if (newMesh) {
+                vboId = glGenBuffers();
+                vboIdList.add(vboId);
+                
+            } else {
+                vboId = vboIdList.get(3);
+            }
+
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+
             vecNormalsBuffer = MemoryUtil.memAllocFloat(normals.length);
             vecNormalsBuffer.put(normals).flip();
             glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+            glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0);
 
             // Index VBO
             if (newMesh) {
@@ -144,7 +165,7 @@ public class Mesh {
                 vboIdList.add(vboId);
                 
             } else {
-                vboId = vboIdList.get(3);
+                vboId = vboIdList.get(4);
             }
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
@@ -163,6 +184,10 @@ public class Mesh {
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
+            }
+
+            if (colBuffer != null) {
+                MemoryUtil.memFree(colBuffer);
             }
 
             if (textCoordsBuffer != null) {
@@ -215,6 +240,7 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
     }
 
     public void endRender() {
@@ -222,6 +248,7 @@ public class Mesh {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }

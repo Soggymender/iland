@@ -16,6 +16,8 @@ class MeshData {
     public int vertexCount = 0;
     public float[] positions;
     public int positionsCount = 0;
+    public float[] colors;
+    public int colorsCount = 0;
     public float[] texCoords;
     public int texCoordsCount = 0;
     public int[] indices;
@@ -254,6 +256,7 @@ public class UiElement extends Entity {
         MeshData meshData = new MeshData();
 
         meshData.positions = new float[4 * 3];
+        meshData.colors = new float[4 * 4];
         meshData.texCoords = new float[4 * 2];
         meshData.indices = new int[6];
 
@@ -263,7 +266,7 @@ public class UiElement extends Entity {
 
         float[] normals = new float[0];
 
-        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
         mesh.setMaterial(material);
 
         setMesh(mesh);
@@ -323,9 +326,9 @@ public class UiElement extends Entity {
         float[] normals = new float[0];
 
         if (mesh == null) 
-            mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+            mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
         else
-            mesh.set(Mesh.TRIANGLES, meshData.positions, meshData.texCoords, normals, meshData.indices);
+            mesh.set(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
 
         mesh.setMaterial(material);
 
@@ -376,6 +379,18 @@ public class UiElement extends Entity {
         meshData.texCoords[tc + 6] = 0.0f;
         meshData.texCoords[tc + 7] = 1.0f;
 
+        for (int i = 0; i < 4; i++) {
+
+            int cc = meshData.colorsCount;
+
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
+            meshData.colorsCount += 4;
+        }
+
         meshData.indices[ic + 0] = vc + 1;
         meshData.indices[ic + 1] = vc + 0;
         meshData.indices[ic + 2] = vc + 3;
@@ -399,6 +414,7 @@ public class UiElement extends Entity {
 
         int vc = meshData.vertexCount;
         int pc = meshData.positionsCount;
+        int cc = meshData.colorsCount;
         int tc = meshData.texCoordsCount;
         int ic = meshData.indexCount;
 
@@ -409,11 +425,17 @@ public class UiElement extends Entity {
         meshData.positions[pc + 1] = y - halfHeight;
         meshData.positions[pc + 2] = depth;
 
+        meshData.colors[cc + 0] = 1.0f;
+        meshData.colors[cc + 1] = 1.0f;
+        meshData.colors[cc + 2] = 1.0f;
+        meshData.colors[cc + 3] = 1.0f;
+
         meshData.texCoords[tc + 0] = 0.0f;
         meshData.texCoords[tc + 1] = 0.0f;
 
         vc++;
         pc += 3;
+        cc += 4;
         tc += 2;
     
 
@@ -430,6 +452,11 @@ public class UiElement extends Entity {
             meshData.positions[pc + 1] = y - posY - halfHeight;
             meshData.positions[pc + 2] = depth;
 
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
             meshData.texCoords[tc + 0] = 0.0f;
             meshData.texCoords[tc + 1] = 0.0f;
 
@@ -443,6 +470,7 @@ public class UiElement extends Entity {
 
             vc++;
             pc += 3;
+            cc += 4;
             tc += 2;
             ic += 3;
 
@@ -451,6 +479,7 @@ public class UiElement extends Entity {
 
         meshData.vertexCount = vc;
         meshData.positionsCount = pc;
+        meshData.colorsCount = cc;
         meshData.texCoordsCount = tc;
         meshData.indexCount = ic;
     }
@@ -466,6 +495,7 @@ public class UiElement extends Entity {
 
         int vc = meshData.vertexCount;
         int pc = meshData.positionsCount;
+        int cc = meshData.colorsCount;
         int tc = meshData.texCoordsCount;
         int ic = meshData.indexCount;
 
@@ -530,9 +560,20 @@ public class UiElement extends Entity {
         meshData.indices[ic + 0] = vc + 0;
         meshData.indices[ic + 1] = vc + 1;
         meshData.indices[ic + 2] = vc + 2;
- 
+
+        for (int i = 0; i < 3; i++) {
+
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
+            cc += 4;
+        }
+
         meshData.vertexCount += 3;
         meshData.positionsCount += 9;
+        meshData.colorsCount += 12;
         meshData.texCoordsCount += 6;
         meshData.indexCount += 3;
     }

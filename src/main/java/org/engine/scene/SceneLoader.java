@@ -261,6 +261,7 @@ public class SceneLoader {
 
     private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
         List<Float> vertices = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
@@ -268,11 +269,14 @@ public class SceneLoader {
         BoundingBox bbox = new BoundingBox();
 
         processVertices(aiMesh, vertices, bbox);
+        processColors(aiMesh, colors);
         processNormals(aiMesh, normals);
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh = new Mesh(Mesh.TRIANGLES, Utilities.listToArray(vertices),
+        Mesh mesh = new Mesh(Mesh.TRIANGLES,
+                Utilities.listToArray(vertices),
+                Utilities.listToArray(colors),
                 Utilities.listToArray(textures),
                 Utilities.listToArray(normals),
                 Utilities.listIntToArray(indices),
@@ -288,6 +292,19 @@ public class SceneLoader {
         mesh.setMaterial(material);
 
         return mesh;
+    }
+
+    private static void processColors(AIMesh aiMesh, List<Float> colors) {
+
+        AIVector3D.Buffer aiVertices = aiMesh.mVertices();
+        while (aiVertices.remaining() > 0) {
+            AIVector3D aiVertex = aiVertices.get();
+
+            colors.add(1.0f);
+            colors.add(1.0f);
+            colors.add(1.0f);
+            colors.add(1.0f);
+        }       
     }
 
     private static void processVertices(AIMesh aiMesh, List<Float> vertices, BoundingBox bbox) {
