@@ -73,7 +73,7 @@ public class Game implements SceneLoader.IEventHandler {
         setupLights();
     }
 
-    private void startZoneFadeOutTransitionOut() {
+    private void startZoneFadeOut() {
 
         float targetHeading = zone.getRequestedTargetHeading();
 
@@ -87,7 +87,7 @@ public class Game implements SceneLoader.IEventHandler {
         hud.startFadeOut();
     }
 
-    private void startZoneHeadingOutTransition() {
+    private void startZoneHeadingOut() {
 
         float targetHeading = zone.getRequestedTargetHeading();
 
@@ -103,39 +103,55 @@ public class Game implements SceneLoader.IEventHandler {
 
     private void startZone() {
 
-        hud.setFadeOut();
-        hud.startFadeIn();
-
         float oldZoneHeading = zone.getMapHeading();
 
         zone.loadRequestedZone();
 
         float newZoneHeading = zone.getMapHeading(); 
 
-        avatar.goToStart();
+        
 
         if (zone.enteredByDoor()) {
 
             camera.setHeading(0.0f);
-           // if (newZoneHeading > oldZoneHeading) {
+            if (newZoneHeading > oldZoneHeading) {
                 zone.transition.startHeadingTransition();
-             //   camera.setHeading(90.0f);
-           // }
+                camera.setHeading(90.0f);
 
-            //else if (newZoneHeading < oldZoneHeading) {
+                camera.forceTargetOffset();
+            }
+
+            else if (newZoneHeading < oldZoneHeading) {
                 zone.transition.startHeadingTransition();
-              //  camera.setHeading(-90.0f);
-           // }
+                camera.setHeading(-90.0f);
+
+                camera.forceTargetOffset();
+            }
         }
         
-        if (!zone.transition.headingTransition()) 
+        // Go to start AFTER the forced target offset is recorded.
+        avatar.goToStart();
+
+        if (!zone.transition.headingTransition()) {
+            hud.setFadeOut();
+            hud.startFadeIn();
+    
             zone.transition.startPanTransition();
-        
+        }
+
         count += 1;
 
         //mapScene.addEntity(zone.zoneRoot);
         map.addZone(zone.getName(), zone.getMapOffset(), zone.getMapHeading(), zone.getAvatarBounds());
         map.enterZone(zone.getName());
+    }
+
+    private void startZoneFadeIn() {
+
+        hud.startFadeIn();
+        zone.transition.endTransition();
+
+        camera.releaseTargetOffset();
     }
 
     private void initializeTileShader() throws Exception {
@@ -218,19 +234,34 @@ public class Game implements SceneLoader.IEventHandler {
                 if (zone.transition.getTransitionPercent() == 1.0f) {
 
                     if (zone.transition.fadeOutTransition()) {
-                        startZoneHeadingOutTransition();
-
-                    } else if (zone.transition.headingOutTransition()) {
                         startZone();
-                    }
+                        
+                        //startZoneHeadingOutTransition();
+
+                    }// else if (zone.transition.headingOutTransition()) {
+                        //startZone();
+                    //}
                 }
 
             } else {
                 // Start transition out?
                 if (!zone.transition.headingTransition() && !zone.transition.headingOutTransition()) {
-                    startZoneFadeOutTransitionOut();
+                    startZoneFadeOut();
                 }
                 //startZone();
+            }
+        } else {
+
+            // New zone is loaded, working through the transition.
+            if (zone.transition.transitionActive()) {
+
+                if (zone.transition.getTransitionPercent() == 1.0f) {
+             
+                    if (zone.transition.headingTransition()) {
+
+                        startZoneFadeIn();
+                    }
+                }
             }
         }
 

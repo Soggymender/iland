@@ -49,7 +49,7 @@ public class ZoneTransition {
 
         time += interval;
 
-        if (fadeOutTransition || headingOutTransition) {
+        if (fadeOutTransition || headingOutTransition || headingTransition) {
             if (time > length) {
                 time = length;
                 // Now wait for the game to move us along.
@@ -64,6 +64,14 @@ public class ZoneTransition {
         }
     }
 
+    public void endTransition() {
+
+        time = 0.0f;
+        active = false;
+
+        clearFlags();
+    }
+
     private void clearFlags() {
 
         panTransition = false;
@@ -75,7 +83,7 @@ public class ZoneTransition {
     public void startFadeOutTransition() {
 
         clearFlags();
-        
+
         active = true;
         fadeOutTransition = true;
 

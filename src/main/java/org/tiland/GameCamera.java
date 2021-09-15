@@ -27,6 +27,9 @@ public class GameCamera extends Camera {
 
     float heading = 0.0f;
 
+    boolean forceTargetOffset = false;
+    Vector3f forcedTargetOffset = null;
+
     public GameCamera(Window window, Entity target, Zone zone) {
 
         super(window);
@@ -37,6 +40,8 @@ public class GameCamera extends Camera {
 
 //        targetOffset = new Vector3f(0.0f, 2.45f, 4.25f);
         targetOffset = new Vector3f(0.0f, 0.75f, 4.25f);
+
+        forcedTargetOffset = new Vector3f(0.0f, 0.0f, 0.0f);
 
         this.zone = zone;
 
@@ -66,6 +71,26 @@ public class GameCamera extends Camera {
 
     public float getHeading() {
         return this.heading;
+    }
+
+    public void forceTargetOffset() {
+
+        Vector3f targetPos = target.getPosition();
+        
+        forcedTargetOffset.set(position);
+        forcedTargetOffset.sub(targetPos);
+
+        forceTargetOffset = true;
+    }
+
+    public void releaseTargetOffset() {
+
+        forceTargetOffset = false;
+    }
+
+    public void restoreTargetOffset() {
+        //targetOffset.set(oldTargetOffset);
+        forceTargetOffset = false;
     }
 
     @Override
@@ -102,7 +127,29 @@ public class GameCamera extends Camera {
         clippedTargetPos.x += targetOffset.x;
         clippedTargetPos.y += targetOffset.y;
         position.set(clippedTargetPos);
-        
+
+        if (forceTargetOffset) {
+
+            if (!zone.transition.headingTransition()) {
+                forceTargetOffset = false;
+            } else {
+
+                float t = zone.transition.getTransitionPercent();
+                t = Math.easeIn(t);
+
+                // Position is where we want to be, but we need to lerp over.
+
+                Vector3f forcedTargetPos = new Vector3f(targetPos);
+                forcedTargetPos.add(forcedTargetOffset);
+
+                // Lerp from here to there.
+                position.set(Math.lerp(forcedTargetPos, position, t));
+            }
+        }
+
+
+
+
         /*
         if (heading != 0.0f) {
 
@@ -124,12 +171,12 @@ public class GameCamera extends Camera {
         }
         */
         
-        if (zone.transition.headingOutTransition()) {
+        if (zone.transition.headingTransition()) {
 
             // Approach heading.
             float p = zone.transition.getTransitionPercent();
 
-            rotation.y =  Math.toRadians(heading - (heading * (1.0f - p)));
+            rotation.y =  -Math.toRadians((heading * (1.0f - p)));
 
         //} else if (zone.transition.headingTransition()) {
 

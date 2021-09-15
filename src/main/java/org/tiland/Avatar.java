@@ -212,7 +212,7 @@ public class Avatar extends Sprite {
             interactDown = false;
             crouch = false;
             drop = false;
-            return;
+      //      return;
         }
 
         interactUp = false;
