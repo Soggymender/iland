@@ -124,11 +124,20 @@ public class GameCamera extends Camera {
         }
         */
         
-        if (zone.transition.headingTransition()) {
+        if (zone.transition.headingOutTransition()) {
 
+            // Approach heading.
             float p = zone.transition.getTransitionPercent();
 
-            rotation.y = -Math.toRadians(heading * (1.0f - p));
+            rotation.y =  Math.toRadians(heading - (heading * (1.0f - p)));
+
+        //} else if (zone.transition.headingTransition()) {
+
+            // Leave heading.
+           // float p = zone.transition.getTransitionPercent();
+
+            //rotation.y = -Math.toRadians(heading * (1.0f - p));
+            
         } else
             rotation.y = 0.0f;
     //    rotation.y = -Math.toRadians(heading);

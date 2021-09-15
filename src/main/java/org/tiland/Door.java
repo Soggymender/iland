@@ -15,6 +15,7 @@ public class Door extends Entity {
 
     public String targetZone;
     public String targetDoor;
+    public float  targetHeading;
 
     public boolean isFront;
     public boolean isTrigger;

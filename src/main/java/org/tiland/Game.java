@@ -67,10 +67,38 @@ public class Game implements SceneLoader.IEventHandler {
 
         initializeTileShader();
 
-        zone.requestZone("temple", "");
+        zone.requestZone("temple", "", 0.0f);
 
         // Setup Lights
         setupLights();
+    }
+
+    private void startZoneFadeOutTransitionOut() {
+
+        float targetHeading = zone.getRequestedTargetHeading();
+
+        if (targetHeading == 0.0f) {
+            startZone();
+            return;
+        }
+        
+        zone.transition.startFadeOutTransition();
+
+        hud.startFadeOut();
+    }
+
+    private void startZoneHeadingOutTransition() {
+
+        float targetHeading = zone.getRequestedTargetHeading();
+
+        if (targetHeading == 0.0f) {
+            startZone();
+            return;
+        }
+        
+        zone.transition.startHeadingOutTransition();
+
+        camera.setHeading(targetHeading);
     }
 
     private void startZone() {
@@ -88,15 +116,16 @@ public class Game implements SceneLoader.IEventHandler {
 
         if (zone.enteredByDoor()) {
 
-            if (newZoneHeading > oldZoneHeading) {
+            camera.setHeading(0.0f);
+           // if (newZoneHeading > oldZoneHeading) {
                 zone.transition.startHeadingTransition();
-                camera.setHeading(90.0f);
-            }
+             //   camera.setHeading(90.0f);
+           // }
 
-            else if (newZoneHeading < oldZoneHeading) {
+            //else if (newZoneHeading < oldZoneHeading) {
                 zone.transition.startHeadingTransition();
-                camera.setHeading(-90.0f);
-            }
+              //  camera.setHeading(-90.0f);
+           // }
         }
         
         if (!zone.transition.headingTransition()) 
@@ -173,10 +202,40 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void update(float interval) {
 
+        // Fade out.
+        // Record position of avatar
+        // Load new scene
+        // Record starting position
+        // Move & rotate to match recorded position
+        // Pan & rotate to starting position
+
+
         // Check for a zone request.
         if (!zone.getRequestedZone().isEmpty()) {
-            startZone();
+            
+            if (zone.transition.transitionActive()) {
+
+                if (zone.transition.getTransitionPercent() == 1.0f) {
+
+                    if (zone.transition.fadeOutTransition()) {
+                        startZoneHeadingOutTransition();
+
+                    } else if (zone.transition.headingOutTransition()) {
+                        startZone();
+                    }
+                }
+
+            } else {
+                // Start transition out?
+                if (!zone.transition.headingTransition() && !zone.transition.headingOutTransition()) {
+                    startZoneFadeOutTransitionOut();
+                }
+                //startZone();
+            }
         }
+
+        // Update an active transition
+//        if (zone.transition.headingOutT)
 
         zone.update(interval);
 

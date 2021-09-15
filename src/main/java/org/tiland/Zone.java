@@ -37,6 +37,7 @@ public class Zone {
 
     String requestedZoneName = new String();
     String requestedDoorName = new String();
+    float  requestedTargetHeading = 0.0f;
 
     ZoneTransition transition = new ZoneTransition();
 
@@ -117,13 +118,19 @@ public class Zone {
         }
     }
 
-    public void requestZone(String zoneName, String doorName) {
+    public void requestZone(String zoneName, String doorName, float targetHeading) {
         requestedZoneName = zoneName;
         requestedDoorName = doorName;
+        requestedTargetHeading = targetHeading;
     }
 
     public String getRequestedZone() {
         return requestedZoneName;
+    }
+
+    public float getRequestedTargetHeading()
+    {
+        return requestedTargetHeading;
     }
 
     public boolean enteredByDoor() {
@@ -362,12 +369,24 @@ public class Zone {
 
         door.targetZone = properties.get("p_target_zone");
         door.targetDoor = properties.get("p_target_object");
+
+        String headingString = properties.get("p_target_heading");
+        if (headingString == null) {
+            door.targetHeading = 0.0f;
+        } else {
+            door.targetHeading = Float.parseFloat(headingString);
+        }
+        
         door.isFront = frontDoor;
         door.isTrigger = isTrigger;
 
-        if (frontDoor) {
-            door.setLayer(3);
-        }
+        //if (frontDoor) {
+        //    door.setLayer(3);
+        //}
+
+        // Model the doors with the proper depth, and put them on the avatar layer
+        // so the zone heading out transition can keep the door and avatar "above" the fade layer.
+        door.setLayer(1);
 
         String state = properties.get("p_state");
         if (state != null && state.length() != 0) {
@@ -538,6 +557,7 @@ public class Zone {
 
         String targetZone = null;
         String targetDoor = null;
+        float targetHeading = 0.0f;
 
         for (int i = 0; i < doors.size(); i++) {
 
@@ -577,6 +597,7 @@ public class Zone {
 
                 targetZone = door.targetZone;
                 targetDoor = door.targetDoor;
+                targetHeading = door.targetHeading;
             
                 break;
             } else {
@@ -588,7 +609,7 @@ public class Zone {
 
         if (targetZone != null) {
             
-            requestZone(targetZone, targetDoor);
+            requestZone(targetZone, targetDoor, targetHeading);
 
             return true;
         }
@@ -1181,7 +1202,7 @@ public class Zone {
                     break;
                   
                 case "zone":
-                    requestZone(new String(args[1]), new String(args[2]));
+                    requestZone(new String(args[1]), new String(args[2]), 0.0f);
                     break;
 
                 // Check the entity state string for equality.

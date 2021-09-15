@@ -149,6 +149,11 @@ public class SceneRenderer {
 
                 numLayersRemaining += renderShaderMeshes(curLayer, camera, shader, scene, meshList, false);
 
+                // An experiment in which any layer can contain transparent elements.
+                glDepthMask(false);
+                renderShaderMeshes(curLayer, camera, shader, scene, meshList, true);
+                glDepthMask(true);
+
             }
 
             zDirty = true;
@@ -156,6 +161,7 @@ public class SceneRenderer {
 
         } while (numLayersRemaining > 0);
         
+        /*
         glDepthMask(false);
    //     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -170,6 +176,7 @@ public class SceneRenderer {
         }
         
         glDepthMask(true);
+        */
     }
 
     private int renderShaderMeshes(int curLayer, Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {

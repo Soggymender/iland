@@ -72,7 +72,8 @@ public class Hud {
         fpsText.xJustifyCenter = false;
 
         fade.setVisible(false);
-       // fade.setDepth(1.0f);
+        fade.setLayer(0);
+        //fade.setDepth(-0.5f);
 
         mapPanel.setVisible(true);
         mapPanel.setColor(new Color(0, 0, 0, 0.5f));
