@@ -418,8 +418,11 @@ public class Zone {
 
         // Model the doors with the proper depth, and put them on the avatar layer
         // so the zone heading out transition can keep the door and avatar "above" the fade layer.
-        door.setLayer(1);
-
+        
+        if (!isTrigger) {
+            door.setLayer(1);
+        }
+        
         String state = properties.get("p_state");
         if (state != null && state.length() != 0) {
             if (state.equals("closed")) {
