@@ -119,6 +119,7 @@ public class Game implements SceneLoader.IEventHandler {
                 camera.setHeading(90.0f);
 
                 camera.forceTargetOffset();
+                zone.hideUnenteredDoors();
             }
 
             else if (newZoneHeading < oldZoneHeading) {
@@ -126,6 +127,7 @@ public class Game implements SceneLoader.IEventHandler {
                 camera.setHeading(-90.0f);
 
                 camera.forceTargetOffset();
+                zone.hideUnenteredDoors();
             }
         }
         
@@ -152,6 +154,8 @@ public class Game implements SceneLoader.IEventHandler {
         zone.transition.endTransition();
 
         camera.releaseTargetOffset();
+
+        zone.unhideUnenteredDoors();
     }
 
     private void initializeTileShader() throws Exception {

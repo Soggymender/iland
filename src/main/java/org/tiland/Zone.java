@@ -249,6 +249,38 @@ public class Zone {
         avatarBounds.max.y = -9999.0f;
     }
 
+    /*
+    Normally doors should be on layer 1 with the avatar in order to have proper background and
+    foreground depth. But 1 is above the fade layer, and during heading transitions, we only
+    want the entered / requested door to be visible so far off doors aren't swinging into view.
+    Move all unentered doors to layer 0 to be obscured by fade.
+    */
+    public void hideUnenteredDoors() {
+
+        for (int i = 0; i < doors.size(); i++) {
+
+            Door door = doors.get(i);
+            if (door.getName().equals(requestedDoorName)) {
+                continue;
+            }
+
+            door.setLayer(0);
+        }        
+    }
+
+    public void unhideUnenteredDoors() {
+
+        for (int i = 0; i < doors.size(); i++) {
+
+            Door door = doors.get(i);
+            if (door.getName().equals(requestedDoorName)) {
+                continue;
+            }
+
+            door.setLayer(1);
+        }        
+    }
+
     public void setAvatarStart(Vector3f avatarStart) {
 
         this.avatarStart = new Vector3f(avatarStart);

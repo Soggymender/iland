@@ -13,8 +13,8 @@ public class ZoneTransition {
 
     final float panLength = 0.5f;
     final float headingLength = 1.0f;
-    final float headingOutLength = 1.0f;
-    final float fadeOutLength = 1.0f;
+    final float headingOutLength = 0.66f;
+    final float fadeOutLength = 0.66f;
     
     public boolean transitionActive() {
         return active;
@@ -33,7 +33,16 @@ public class ZoneTransition {
     }
 
     public boolean blockInput() {
-        return active && (time / length <= 0.75f);
+
+        if (!active) {
+            return false;
+        }
+
+        if (fadeOutTransition || headingTransition) {
+            return true;
+        }
+
+        return time / length <= 0.75f;
     }
 
     public float getTransitionPercent() {
