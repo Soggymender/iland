@@ -190,11 +190,11 @@ public class Game implements SceneLoader.IEventHandler {
         float lightIntensity = 1.0f;//0.75f;
         Vector3f lightDirection = new Vector3f(0.0f, 0.0f, 1.0f);
         directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        directionalLight.flags.viewSpace = true;
         sceneLighting.addDirectionalLight(directionalLight);
-
         
         directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
-        directionalLight.flags.viewSpace = false;
+        directionalLight.flags.viewSpace = true;
         sceneLighting.addDirectionalLight(directionalLight);
 
     }

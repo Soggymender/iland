@@ -271,6 +271,8 @@ public class SceneRenderer {
 
         List<DirectionalLight> directionalLights = sceneLighting.getDirectionalLights();
 
+        viewMatrix = viewMatrix.invert();
+
         for (int i = 0; i < directionalLights.size(); i++) {
 
             DirectionalLight light = directionalLights.get(i);
@@ -281,10 +283,13 @@ public class SceneRenderer {
             if (currDirLight.flags.viewSpace) {
                 Vector4f dir = new Vector4f(currDirLight.getDirection(), 0.0f);
                 dir.mul(viewMatrix);
+                
                 currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
             }
                 
             shader.setUniform("directionalLights", currDirLight, i);
         }
+
+        viewMatrix = viewMatrix.invert();
     }
 }
