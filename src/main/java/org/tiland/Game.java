@@ -77,28 +77,16 @@ public class Game implements SceneLoader.IEventHandler {
 
         float targetHeading = zone.getRequestedTargetHeading();
 
+        // New zone on the same plane is just a snap to black then fade in.
         if (targetHeading == 0.0f) {
             startZone();
             return;
         }
         
+        // New zone on the adjacent plane is a fade out then heading transition.
         zone.transition.startFadeOutTransition();
 
         hud.startFadeOut();
-    }
-
-    private void startZoneHeadingOut() {
-
-        float targetHeading = zone.getRequestedTargetHeading();
-
-        if (targetHeading == 0.0f) {
-            startZone();
-            return;
-        }
-        
-        zone.transition.startHeadingOutTransition();
-
-        camera.setHeading(targetHeading);
     }
 
     private void startZone() {
@@ -108,8 +96,6 @@ public class Game implements SceneLoader.IEventHandler {
         zone.loadRequestedZone();
 
         float newZoneHeading = zone.getMapHeading(); 
-
-        
 
         if (zone.enteredByDoor()) {
 

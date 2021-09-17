@@ -23,7 +23,6 @@ public class Avatar extends Sprite {
     public boolean crouch = false;
     public boolean drop = false;
 
-    public boolean climbing = false;
     public Entity climbingEntity = null;
 
     public Entity interactEntity = null;
@@ -207,7 +206,7 @@ public class Avatar extends Sprite {
         }
 
         // Enter automatic or interactive doors.
-        if (support != null && zone.enterDoor(this, interactUp, interactDown)) {
+        if (/*(support != null || climbingEntity != null)  &&*/ zone.enterDoor(this, interactUp, interactDown)) {
             interactUp = false;
             interactDown = false;
             crouch = false;
