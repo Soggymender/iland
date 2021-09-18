@@ -52,6 +52,7 @@ public class Zone {
     public List<Ladder> ladders;
     public List<Trigger> triggers;
 
+    boolean retainEntryBounds = false;
     String boundsName = null;
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
@@ -290,7 +291,11 @@ public class Zone {
     
         boundsName = properties.get("p_bounds");
 
-        String offsetString = properties.get("p_offset");
+        String offsetString = properties.get("p_map_offset");
+        if (offsetString == null) {
+            offsetString = properties.get("p_offset");
+        }
+
         if (offsetString.length() > 0) {
             String[] coords = offsetString.split(",");
         
@@ -299,7 +304,10 @@ public class Zone {
             zoneOffset.z = Float.parseFloat(coords[2]);
         }
 
-        String headingString = properties.get("p_heading");
+        String headingString = properties.get("p_map_heading");
+        if (headingString == null) {
+            headingString = properties.get("p_map_heading");
+        }
         if (headingString.length() > 0) {
             zoneHeading = Float.parseFloat(headingString);
         }
@@ -399,8 +407,17 @@ public class Zone {
     
         Door door = new Door();
 
-        door.targetZone = properties.get("p_target_zone");
-        door.targetDoor = properties.get("p_target_object");
+        String target = properties.get("p_target");
+        if (target != null) {
+            // New format.
+            String[] targets = target.split("\\.");
+            door.targetZone = targets[0];
+            door.targetDoor = targets[1];
+        } else {
+            // Old format.
+            door.targetZone = properties.get("p_target_zone");
+            door.targetDoor = properties.get("p_target_object");
+        }
 
         String headingString = properties.get("p_target_heading");
         if (headingString == null) {
@@ -504,6 +521,20 @@ public class Zone {
             processScript((Entity)avatar, entity, "on_load");
             return;
         }
+
+        This will generate an Error.
+        Make a zone metadata property that retains the existing bounds when loading the new zone.
+        This will simplify the process of making shops / interiors, and maintaining them as the exterior
+        zone changes shape!
+
+        It will also make it so you can enter a shop from different zones and retain the bounding appropriate
+        for the zone entered from instead of abruptly snapping to one specific zone's bounds. All win.
+
+        Also make it so the shop interiors are not location specific, but when entering / loading them, place them
+        in the world relative to the entry so they fit in the existing bounds properly.
+
+        Maybe this leads to the conclusion that all Doors and Exits should automatically calculate the connecting geometry
+        with a hard coded gap between same-plane Exits? Bonus: it would simplify zone metadata.
 
         expandBounds(entity.getPosition(), entity.getBBox());
     }
