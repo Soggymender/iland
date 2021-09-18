@@ -319,7 +319,7 @@ public class Game implements SceneLoader.IEventHandler {
         String type = properties.get("p_type");
         if (type != null) {
 
-            if (type.equals("zone metadata")) {
+            if (type.equals("zone_metadata") || type.equals("zone metadata")) {
 
                 zone.setMetadata(properties);
                 return null;
@@ -381,10 +381,13 @@ public class Game implements SceneLoader.IEventHandler {
 
     public void postLoadEntityEvent(Entity entity, Map<String, String>properties) {
 
-        String avatarStart = properties.get("p_avatar_start");
-        if (avatarStart != null) {
-            zone.setAvatarStart(entity.getPosition());
-            return;
+        String type = properties.get("p_type");
+        if (type != null) {
+
+            if (type.equals("avatar_start")) {
+                zone.setAvatarStart(entity.getPosition());
+                return;           
+            }
         }
 
         Mesh mesh = entity.getMesh();

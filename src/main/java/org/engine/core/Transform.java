@@ -57,6 +57,11 @@ public class Transform {
 
     public static Vector3f project(Vector3f point, Camera camera) {
 
+        /*
+        vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPos;
+        */
+
         Vector3f result = new Vector3f();
 
         Viewport viewport = camera.getViewport();
@@ -64,26 +69,40 @@ public class Transform {
         Matrix4f view = new Matrix4f(camera.getViewMatrix());
         Matrix4f projection = viewport.getSelectedProjectionMatrix();
 
+//    view = view.invert();
 
+    Vector4f vec = new Vector4f();
+    vec.set(point, 1.0f);
 
+    //vec.mul(view);
+    //vec.mul(projection);
 
+    view.transform(vec);
+    //projection.transform(vec);
 
+/*
 
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.identity().translate(point);
 
         Matrix4f modelViewMatrix = new Matrix4f(view);
         modelViewMatrix.mul(modelMatrix);
+        //modelMatrix.mul(modelViewMatrix);
 
         Vector4f vec = new Vector4f();
 
-        vec = vec.mul(modelViewMatrix);
+        //vec = vec.mul(modelMatrix);//modelViewMatrix);
+modelMatrix.transform(vec);
 
         vec.w = 1.0f / vec.w;
 
         result.x = vec.x * vec.w;
         result.y = vec.y * vec.w;
         result.z = vec.z * vec.w;
+*/
+        result.x = vec.x;
+        result.y = vec.y;
+        result.z = vec.z;
 
         return result;
     }

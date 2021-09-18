@@ -194,7 +194,8 @@ public class Hud {
         if (dialogOutline.getVisible()) {
 
             Vector3f targetPos = new Vector3f(dialogEntity.getPosition());
-            targetPos.y += 1.25f;
+           // targetPos.add(camera.getPosition());
+            //targetPos.y += 1.25f;
             targetPos.z = 0.0f;
     
             targetPos = Transform.project(targetPos, camera);
