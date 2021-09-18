@@ -56,6 +56,8 @@ public class Zone {
     String boundsName = null;
     BoundingBox avatarBounds;
     BoundingBox cameraBounds;
+    BoundingBox oldAvatarBounds;
+    BoundingBox oldCameraBounds;
 
     public Camera camera;
 
@@ -154,6 +156,11 @@ public class Zone {
 
         requestedZoneName = "";
 
+        if (retainEntryBounds) {
+            avatarBounds = oldAvatarBounds;
+            cameraBounds = oldCameraBounds;
+        }
+
         // If the zone metadata specified a specific bounds object, get it and bash the bounds to its
         // extents instead of using all zone entities.
         if (boundsName != null) {
@@ -241,6 +248,10 @@ public class Zone {
 
         boundsName = null;
 
+        // Copy the current bounds in case the new zone wants to retain them.
+        oldAvatarBounds = new BoundingBox(avatarBounds);
+        oldCameraBounds = new BoundingBox(cameraBounds);
+
         avatarBounds.reset();
         cameraBounds.reset();
 
@@ -289,6 +300,12 @@ public class Zone {
 
     public void setMetadata(Map<String, String>properties) {
     
+        if (properties.get("p_retain_bounds") != null) {
+            retainEntryBounds = true;
+        } else {
+            retainEntryBounds = false;
+        }
+
         boundsName = properties.get("p_bounds");
 
         String offsetString = properties.get("p_map_offset");
@@ -306,7 +323,7 @@ public class Zone {
 
         String headingString = properties.get("p_map_heading");
         if (headingString == null) {
-            headingString = properties.get("p_map_heading");
+            headingString = properties.get("p_heading");
         }
         if (headingString.length() > 0) {
             zoneHeading = Float.parseFloat(headingString);
@@ -522,6 +539,7 @@ public class Zone {
             return;
         }
 
+        /*
         This will generate an Error.
         Make a zone metadata property that retains the existing bounds when loading the new zone.
         This will simplify the process of making shops / interiors, and maintaining them as the exterior
@@ -535,8 +553,11 @@ public class Zone {
 
         Maybe this leads to the conclusion that all Doors and Exits should automatically calculate the connecting geometry
         with a hard coded gap between same-plane Exits? Bonus: it would simplify zone metadata.
+        */
 
-        expandBounds(entity.getPosition(), entity.getBBox());
+        if (!retainEntryBounds) {
+            expandBounds(entity.getPosition(), entity.getBBox());
+        }
     }
 
     public void expandBounds(Vector3f pos, BoundingBox bBox) {
