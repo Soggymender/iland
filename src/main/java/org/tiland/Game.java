@@ -94,7 +94,7 @@ public class Game implements SceneLoader.IEventHandler {
 
         float oldZoneHeading = zone.getMapHeading();
 
-        zone.loadRequestedZone();
+        zone.loadRequestedZone(map);
 
         float newZoneHeading = zone.getMapHeading(); 
 

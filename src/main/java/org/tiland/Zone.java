@@ -35,6 +35,9 @@ public class Zone {
     Vector3f zoneMapOffset = new Vector3f();
     float zoneMapHeading;
 
+    Vector3f newZoneMapOffset = new Vector3f();
+    float newZoneMapHeading = 0.0f;
+
     Vector3f entryDoorPosition = new Vector3f(); // Position of the entered door for calculating the requested zone's offset relative to the two connecting doors.
     Vector3f zoneOffset = new Vector3f(); // Zone offset calculated from the two connecting doors.
 
@@ -143,7 +146,7 @@ public class Zone {
         return !requestedDoorName.isEmpty();
     }
 
-    public void loadRequestedZone() {
+    public void loadRequestedZone(MiniMap map) {
 
         if (requestedZoneName.isEmpty()) {
             return;
@@ -161,7 +164,7 @@ public class Zone {
         requestedZoneName = "";
 
         if (retainEntryBounds) {
-            avatarBounds = oldAvatarBounds;
+            //avatarBounds = oldAvatarBounds;
             cameraBounds = oldCameraBounds;
         }
 
@@ -187,8 +190,98 @@ public class Zone {
         Entity entity = scene.findEntity(requestedDoorName);
         if (entity != null) {
             setAvatarStart(entity.getPosition());
-            return;
+
+            boolean entryIsLadder = (entity instanceof Ladder);
+
+            // Try to calculate the zoneMapOffset
+           // if (!retainEntryBounds) {
+                Vector3f oldMapOffset = new Vector3f(map.offset);
+                float oldMapHeading = map.heading;
+                //  public float heading;
+
+                // "map" position of entry door.
+                Vector3f entryDoorPos = new Vector3f();
+
+                entryDoorPos.set(entryDoorPosition);
+                entryDoorPos.z = 0.0f;
+                entryDoorPos.sub(oldAvatarBounds.min);
+
+                newZoneMapOffset.set(oldMapOffset);
+                newZoneMapOffset.add(entryDoorPos);
+
+                /*
+                Auto gap rules:
+                - entry exit doors on the same plane are a gap in X
+                - entry exit ladders on the same plane are a gap in Y
+                - entry on 0 heading, exit on 90 heading, gap in Z
+                - entry on 90 heading, exit on 0 heading, gap in Z
+
+                - "retain bounds" z tunneling doors gap on same plane. 
+                    - have not tried z tunneling in 90 heading zone yet.
+                */
+
+                Vector3f gap = new Vector3f();
+
+               // if
+
+                if (retainEntryBounds) {
+
+                    gap.set(0.0f, 0.0f, -1.0f);
+                //    newZoneMapOffset.add(0.0f, 0.0f, -1.0f);
+                } else if (entryIsLadder) {
+
+                    newZoneMapHeading = zoneMapHeading;
+                    
+                    gap.set(0.0f, -5.0f, 0.0f);
+                  
+                } else if (oldMapHeading == 0 && requestedTargetHeading == 0) {
+
+                    // New zone is rotated, or old zone is rotated and new zone is not. ie, new zone is on the XY plane.
+                    newZoneMapHeading = zoneMapHeading;
+                    
+                    gap.set(5.0f, 0.0f, 0.0f);
+                    //newZoneMapOffset.add(5.0f, 0.0f, 0.0f);
+
+                } else {
+
+                    newZoneMapHeading = oldMapHeading + requestedTargetHeading;
+                    
+                    if (newZoneMapHeading == -90.0f) {
+                        gap.set(0.0f, 0.0f, 5.0f);
+                //        newZoneMapOffset.add(0.0f, 0.0f, 5.0f);
+                    } else {//} if (newZoneMapHeading == 90.0f) {
+                        gap.set(0.0f, 0.0f, -5.0f);
+                //        newZoneMapOffset.add(0.0f, 0.0f, -5.0f);
+                    }
+                }
+
+                // Rotate the gap.
+                if (gap.length() > 0.0f) {
+            //        gap.rotateY(oldMapHeading);
+                }
+
+        //        newZoneMapOffset.add(gap);
+
+                Vector3f newZoneOffset = new Vector3f();
+                
+                newZoneOffset.set(avatarBounds.min);
+                newZoneOffset.sub(entity.getPosition());
+                newZoneOffset.z = 0.0f;
+
+                newZoneOffset.add(gap);
+
+              //  newZoneOffset.rotateY(newZoneMapHeading);
+
+                newZoneMapOffset.sub(oldMapOffset);
+                newZoneMapOffset.rotateY((float)Math.toRadians(oldMapHeading));
+                newZoneMapOffset.add(oldMapOffset);
+
+                newZoneMapOffset.add(newZoneOffset);
+
+                // Eh... sub origin, rotate?
+           // }
         }
+
 
         /* Maybe I don't do this anymore? Doesn't seem like it.
            The code above means a door can link to any type of entity.
@@ -268,6 +361,10 @@ public class Zone {
                     }
                     child.getPosition().add(offset);
                 }
+
+                // Move the avatar bounds.
+                avatarBounds.min.add(offset);
+                avatarBounds.max.add(offset);
             }
         }    
     }
@@ -593,9 +690,9 @@ public class Zone {
         with a hard coded gap between same-plane Exits? Bonus: it would simplify zone metadata.
         */
 
-        if (!retainEntryBounds) {
+       // if (!retainEntryBounds) {
             expandBounds(entity.getPosition(), entity.getBBox());
-        }
+       // }
     }
 
     public void expandBounds(Vector3f pos, BoundingBox bBox) {
@@ -616,19 +713,21 @@ public class Zone {
             avatarBounds.max.y = pos.y + bBox.max.y;
         }
 
-        cameraBounds.max.x = avatarBounds.max.x;
-        cameraBounds.min.x = avatarBounds.min.x;
-        cameraBounds.max.y = avatarBounds.max.y;
-        cameraBounds.min.y = avatarBounds.min.y;
+        if (!retainEntryBounds) {
+            cameraBounds.max.x = avatarBounds.max.x;
+            cameraBounds.min.x = avatarBounds.min.x;
+            cameraBounds.max.y = avatarBounds.max.y;
+            cameraBounds.min.y = avatarBounds.min.y;
+        
+            //float fov = 53.5f; // TODO: pull this from the camera.
+            //float camz = 4.25f; // TODO: look this up too.
 
-        //float fov = 53.5f; // TODO: pull this from the camera.
-        //float camz = 4.25f; // TODO: look this up too.
+            //float halfFov = (float)java.lang.Math.toRadians(fov);
 
-        //float halfFov = (float)java.lang.Math.toRadians(fov);
-
-        // Shift this bounds to the right  to account for FOV.
-        cameraBounds.min.x += 4.5;//halfFov * camz;
-        cameraBounds.max.x -= 4.5;//halfFov * camz;
+            // Shift this bounds to the right  to account for FOV.
+            cameraBounds.min.x += 4.5;//halfFov * camz;
+            cameraBounds.max.x -= 4.5;//halfFov * camz;
+            }
     }
 
     public BoundingBox getAvatarBounds() {
@@ -1115,7 +1214,7 @@ public class Zone {
     }
 
     public Vector3f getMapOffset() {
-        return zoneMapOffset;
+        return newZoneMapOffset;
     }
 
     public float getMapHeading() {
