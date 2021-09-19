@@ -32,8 +32,11 @@ public class Zone {
     final float maxTriggerY = 0.25f;
 
     String zoneName;
-    Vector3f zoneOffset = new Vector3f();
-    float zoneHeading;
+    Vector3f zoneMapOffset = new Vector3f();
+    float zoneMapHeading;
+
+    Vector3f entryDoorPosition = new Vector3f(); // Position of the entered door for calculating the requested zone's offset relative to the two connecting doors.
+    Vector3f zoneOffset = new Vector3f(); // Zone offset calculated from the two connecting doors.
 
     String requestedZoneName = new String();
     String requestedDoorName = new String();
@@ -141,6 +144,7 @@ public class Zone {
     }
 
     public void loadRequestedZone() {
+
         if (requestedZoneName.isEmpty()) {
             return;
         }
@@ -186,6 +190,8 @@ public class Zone {
             return;
         }
 
+        /* Maybe I don't do this anymore? Doesn't seem like it.
+           The code above means a door can link to any type of entity.
         if (!requestedDoorName.isEmpty()) {
 
             for (int i = 0; i < doors.size(); i++) {
@@ -207,6 +213,7 @@ public class Zone {
                 }
             }
         }
+        */
     }
 
     public void load(String zoneName) {
@@ -233,6 +240,36 @@ public class Zone {
         }
 
         scene.addEntity(zoneRoot);
+
+        // Retain entry bounds means we want to position the new zone relative to the old so that the 
+        // avatar and camera framing and boundis are all consistent after entering the new zone. The
+        // connecting doors are used to figure out the math but otherwise are not important. It could be
+        // necessary if there are multiple doors to specify one to always use for the connection?
+
+        // ALL of the loaded entities need to be offset. The exception is NPCs that get loaded once and
+        // retain a persistent position within their home zone across loads.
+
+        if (retainEntryBounds) {
+
+            Entity entity = scene.findEntity(requestedDoorName);
+            if (entity != null) {
+             
+                Vector3f offset = new Vector3f();
+
+                offset.set(entryDoorPosition);
+                offset.sub(entity.getPosition());
+
+                //zoneRoot.getPosition().add(offset);
+
+                // Iterate the children and apply the offset.
+                for (Entity child : zoneRoot.children) {
+                    if (child instanceof Npc && ((Npc)child).beenAround) {
+                        continue;
+                    }
+                    child.getPosition().add(offset);
+                }
+            }
+        }    
     }
 
     public void reset() {
@@ -316,9 +353,9 @@ public class Zone {
         if (offsetString.length() > 0) {
             String[] coords = offsetString.split(",");
         
-            zoneOffset.x = Float.parseFloat(coords[0]);
-            zoneOffset.y = Float.parseFloat(coords[1]);
-            zoneOffset.z = Float.parseFloat(coords[2]);
+            zoneMapOffset.x = Float.parseFloat(coords[0]);
+            zoneMapOffset.y = Float.parseFloat(coords[1]);
+            zoneMapOffset.z = Float.parseFloat(coords[2]);
         }
 
         String headingString = properties.get("p_map_heading");
@@ -326,7 +363,7 @@ public class Zone {
             headingString = properties.get("p_heading");
         }
         if (headingString.length() > 0) {
-            zoneHeading = Float.parseFloat(headingString);
+            zoneMapHeading = Float.parseFloat(headingString);
         }
     }
 
@@ -344,6 +381,7 @@ public class Zone {
             if (npcName != null && npcHome != null)  {
                 if (npcName.equals(name) && npcHome.equals(zoneName)) {
 
+                    npc.beenAround = true;
                     return null; // Signal not to create or modify the existing NPC.
                 }
             }
@@ -686,6 +724,8 @@ public class Zone {
                 targetDoor = door.targetDoor;
                 targetHeading = door.targetHeading;
             
+                entryDoorPosition.set(door.getPosition());
+
                 break;
             } else {
                 if (enteredFromHere) {
@@ -1075,11 +1115,11 @@ public class Zone {
     }
 
     public Vector3f getMapOffset() {
-        return zoneOffset;
+        return zoneMapOffset;
     }
 
     public float getMapHeading() {
-        return zoneHeading;
+        return zoneMapHeading;
     }
 
     public boolean processScript(Entity entity, Entity other, String label) {

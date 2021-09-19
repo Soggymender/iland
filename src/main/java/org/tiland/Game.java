@@ -29,6 +29,7 @@ public class Game implements SceneLoader.IEventHandler {
     private float accumulator = 0.0f;
     private float fpsTotal = 0.0f;
     private int   fpsSamples = 0;
+    private float fps = 0;
 
     Shader tileShader = null;
 
@@ -266,18 +267,21 @@ public class Game implements SceneLoader.IEventHandler {
 
         if (accumulator >= 1.0f) {
 
-            float fps = 0;
             if (fpsSamples > 0) {
                 fps = fpsTotal / fpsSamples;
             }
-
-            String fpsString = String.format("%.2f", fps);
-            hud.setStatusText(fpsString);
 
             accumulator = 0.0f;
             fpsTotal = 0.0f;
             fpsSamples = 0;
         }
+
+        float avatarX = avatar.getPosition().x;
+        float avatarY = avatar.getPosition().y;
+        float avatarZ = avatar.getPosition().z;
+
+        String fpsString = String.format("%.2f [%.2f, %.2f, %.2f]", fps, avatarX, avatarY, avatarZ);
+        hud.setStatusText(fpsString);
 
         float fps = 1.0f / interval;
         accumulator += interval;

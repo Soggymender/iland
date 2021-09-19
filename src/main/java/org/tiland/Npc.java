@@ -19,6 +19,7 @@ public class Npc extends Sprite {
     private Entity destEntity = null;
 
     public boolean isItem = false;
+    public boolean beenAround = false; 
 
     private Zone zone = null;
 
