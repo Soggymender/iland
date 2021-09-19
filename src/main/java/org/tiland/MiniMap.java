@@ -36,9 +36,9 @@ public class MiniMap {
     private Entity target;
 
     private Camera camera;
-    private Vector3f offset;
+    public  Vector3f offset;
     private Vector3f origin;
-    private float heading;
+    public  float heading;
     private String currentZoneName;
 
     private Hud hud;
@@ -256,10 +256,10 @@ public class MiniMap {
         Rect hudPanel = hud.getMapPanelRect();
 
         camera.setViewport(hudPanel.xMin, hudPanel.yMin, hudPanel.xMax - hudPanel.xMin, (hudPanel.yMax - hudPanel.yMin), true); 
-        
+        camera.setViewportEx(-500, 500, true);
+
         Viewport viewport = camera.getViewport();
         Matrix4f projMat = viewport.getOrthoProjectionMatrix();
-
 
         Matrix4f cavalierMat = new Matrix4f(
             1, 0, 0, 0,
@@ -271,7 +271,6 @@ public class MiniMap {
         projMat.scale(8.5f);
         viewport.selectProjectionMatrix(projMat);
  
-
         camera.update(interval);
         cavalierMat.mul(camera.getViewMatrix());
         camera.setViewMatrix(cavalierMat);
