@@ -19,6 +19,7 @@ public class Door extends Entity {
 
     public boolean isFront;
     public boolean isTrigger;
+    public boolean retainBounds;
 
     @Override
     public void update(float interval) {

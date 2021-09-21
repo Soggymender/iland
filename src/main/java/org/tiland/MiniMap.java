@@ -85,7 +85,7 @@ public class MiniMap {
 
         MapZone mapZone = mapZones.get(name);
         if (mapZone != null) {
-            return mapZone.offset;
+            return new Vector3f(mapZone.offset);
         }        
 
         return null;

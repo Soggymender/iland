@@ -129,10 +129,12 @@ public class Zone {
         }
     }
 
-    public void requestZone(String zoneName, String doorName, float targetHeading) {
+    public void requestZone(String zoneName, String doorName, float targetHeading, boolean retainBounds) {
         requestedZoneName = zoneName;
         requestedDoorName = doorName;
         requestedTargetHeading = targetHeading;
+
+        retainEntryBounds = retainBounds;
     }
 
     public String getRequestedZone() {
@@ -193,7 +195,7 @@ public class Zone {
         if (entity != null) {
             setAvatarStart(entity.getPosition());
 
- /*           
+            
             if (map.hasZone(zoneName)) {
 
                 // If we already stashed the offset and heading in the minimap, use those.
@@ -204,8 +206,7 @@ public class Zone {
 
                 return;
             }
- */           
-
+            
             // Calculate the offset and heading from scratch.
 
             boolean entryIsLadder = (entity instanceof Ladder);
@@ -450,7 +451,7 @@ public class Zone {
             offsetString = properties.get("p_offset");
         }
 
-        if (offsetString.length() > 0) {
+        if (offsetString != null && offsetString.length() > 0) {
             String[] coords = offsetString.split(",");
         
             zoneMapOffset.x = Float.parseFloat(coords[0]);
@@ -462,7 +463,7 @@ public class Zone {
         if (headingString == null) {
             headingString = properties.get("p_heading");
         }
-        if (headingString.length() > 0) {
+        if (headingString != null && headingString.length() > 0) {
             zoneMapHeading = Float.parseFloat(headingString);
         }
     }
@@ -581,6 +582,9 @@ public class Zone {
             door.targetHeading = Float.parseFloat(headingString);
         }
         
+        String retainBoundsString = properties.get("p_retain_bounds");
+        door.retainBounds = retainBoundsString != null;
+
         door.isFront = frontDoor;
         door.isTrigger = isTrigger;
 
@@ -785,6 +789,7 @@ public class Zone {
         String targetZone = null;
         String targetDoor = null;
         float targetHeading = 0.0f;
+        boolean retainBounds = false;
 
         for (int i = 0; i < doors.size(); i++) {
 
@@ -825,6 +830,7 @@ public class Zone {
                 targetZone = door.targetZone;
                 targetDoor = door.targetDoor;
                 targetHeading = door.targetHeading;
+                retainBounds = door.retainBounds;
             
                 entryDoorPosition.set(door.getPosition());
 
@@ -838,7 +844,7 @@ public class Zone {
 
         if (targetZone != null) {
             
-            requestZone(targetZone, targetDoor, targetHeading);
+            requestZone(targetZone, targetDoor, targetHeading, retainBounds);
 
             return true;
         }
@@ -1431,7 +1437,7 @@ public class Zone {
                     break;
                   
                 case "zone":
-                    requestZone(new String(args[1]), new String(args[2]), 0.0f);
+                    requestZone(new String(args[1]), new String(args[2]), 0.0f, false);
                     break;
 
                 // Check the entity state string for equality.

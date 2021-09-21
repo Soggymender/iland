@@ -68,7 +68,7 @@ public class Game implements SceneLoader.IEventHandler {
 
         initializeTileShader();
 
-        zone.requestZone("temple", "", 0.0f);
+        zone.requestZone("temple", "", 0.0f, false);
 
         // Setup Lights
         setupLights();
