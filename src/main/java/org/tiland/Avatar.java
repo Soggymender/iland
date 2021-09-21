@@ -115,12 +115,12 @@ public class Avatar extends Sprite {
   
         Keyboard keyboard = input.getKeyboard();
 
-        if (keyboard.keyDown(GLFW_KEY_A)){
+        if (keyboard.keyDown(GLFW_KEY_A) || keyboard.keyDown(GLFW_KEY_LEFT)){
             moveVec.x = -1;
             dirScale.x = -1.0f;
         } 
 
-        if (keyboard.keyDown(GLFW_KEY_D)) {
+        if (keyboard.keyDown(GLFW_KEY_D) || keyboard.keyDown(GLFW_KEY_RIGHT)) {
             moveVec.x = 1.0f;
             dirScale.x = 1.0f;
         }
@@ -132,30 +132,30 @@ public class Avatar extends Sprite {
 
         if (/*!jump &&*/ climbingEntity != null) {
 
-            if (keyboard.keyDown(GLFW_KEY_W)) {
+            if (keyboard.keyDown(GLFW_KEY_W) || keyboard.keyDown(GLFW_KEY_UP)) {
                 moveVec.y = 1.0f;
             }
 
-            if (keyboard.keyDown(GLFW_KEY_S)) {
+            if (keyboard.keyDown(GLFW_KEY_S) || keyboard.keyDown(GLFW_KEY_DOWN)) {
                 moveVec.y = -1.0f;
             }
         } else {
 
-            if (keyboard.keyJustDown(GLFW_KEY_W)) {
+            if (keyboard.keyJustDown(GLFW_KEY_W) || keyboard.keyJustDown(GLFW_KEY_UP)) {
                 interactUp = true;
             }
 
-            if (keyboard.keyJustDown(GLFW_KEY_S)) {
+            if (keyboard.keyJustDown(GLFW_KEY_S) || keyboard.keyJustDown(GLFW_KEY_DOWN)) {
                 interactDown = true;
                 crouch = true;
                 drop = true;
             }
 
-            if (keyboard.keyJustUp(GLFW_KEY_S)) {
+            if (keyboard.keyJustUp(GLFW_KEY_S) || keyboard.keyJustUp(GLFW_KEY_DOWN)) {
                 crouch = false;
             }
 
-            if (keyboard.keyDown(GLFW_KEY_W)) {
+            if (keyboard.keyDown(GLFW_KEY_W) || keyboard.keyDown(GLFW_KEY_UP)) {
                 climb = true;
             }
         }
