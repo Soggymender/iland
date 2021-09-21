@@ -31,6 +31,8 @@ public class Zone {
     final float maxTriggerX = 0.25f;
     final float maxTriggerY = 0.25f;
 
+    final float MapGap = 1.0f;
+
     String zoneName;
     Vector3f zoneMapOffset = new Vector3f();
     float zoneMapHeading;
@@ -191,97 +193,95 @@ public class Zone {
         if (entity != null) {
             setAvatarStart(entity.getPosition());
 
+ /*           
+            if (map.hasZone(zoneName)) {
+
+                // If we already stashed the offset and heading in the minimap, use those.
+                newZoneMapOffset = map.getZoneOffset(zoneName);
+                newZoneMapHeading = map.getZoneHeading(zoneName);
+
+                zoneMapHeading = newZoneMapHeading;
+
+                return;
+            }
+ */           
+
+            // Calculate the offset and heading from scratch.
+
             boolean entryIsLadder = (entity instanceof Ladder);
 
             // Try to calculate the zoneMapOffset
-           // if (!retainEntryBounds) {
-                Vector3f oldMapOffset = new Vector3f(map.offset);
-                float oldMapHeading = map.heading;
-                //  public float heading;
+            Vector3f oldMapOffset = new Vector3f(map.offset);
+            float oldMapHeading = map.heading;
+            //  public float heading;
 
-                // "map" position of entry door.
-                Vector3f entryDoorPos = new Vector3f();
+            // "map" position of entry door.
+            Vector3f entryDoorPos = new Vector3f();
 
-                entryDoorPos.set(entryDoorPosition);
-                entryDoorPos.z = 0.0f;
-                entryDoorPos.sub(oldAvatarBounds.min);
+            entryDoorPos.set(entryDoorPosition);
+            entryDoorPos.z = 0.0f;
+            entryDoorPos.sub(oldAvatarBounds.min);
 
-                newZoneMapOffset.set(oldMapOffset);
-                newZoneMapOffset.add(entryDoorPos);
+            newZoneMapOffset.set(oldMapOffset);
+            newZoneMapOffset.add(entryDoorPos);
 
-                /*
-                Auto gap rules:
-                - entry exit doors on the same plane are a gap in X
-                - entry exit ladders on the same plane are a gap in Y
-                - entry on 0 heading, exit on 90 heading, gap in Z
-                - entry on 90 heading, exit on 0 heading, gap in Z
+            /*
+            Auto gap rules:
+            - entry exit doors on the same plane are a gap in X
+            - entry exit ladders on the same plane are a gap in Y
+            - entry on 0 heading, exit on 90 heading, gap in Z
+            - entry on 90 heading, exit on 0 heading, gap in Z
 
-                - "retain bounds" z tunneling doors gap on same plane. 
-                    - have not tried z tunneling in 90 heading zone yet.
-                */
+            - "retain bounds" z tunneling doors gap on same plane. 
+                - have not tried z tunneling in 90 heading zone yet.
+            */
 
-                Vector3f gap = new Vector3f();
+            Vector3f gap = new Vector3f();
 
-               // if
+            if (retainEntryBounds) {
 
-                if (retainEntryBounds) {
+                newZoneMapHeading = zoneMapHeading;
+                gap.set(0.0f, 0.0f, 0.0f);//-MapGap);
 
-                    gap.set(0.0f, 0.0f, -1.0f);
-                //    newZoneMapOffset.add(0.0f, 0.0f, -1.0f);
-                } else if (entryIsLadder) {
+            } else if (entryIsLadder) {
 
-                    newZoneMapHeading = zoneMapHeading;
-                    
-                    gap.set(0.0f, -5.0f, 0.0f);
-                  
-                } else if (oldMapHeading == 0 && requestedTargetHeading == 0) {
-
-                    // New zone is rotated, or old zone is rotated and new zone is not. ie, new zone is on the XY plane.
-                    newZoneMapHeading = zoneMapHeading;
-                    
-                    gap.set(5.0f, 0.0f, 0.0f);
-                    //newZoneMapOffset.add(5.0f, 0.0f, 0.0f);
-
-                } else {
-
-                    newZoneMapHeading = oldMapHeading + requestedTargetHeading;
-                    
-                    if (newZoneMapHeading == -90.0f) {
-                        gap.set(0.0f, 0.0f, 5.0f);
-                //        newZoneMapOffset.add(0.0f, 0.0f, 5.0f);
-                    } else {//} if (newZoneMapHeading == 90.0f) {
-                        gap.set(0.0f, 0.0f, -5.0f);
-                //        newZoneMapOffset.add(0.0f, 0.0f, -5.0f);
-                    }
-                }
-
-                // Rotate the gap.
-                if (gap.length() > 0.0f) {
-            //        gap.rotateY(oldMapHeading);
-                }
-
-        //        newZoneMapOffset.add(gap);
-
-                Vector3f newZoneOffset = new Vector3f();
+                newZoneMapHeading = zoneMapHeading;
+                gap.set(0.0f, -MapGap, 0.0f);
                 
-                newZoneOffset.set(avatarBounds.min);
-                newZoneOffset.sub(entity.getPosition());
-                newZoneOffset.z = 0.0f;
+            } else if (oldMapHeading == 0 && requestedTargetHeading == 0) {
 
-                newZoneOffset.add(gap);
+                // New zone is rotated, or old zone is rotated and new zone is not. ie, new zone is on the XY plane.
+                newZoneMapHeading = zoneMapHeading;
+                
+                gap.set(MapGap, 0.0f, 0.0f);
 
-              //  newZoneOffset.rotateY(newZoneMapHeading);
+            } else {
 
-                newZoneMapOffset.sub(oldMapOffset);
-                newZoneMapOffset.rotateY((float)Math.toRadians(oldMapHeading));
-                newZoneMapOffset.add(oldMapOffset);
+                newZoneMapHeading = oldMapHeading + requestedTargetHeading;
+                
+                if (newZoneMapHeading == -90.0f) {
+                    gap.set(0.0f, 0.0f, MapGap);
+                } else {
+                    gap.set(0.0f, 0.0f, -MapGap);
+                }
+            }
 
-                newZoneMapOffset.add(newZoneOffset);
+            Vector3f newZoneOffset = new Vector3f();
+            
+            newZoneOffset.set(avatarBounds.min);
+            newZoneOffset.sub(entity.getPosition());
+            newZoneOffset.z = 0.0f;
 
-                // Eh... sub origin, rotate?
-           // }
+            newZoneOffset.add(gap);
+
+            newZoneMapOffset.sub(oldMapOffset);
+            newZoneMapOffset.rotateY((float)Math.toRadians(oldMapHeading));
+            newZoneMapOffset.add(oldMapOffset);
+
+            newZoneMapOffset.add(newZoneOffset);
         }
 
+        zoneMapHeading = newZoneMapHeading;
 
         /* Maybe I don't do this anymore? Doesn't seem like it.
            The code above means a door can link to any type of entity.
@@ -348,6 +348,9 @@ public class Zone {
             if (entity != null) {
              
                 Vector3f offset = new Vector3f();
+
+              //  offset.set(entity.getPosition());
+              //  offset.sub(entryDoorPosition);
 
                 offset.set(entryDoorPosition);
                 offset.sub(entity.getPosition());
@@ -1218,7 +1221,7 @@ public class Zone {
     }
 
     public float getMapHeading() {
-        return zoneMapHeading;
+        return newZoneMapHeading;
     }
 
     public boolean processScript(Entity entity, Entity other, String label) {

@@ -71,14 +71,43 @@ public class MiniMap {
         return camera;
     }
 
-    public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {  
+    public boolean hasZone(String name) {
  
         MapZone mapZone = mapZones.get(name);
         if (mapZone != null) {
+            return true;
+        }        
+
+        return false;
+    }
+
+    public Vector3f getZoneOffset(String name) {
+
+        MapZone mapZone = mapZones.get(name);
+        if (mapZone != null) {
+            return mapZone.offset;
+        }        
+
+        return null;
+    }
+
+    public float getZoneHeading(String name) {
+
+        MapZone mapZone = mapZones.get(name);
+        if (mapZone != null) {
+            return mapZone.heading;
+        }        
+
+        return 0.0f;
+    }
+
+    public void addZone(String name, Vector3f offset, float heading, BoundingBox zoneBounds) {  
+ 
+        if (hasZone(name)) {
             return;
         }
 
-        mapZone = new MapZone();
+        MapZone mapZone = new MapZone();
         mapZones.put(name, mapZone);
  
         mapZone.offset.set(offset);
@@ -164,10 +193,10 @@ public class MiniMap {
             color.z = 0.1f;
         }
 
-        //mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);
-        //mapZone.zoneSketch.addLines(color, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos2.x, mapZone.pos2.y, mapZone.pos2.z, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z);
         mapZone.zoneSketch.addLines(color, mapZone.pos3.x, mapZone.pos3.y, mapZone.pos3.z, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z);
-        //mapZone.zoneSketch.addLines(color, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z);
+        mapZone.zoneSketch.addLines(color, mapZone.pos4.x, mapZone.pos4.y, mapZone.pos4.z, mapZone.pos1.x, mapZone.pos1.y, mapZone.pos1.z);
     }
 
     private void updateLocationSketch() {
@@ -264,7 +293,7 @@ public class MiniMap {
         Matrix4f cavalierMat = new Matrix4f(
             1, 0, 0, 0,
             0, 1, 0, 0,
-            -0.65f * Math.cos(((float)java.lang.Math.PI / 4)), -0.65f * Math.sin(((float)java.lang.Math.PI / 4)), 1                    , 0,
+            -0.64f * Math.cos(((float)java.lang.Math.PI / 4)), -0.64f * Math.sin(((float)java.lang.Math.PI / 4)), 1, 0,
             0, 0, 0 , 1
         );
 
