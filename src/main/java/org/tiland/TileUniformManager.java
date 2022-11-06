@@ -18,6 +18,7 @@ public class TileUniformManager implements IUniformManager {
     public TileUniformManager(Shader shader) throws Exception {
         this.shader = shader;
 
+        shader.createUniform("outline");
         shader.createUniform("projectionMatrix");
         shader.createUniform("modelViewMatrix");
         shader.createUniform("texture_sampler");
@@ -45,6 +46,7 @@ public class TileUniformManager implements IUniformManager {
 
     public void setMeshUniforms(Mesh mesh) {
 
+        shader.setUniform("outline", int(mesh.shadeType == mesh.SHADE_OUTLINE));
         shader.setUniform("material", mesh.getMaterial());
     }
 

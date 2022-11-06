@@ -94,7 +94,7 @@ public class SceneLoader {
             // Engine types.
 
             String p_type = properties.get("p_type");
-            if (p_type != null && p_type == "terrain") {
+            if (p_type != null && p_type.equals("terrain")) {
 
                 String entityName = name.dataString().toLowerCase();
 
@@ -102,7 +102,7 @@ public class SceneLoader {
                 entity.setName(entityName);
                 entity.setParent(sceneRoot);
                 
-                Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                Mesh[] meshes = parseMesh(aiScene, aiNode, materials, properties);
                 
                 entity.setMeshes(meshes);
 
@@ -120,7 +120,7 @@ public class SceneLoader {
                     entity.setName(entityName);
                     entity.setParent(sceneRoot);
 
-                    Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                    Mesh[] meshes = parseMesh(aiScene, aiNode, materials, properties);
                     entity.setMeshes(meshes);
 
                     Matrix4f transform = toMatrix(aiNode.mTransformation());
@@ -175,10 +175,10 @@ public class SceneLoader {
             throw new Exception(error);
         }
 
-        return parseMesh(aiScene, texturesDir);
+        return parseMesh(aiScene, texturesDir, null);
     }
 
-    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials) {
+    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials, Map<String, String>properties) {
 
         int numMeshes = aiNode.mNumMeshes();
         IntBuffer aiMeshes = aiNode.mMeshes();
@@ -187,7 +187,7 @@ public class SceneLoader {
 
             int meshIndex = aiMeshes.get(i);
             AIMesh aiMesh = AIMesh.create(aiScene.mMeshes().get(meshIndex));
-            Mesh mesh = processMesh(aiMesh, materials);
+            Mesh mesh = processMesh(aiMesh, materials, properties);
             meshes[i] = mesh;
         }
 
@@ -195,7 +195,7 @@ public class SceneLoader {
     }
 
 
-    public static Mesh[] parseMesh(AIScene aiScene, String texturesDir) throws Exception {
+    public static Mesh[] parseMesh(AIScene aiScene, String texturesDir, Map<String, String>properties) throws Exception {
 
         int numMaterials = aiScene.mNumMaterials();
         PointerBuffer aiMaterials = aiScene.mMaterials();
@@ -210,7 +210,7 @@ public class SceneLoader {
         Mesh[] meshes = new Mesh[numMeshes];
         for (int i = 0; i < numMeshes; i++) {
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-            Mesh mesh = processMesh(aiMesh, materials);
+            Mesh mesh = processMesh(aiMesh, materials, properties);
             meshes[i] = mesh;
         }
 
@@ -259,7 +259,7 @@ public class SceneLoader {
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials, Map<String, String>properties) {
         List<Float> vertices = new ArrayList<>();
         List<Float> colors = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
@@ -274,7 +274,17 @@ public class SceneLoader {
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh = new Mesh(Mesh.TRIANGLES,
+        int shadeType = Mesh.SHADE_DEFAULT;
+
+        if (properties != null) {
+        
+            String p_shade = properties.get("p_shade");
+            if (p_shade != null && p_shade.equals("outline")) {
+                shadeType = Mesh.SHADE_OUTLINE;
+            }
+        }
+
+        Mesh mesh = new Mesh(Mesh.TRIANGLES, shadeType,
                 Utilities.listToArray(vertices),
                 Utilities.listToArray(colors),
                 Utilities.listToArray(textures),

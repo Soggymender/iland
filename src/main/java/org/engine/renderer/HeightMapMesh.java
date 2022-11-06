@@ -85,7 +85,7 @@ public class HeightMapMesh {
         int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         float[] normalsArr = calcNormals(posArr, width, height);
-        this.mesh = new Mesh(Mesh.TRIANGLES, posArr, colArr, textCoordsArr, normalsArr, indicesArr);
+        this.mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normalsArr, indicesArr);
         Material material = new Material(texture, 0.0f);
         mesh.setMaterial(material);
     }

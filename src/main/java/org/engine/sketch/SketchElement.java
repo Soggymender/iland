@@ -176,12 +176,12 @@ public class SketchElement extends Entity {
         }
 
         if (mesh == null) {
-            mesh = new Mesh(Mesh.LINES, positions, colors, texCoords, normals, indices);
+            mesh = new Mesh(Mesh.LINES, Mesh.SHADE_DEFAULT, positions, colors, texCoords, normals, indices);
             setMesh(mesh);
             mesh.setMaterial(material);
             //material.setTransparent();
         } else {
-            mesh.set(Mesh.LINES, positions, colors, texCoords, normals, indices);
+            mesh.set(Mesh.LINES, Mesh.SHADE_DEFAULT, positions, colors, texCoords, normals, indices);
         }
     }
 }

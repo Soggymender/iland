@@ -221,11 +221,11 @@ public class Text extends UiElement {
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
 
         if (mesh == null) {
-            mesh = new Mesh(Mesh.TRIANGLES, posArr, colArr, textCoordsArr, normals, indicesArr);
+            mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normals, indicesArr);
             setMesh(mesh);
             mesh.setMaterial(material);
         } else {
-            mesh.set(Mesh.TRIANGLES, posArr, colArr, textCoordsArr, normals, indicesArr);
+            mesh.set(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normals, indicesArr);
         }
         
         return mesh;

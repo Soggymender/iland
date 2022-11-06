@@ -18,11 +18,17 @@ import org.lwjgl.system.MemoryUtil;
 
 import org.engine.scene.Entity; // I don't want this here.
 
+import org.joml.Vector3f;
+
 public class Mesh {
 
     public static final int
         LINES          = GL_LINES,
         TRIANGLES      = GL_TRIANGLES;
+
+    public static final int
+        SHADE_DEFAULT = 0,
+        SHADE_OUTLINE = 1;
 
     static int count = 0;
     private int vaoId;
@@ -31,6 +37,7 @@ public class Mesh {
     private int vertexCount;
 
     private int primitiveType;
+    public int shadeType;
 
     private Material material;
 
@@ -39,20 +46,18 @@ public class Mesh {
     float[] colors;
     private BoundingBox bbox;
 
-    public Mesh(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
+    public Mesh(int primitiveType, int shadeType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
 
-        this(primitiveType, positions, colors, textCoords, normals, indices, new BoundingBox());
+        this(primitiveType, shadeType, positions, colors, textCoords, normals, indices, new BoundingBox());
     }
 
-    public Mesh(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
-        set(primitiveType, positions, colors, textCoords, normals, indices, bbox);
+    public Mesh(int primitiveType, int shadeType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
+        set(primitiveType, shadeType, positions, colors, textCoords, normals, indices, bbox);
     }
 
   
-    public void set(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
+    public void set(int primitiveType, int shadeType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices) {
         
-        
-
         // TODO: Ewgross
         if (bbox == null) {
             if (this.bbox == null) {
@@ -60,12 +65,19 @@ public class Mesh {
             }
         }
 
-        set(primitiveType, positions, colors, textCoords, normals, indices, bbox);
+        set(primitiveType, shadeType, positions, colors, textCoords, normals, indices, bbox);
     }
 
-    public void set(int primitiveType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
+    public void set(int primitiveType, int shadeType, float[] positions, float[] colors, float[] textCoords, float[] normals, int[] indices, BoundingBox bbox) {
         
         // TODO: bbox is not being auto-sized.
+
+        this.shadeType = shadeType;
+
+        // If shadeType is SHADE_OUTLINE, generate smooth normals and stash them in the color channel.
+        if (shadeType == Mesh.SHADE_OUTLINE) {
+            generateOutlineNormals(positions, colors, normals);
+        }
 
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
@@ -200,6 +212,42 @@ public class Mesh {
 
             if (indicesBuffer != null) {
                 MemoryUtil.memFree(indicesBuffer);
+            }
+        }
+    }
+
+    public void generateOutlineNormals(float[] positions, float[] colors, float[] normals) {
+
+        int positionCount = 0;
+        Vector3f smoothNormal = new Vector3f();
+
+        for (int i = 0; i < positions.length; i += 3) {
+
+            positionCount = 0;
+            smoothNormal.zero();
+            
+            for (int j = 0; j < positions.length; j += 3) {
+
+                if (positions[i] == positions[j] && positions[i+1] == positions[j+1] && positions[i+2] == positions[j+2]) {
+
+                    positionCount++;
+                    smoothNormal.x += normals[j];
+                    smoothNormal.y += normals[j+1];
+                    smoothNormal.z += normals[j+2];
+                }
+            }
+
+            if (positionCount > 0) {
+
+                smoothNormal.x /= (float)positionCount;
+                smoothNormal.y /= (float)positionCount;
+                smoothNormal.z /= (float)positionCount;
+
+                smoothNormal.normalize();
+
+                colors[i]   = smoothNormal.x;
+                colors[i+1] = smoothNormal.y;
+                colors[i+2] = smoothNormal.z;
             }
         }
     }

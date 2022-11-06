@@ -266,7 +266,7 @@ public class UiElement extends Entity {
 
         float[] normals = new float[0];
 
-        mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
+        mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
         mesh.setMaterial(material);
 
         setMesh(mesh);
@@ -329,9 +329,9 @@ public class UiElement extends Entity {
         float[] normals = new float[0];
 
         if (mesh == null) 
-            mesh = new Mesh(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
+            mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
         else
-            mesh.set(Mesh.TRIANGLES, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
+            mesh.set(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
 
         mesh.setMaterial(material);
 

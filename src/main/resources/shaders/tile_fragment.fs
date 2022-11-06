@@ -162,4 +162,16 @@ void main()
     }
 
     fragColor = ambientC * vec4(ambientLight, 1) + diffuseSpecularComp;
+
+    float _OutlineWidth = 0.9;
+    float _OutlineSoftness = 0.25;
+    float _OutlinePower = 0.9;
+    vec3 viewWS = vec3(0, 0, -1);
+    vec4 _OutlineColor = fragColor;//vec4(1, 1, 1, 1);
+
+
+    float edge1 = 1 - _OutlineWidth;
+    float edge2 = edge1 + _OutlineSoftness;
+    float fresnel = pow(1.0 - clamp(dot(mvVertexNormal, viewWS), 0.0, 1.0), _OutlinePower);
+    fragColor = mix(1, smoothstep(edge1, edge2, fresnel), step(0, edge1)) * _OutlineColor;
 }
