@@ -1,0 +1,20 @@
+begin
+    chld:jar1:remove_jar1
+    chld:jar2:remove_jar2
+    eint:
+    goto:begin
+
+remove_jar1
+    rinv:jar1
+    goto:fill_jar
+
+remove_jar2
+    rinv:jar2
+
+fill_jar
+    ainv:clean_water_jar
+    goto:no_more
+
+no_more
+    eint:
+    goto:no_more

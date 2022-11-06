@@ -29,13 +29,13 @@ public class DefaultUniformManager implements IUniformManager {
 
         shader.createPointLightListUniform("pointLights", SceneRenderer.MAX_POINT_LIGHTS);
         shader.createSpotLightListUniform("spotLights", SceneRenderer.MAX_SPOT_LIGHTS);
-        shader.createDirectionalLightUniform("directionalLight");
+        shader.createDirectionalLightListUniform("directionalLights", SceneRenderer.MAX_DIRECTIONAL_LIGHTS);
     }
 
     public void setShaderUniforms(Viewport viewport) {
 
         // Update the projection matrix.
-        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getSelectedProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);
@@ -50,7 +50,7 @@ public class DefaultUniformManager implements IUniformManager {
 
         Matrix4f viewMatrix = camera.getViewMatrix();
 
-        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix, entity.flags.billboard);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
     }
 

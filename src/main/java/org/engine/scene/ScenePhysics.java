@@ -27,23 +27,31 @@ public class ScenePhysics {
         for (int i = 0; i < frameEntities.size(); i++) {
 
             Entity a = frameEntities.get(i);
-            Vector3f aPos = a.getPosition();
-            BoundingBox aBox = a.getBBox();
-            float aResScalar = 1.0f;
-            
+
             if (!a.flags.collidable || !a.flags.visible) {
                 continue;
             }
 
             if (!a.flags.dynamic) {
-                aResScalar = 0.0f;
+                continue;
+//                aResScalar = 0.0f;
             }
 
-            for (int j = i + 1; j < frameEntities.size(); j++) {
+            Vector3f aPos = a.getPosition();
+            BoundingBox aBox = a.getBBox();
+            
 
+//            for (int j = i + 1; j < frameEntities.size(); j++) {
+
+            for (int j = 0; j < frameEntities.size(); j++) {
+                if (j == i) {
+                    continue;
+                }
+            
                 Entity b = frameEntities.get(j);
                 Vector3f bPos = b.getPosition();
                 BoundingBox bBox = b.getBBox();
+                float aResScalar = 1.0f;
                 float bResScalar = 1.0f;
                 
                 if (!b.flags.collidable || !b.flags.visible) {
@@ -59,9 +67,11 @@ public class ScenePhysics {
                     bResScalar = 0.0f;
                 }
 
-                if (b.flags.dynamic && b.flags.dynamic) {
-                    aResScalar = 0.5f;
-                    bResScalar = 0.5f;
+                if (a.flags.dynamic && b.flags.dynamic) {
+                    // We're just going to try to avoid NxN dynamics because resolution gets complex.
+                    continue;
+                    //aResScalar = 0.5f;
+                    //bResScalar = 0.5f;
                 }
 
                 aNewPos.x = aPos.x + a.frameVelocity.x;
@@ -81,11 +91,11 @@ public class ScenePhysics {
 
                         boolean boxCollision = a.flags.box_collision || b.flags.box_collision;
 
-                        boolean fromLeft  = aPos.x + aBox.max.x <= bPos.x + bBox.min.x;
-                        boolean fromRight = aPos.x + aBox.min.x >= bPos.x + bBox.max.x; 
+                        boolean fromLeft  = aPos.x + aBox.max.x - 0.001f <= bPos.x + bBox.min.x;
+                        boolean fromRight = aPos.x + aBox.min.x + 0.001f >= bPos.x + bBox.max.x; 
                         
                         boolean fromTop = aPos.y + aBox.min.y + 0.001f >= bPos.y + bBox.max.y;
-                        boolean fromBottom = aPos.y + aBox.max.y <= bPos.y + bBox.min.y;
+                        boolean fromBottom = aPos.y + aBox.max.y - 0.001f <= bPos.y + bBox.min.y;
 
                 //        float fromTopVal = (aPos.y + aBox.min.y) - (bPos.y + bBox.max.y);
 
@@ -102,7 +112,7 @@ public class ScenePhysics {
                             aRes.x = (bNewPos.x + bBox.max.x) - (aNewPos.x + aBox.min.x);
                         }
 
-                        if (fromBottom) {
+                        if (fromBottom && boxCollision) {
                             collide = true;
                             aRes.y = (bNewPos.y + bBox.min.y) - (aNewPos.y + aBox.max.y);
                         }
@@ -128,9 +138,9 @@ public class ScenePhysics {
             Entity a = frameEntities.get(i);
             if (a.numCollisions > 0) {
 
-                a.resolutionVec.x /= a.numCollisions;
-                a.resolutionVec.y /= a.numCollisions;
-                a.resolutionVec.z /= a.numCollisions;
+            //    a.resolutionVec.x /= a.numCollisions;
+            //    a.resolutionVec.y /= a.numCollisions;
+            //    a.resolutionVec.z /= a.numCollisions;
 
                 a.frameVelocity.add(a.resolutionVec);
 
@@ -140,6 +150,14 @@ public class ScenePhysics {
 
                 if (a.resolutionVec.y != 0) {
                     a.velocity.y = 0;
+                }
+
+                if (a.children != null) {
+                        
+                    for (Entity child : a.children) {
+                        child.position.add(a.resolutionVec);
+                        //child.frameVelocity.add(a.resolutionVec);
+                    }
                 }
             }
 

@@ -10,18 +10,26 @@ public class Viewport {
     public float zNear, zFar;
     public float fov;
 
-    private Matrix4f projectionMatrix;
+    boolean useOrtho = true;
+    private Matrix4f selectedProjectionMatrix;
+
+    private Matrix4f perspectiveMatrix;
     private Matrix4f orthoMatrix;
 
+    private boolean centerOrtho = false;
 
     public Viewport() {
 
-        projectionMatrix = new Matrix4f();
+        perspectiveMatrix = new Matrix4f();
 
         orthoMatrix = new Matrix4f();
     }
 
     public void set(float x, float y, float width, float height, float zNear, float zFar, float fov) {
+        set(x, y, width, height, zNear, zFar, fov, this.centerOrtho);
+    }
+
+    public void set(float x, float y, float width, float height, float zNear, float zFar, float fov, boolean centerOrtho) {
        
         this.x = x;
         this.y = y;
@@ -31,27 +39,49 @@ public class Viewport {
         this.zFar = zFar;
         this.fov = fov;
 
-        glViewport(0, 0, (int)width, (int)height);
+       // centerOrtho = true;
+        this.centerOrtho = centerOrtho;
 
-        updateProjectionMatrix(fov, width, height, zNear, zFar);
-        updateOrthoProjectionMatrix(0, width, height, 0);
+        glViewport((int)x, (int)y, (int)width, (int)height);
+    
+        updatePerspectiveProjectionMatrix(fov, width, height, zNear, zFar);
+
+        if (centerOrtho) {
+            updateOrthoProjectionMatrix(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, zNear, zFar);
+        } else {
+            updateOrthoProjectionMatrix(0, width, 0, height, zNear, zFar);
+        }
+
+        if (useOrtho) {
+            selectProjectionMatrix(orthoMatrix);
+        } else {
+            selectProjectionMatrix(perspectiveMatrix);
+        }
     }
 
-    public Matrix4f getProjectionMatrix() {
-        return projectionMatrix;
-    }
-
-    public final Matrix4f updateProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
+    public final Matrix4f updatePerspectiveProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
         float aspectRatio = width / height;
-        projectionMatrix.identity();
-        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
-        return projectionMatrix;
+        perspectiveMatrix.identity();
+        perspectiveMatrix.perspective(fov, aspectRatio, zNear, zFar);
+        return perspectiveMatrix;
     }
     
-    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top) {
+    public final Matrix4f updateOrthoProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar) {
         orthoMatrix.identity();
-        orthoMatrix.setOrtho2D(left, right, bottom, top);
+        orthoMatrix.setOrtho(left, right, bottom, top, zNear, zFar);
         return orthoMatrix;
+    }
+
+    public void selectProjectionMatrix(Matrix4f matrix) {
+        selectedProjectionMatrix = matrix;
+    }
+
+    public Matrix4f getSelectedProjectionMatrix() {
+        return selectedProjectionMatrix;
+    }
+
+    public Matrix4f getPerspectiveProjectionMatrix() {
+        return perspectiveMatrix;
     }
 
     public final Matrix4f getOrthoProjectionMatrix() {

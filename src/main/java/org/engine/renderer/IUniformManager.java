@@ -1,6 +1,5 @@
 package org.engine.renderer;
 
-import org.engine.renderer.Mesh;
 import org.engine.scene.Entity;
 import org.engine.scene.Scene;
 

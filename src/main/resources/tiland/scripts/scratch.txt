@@ -1,0 +1,25 @@
+
+
+entity depths
+
+ 0.03   foreground
+ 0.02   front_door  0.02
+ 0.01   dropped items
+ 0.00   avatar      0.01
+ 0.00   collidables
+-0.01   spawned items
+-0.02   npcs
+
+-0.03   back_door
+-0.04   back walls
+-0.05   background
+
+
+
+
+As a former Junior Temple Guard, surely you are aware of the importance of the Great Red Herring to our people's way of life.
+
+At the end of the game the Great Red Herring becomes of age, and is eaten at the annual village feast.
+You can remove the Great Red Herring from its bath but it will always find its way back.
+
+My husband used to be the village plumber until the previous master of the diviner's guild went missing.

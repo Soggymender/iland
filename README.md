@@ -68,6 +68,8 @@ It's also import to make sure instance of the same mesh are actually being insta
 EXPORT TROUBLESHOOTING
 - If FBX Converter bakes in its own (incorrect) relative path to textures, it is because the textures referenced in Blender are no longer in the specified location. Reassign the textures or restore them, then re-export. This happened once after relocating the project files.
 
+- p_type zone_metadata -> sometimes Blender wants to convert the p_map_offset value to an int vector, but ASSIMP seems to want float vector. But the engine wants a string vector. Wrap the tuple in quotes to force Blender to get with the program. The engine will parse the CSV string into floats.
+
 
 
 WORLD EDITOR

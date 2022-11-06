@@ -10,7 +10,7 @@ public class Canvas extends UiElement {
     Window window = null;
 
     private Vector2f referenceResolution;
-    private Vector2f workingResolution;
+    public  Vector2f workingResolution;
 
     private boolean useWidth = true;
 

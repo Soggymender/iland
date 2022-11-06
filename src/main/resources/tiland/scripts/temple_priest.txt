@@ -1,0 +1,16 @@
+begin
+    talk:water is becoming dangerously scarce. we've sent all from the Diviner's Guild, but there has been no word. what will we do if we can't find water?
+    eint
+    talk:there's nothing more you can do here.
+    talk:if you are willing to help then accept this Release from Service.
+    talk:show it to the Master of the Diviner's Guild to the East.
+    ainv:ros
+    eint
+
+wait_guild
+    talk:visit the Master of the Diviner's Guild to the East.
+    eint
+    goto:wait_guild
+
+
+

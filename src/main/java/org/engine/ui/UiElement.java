@@ -11,6 +11,19 @@ import org.engine.renderer.Shader;
 import org.engine.renderer.Mesh;
 import org.engine.scene.Entity;
 
+class MeshData {
+
+    public int vertexCount = 0;
+    public float[] positions;
+    public int positionsCount = 0;
+    public float[] colors;
+    public int colorsCount = 0;
+    public float[] texCoords;
+    public int texCoordsCount = 0;
+    public int[] indices;
+    public int indexCount = 0;
+}
+
 public class UiElement extends Entity {
 
     protected class Flags {
@@ -18,9 +31,18 @@ public class UiElement extends Entity {
         protected boolean acceptsInput = false;
         protected boolean buildsMesh = false;
         protected boolean dirty = true; // Everything starts dirty so it'll do an initial update after construction.
+        protected boolean rebuild = false;
+
+        protected boolean hasTail = false;
     }
 
+    protected float cornerRadius = 0;
     protected RectTransform rectTrans;
+
+    protected float tailWidth = 20.0f;
+    protected float tailHeight = 20.0f;
+    protected Vector2f tailTarget = null;
+
     protected Material material;
 
     protected Canvas canvas = null;
@@ -39,7 +61,7 @@ public class UiElement extends Entity {
         material.setShader(defaultGuiShader);
     }
 
-    public UiElement(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
+    public UiElement(Canvas canvas, Entity parent, Rect rect, float cornerRadius, Rect anchor, Vector2f pivot) throws Exception {
 
         super();
 
@@ -51,6 +73,8 @@ public class UiElement extends Entity {
         rectTrans.pivot.set(pivot);
 
         rectTrans.rect.set(rect);
+
+        this.cornerRadius = cornerRadius;
 
         rectTrans.anchor.set(anchor);
 
@@ -73,6 +97,19 @@ public class UiElement extends Entity {
         rectTrans.anchor = anchor;
     }
 
+    public void setTailSize(float width, float height) {
+        tailWidth = width;
+        tailHeight = height;
+    }
+
+    public void setTailTarget(Vector2f target) {
+        flags.hasTail = true;
+        tailTarget = target;
+
+       // flags.rebuild = true;
+        buildMesh();
+    }
+
     public float getDepth() {
         return rectTrans.getDepth();
     }
@@ -83,6 +120,10 @@ public class UiElement extends Entity {
 
     public void setColor(Color color) {
         material.setDiffuseColor(color);
+    }
+
+    public Rect getScreenRect() {
+        return rectTrans.screenRect.copy();
     }
 
     public void updateSize() {
@@ -115,7 +156,7 @@ public class UiElement extends Entity {
     @Override
     public void update(float interval) {
 
-        if (!flags.dirty) {
+        if (!flags.dirty && !flags.rebuild) {
             super.update(interval);
             return;
         }
@@ -183,76 +224,360 @@ public class UiElement extends Entity {
 
         // To screen space.
         rectTrans.screenRect.set(rectTrans.globalRect);
-
+        float tempMax = rectTrans.screenRect.yMax;
+        rectTrans.screenRect.yMax = canvas.workingResolution.y - rectTrans.screenRect.yMin;
+        rectTrans.screenRect.yMin = canvas.workingResolution.y - tempMax;
+        
 
         // If the screen rect didn't change, the children don't need to be updated.
-        if (rectTrans.screenRect.equals(oldScreenRect)) {
+        if (rectTrans.screenRect.equals(oldScreenRect) && !flags.rebuild) {
             return;
         }
 
         if (flags.buildsMesh) {
+            flags.rebuild = false;
+
             buildMesh();
         }
     }
 
     private void buildMesh() {
 
+        if (cornerRadius > 0) {
+            buildRoundedMesh();
+            return;
+        }
+
         Mesh mesh = getMesh();
         if (mesh != null) {
             mesh.deleteBuffers();
         }
 
-        float depth = rectTrans.getDepth();
+        MeshData meshData = new MeshData();
 
-        float[] positions = new float[4 * 3];
-        float[] texCoords = new float[4 * 2];
-        int[] indices = new int[6];
+        meshData.positions = new float[4 * 3];
+        meshData.colors = new float[4 * 4];
+        meshData.texCoords = new float[4 * 2];
+        meshData.indices = new int[6];
 
-        // Top left
-        positions[0] = rectTrans.screenRect.xMin;
-        positions[1] = rectTrans.screenRect.yMin;
-        positions[2] = depth;
+        Rect rect = new Rect(rectTrans.screenRect.xMin, rectTrans.screenRect.yMin, rectTrans.screenRect.xMax, rectTrans.screenRect.yMax, true);
 
-        texCoords[0] = 0.0f;
-        texCoords[1] = 0.0f;
-
-        // Top right
-        positions[3] = rectTrans.screenRect.xMax;
-        positions[4] = rectTrans.screenRect.yMin;
-        positions[5] = depth;
-
-        texCoords[2] = 1.0f;
-        texCoords[3] = 0.0f;
-
-        // Bottom right
-        positions[6] = rectTrans.screenRect.xMax;
-        positions[7] = rectTrans.screenRect.yMax;
-        positions[8] = depth;
-
-        texCoords[4] = 1.0f;
-        texCoords[5] = 1.0f;
-
-        // Bottom left
-        positions[9] = rectTrans.screenRect.xMin;
-        positions[10] = rectTrans.screenRect.yMax;
-        positions[11] = depth;
-
-        texCoords[6] = 0.0f;
-        texCoords[7] = 1.0f;
-
-        indices[0] = 1;
-        indices[1] = 0;
-        indices[2] = 3;
-
-        indices[3] = 3;
-        indices[4] = 2;
-        indices[5] = 1;
+        addMeshRect(rect, meshData);
 
         float[] normals = new float[0];
 
-        mesh = new Mesh(Mesh.TRIANGLES, positions, texCoords, normals, indices);
+        mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
         mesh.setMaterial(material);
 
         setMesh(mesh);
+    }
+
+    private void buildRoundedMesh() {
+
+        Mesh mesh = getMesh();
+        if (mesh != null) {
+            mesh.deleteBuffers();
+        }
+
+        MeshData meshData = new MeshData();
+
+        int numSegments = 3;
+
+        int numPositions = (1 + numSegments + 1) * 3 * 4;
+        int numColors = (1 + numSegments + 1) * 4 * 4;
+        int numTexCoords = (1 + numSegments + 1) * 2 * 4;
+        int numIndices = (numSegments + 1) * 3 * 4;
+
+        if (flags.hasTail) {
+            numPositions += 9;
+            numColors += 12;
+            numTexCoords += 6;
+            numIndices += 3;
+        }
+
+        meshData.positions = new float[4 * 3 * 3 + numPositions];
+        meshData.colors = new float[4 * 4 * 3 + numColors];
+        meshData.texCoords = new float[4 * 2 * 3 + numTexCoords];
+        meshData.indices = new int[6 * 3 + numIndices];
+
+        Rect rect;
+        
+        // Bottom slice.
+        rect = new Rect(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMin, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin + cornerRadius, true);
+        addMeshRect(rect, meshData);
+
+        // Middle slice.
+        rect = new Rect(rectTrans.screenRect.xMin, rectTrans.screenRect.yMin + cornerRadius, rectTrans.screenRect.xMax, rectTrans.screenRect.yMax - cornerRadius, true);
+        addMeshRect(rect, meshData);
+
+        // Top slice.
+        rect = new Rect(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax, true);
+        addMeshRect(rect, meshData);
+
+                // Add tail.
+                if (flags.hasTail) {
+                    addMeshTail(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin, tailWidth, tailHeight, tailTarget, meshData);
+                }
+        
+        // Add corners.
+        addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -180.0f, -90.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMax - cornerRadius, cornerRadius, -90.0f, 0.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMin + cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,  90.0f, 180.0f, numSegments, meshData);
+        addMeshCorner(rectTrans.screenRect.xMax - cornerRadius, rectTrans.screenRect.yMin + cornerRadius, cornerRadius,   0.0f, 90.0f, numSegments, meshData);
+
+
+        float[] normals = new float[0];
+
+        if (mesh == null) 
+            mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
+        else
+            mesh.set(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, meshData.positions, meshData.colors, meshData.texCoords, normals, meshData.indices);
+
+        mesh.setMaterial(material);
+
+        setMesh(mesh);
+    }
+
+    private void addMeshRect(Rect rect, MeshData meshData) {
+
+        float depth = rectTrans.getDepth();
+
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
+
+        // Top left
+        meshData.positions[pc + 0] = rect.xMin - halfWidth;
+        meshData.positions[pc + 1] = rect.yMax - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
+
+        // Top right
+        meshData.positions[pc + 3] = rect.xMax - halfWidth;
+        meshData.positions[pc + 4] = rect.yMax - halfHeight;
+        meshData.positions[pc + 5] = depth;
+
+        meshData.texCoords[tc + 2] = 1.0f;
+        meshData.texCoords[tc + 3] = 0.0f;
+
+        // Bottom right
+        meshData.positions[pc + 6] = rect.xMax - halfWidth;
+        meshData.positions[pc + 7] = rect.yMin - halfHeight;
+        meshData.positions[pc + 8] = depth;
+
+        meshData.texCoords[tc + 4] = 1.0f;
+        meshData.texCoords[tc + 5] = 1.0f;
+
+        // Bottom left
+        meshData.positions[pc + 9] = rect.xMin - halfWidth;
+        meshData.positions[pc + 10] = rect.yMin - halfHeight;
+        meshData.positions[pc + 11] = depth;
+
+        meshData.texCoords[tc + 6] = 0.0f;
+        meshData.texCoords[tc + 7] = 1.0f;
+
+        for (int i = 0; i < 4; i++) {
+
+            int cc = meshData.colorsCount;
+
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
+            meshData.colorsCount += 4;
+        }
+
+        meshData.indices[ic + 0] = vc + 1;
+        meshData.indices[ic + 1] = vc + 0;
+        meshData.indices[ic + 2] = vc + 3;
+
+        meshData.indices[ic + 3] = vc + 3;
+        meshData.indices[ic + 4] = vc + 2;
+        meshData.indices[ic + 5] = vc + 1;
+ 
+        meshData.vertexCount += 4;
+        meshData.positionsCount += 12;
+        meshData.texCoordsCount += 8;
+        meshData.indexCount += 6;
+    }
+
+    private void addMeshCorner(float x, float y, float radius, float startAngle, float endAngle, int numSegments, MeshData meshData) {
+
+        float depth = rectTrans.getDepth();
+
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int cc = meshData.colorsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
+
+        // Add the pivot.
+        int pivotIdx = vc;
+
+        meshData.positions[pc + 0] = x - halfWidth;
+        meshData.positions[pc + 1] = y - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.colors[cc + 0] = 1.0f;
+        meshData.colors[cc + 1] = 1.0f;
+        meshData.colors[cc + 2] = 1.0f;
+        meshData.colors[cc + 3] = 1.0f;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
+
+        vc++;
+        pc += 3;
+        cc += 4;
+        tc += 2;
+    
+
+        float angle = startAngle;
+        float segmentAngle = (endAngle - startAngle) / numSegments;
+
+        for (int i = 0; i < numSegments + 1; i++) {
+
+            float rads = (float)Math.toRadians(angle);
+            float posX = cornerRadius * (float)Math.cos(rads);
+            float posY = cornerRadius * (float)Math.sin(rads);
+
+            meshData.positions[pc + 0] = x + posX - halfWidth;
+            meshData.positions[pc + 1] = y - posY - halfHeight;
+            meshData.positions[pc + 2] = depth;
+
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
+            meshData.texCoords[tc + 0] = 0.0f;
+            meshData.texCoords[tc + 1] = 0.0f;
+
+            // Add a triangle as long as this isn't the first position.
+            if (i > 0) {
+
+                meshData.indices[ic + 0] = pivotIdx;
+                meshData.indices[ic + 1] = vc - 1;
+                meshData.indices[ic + 2] = vc;        
+            }
+
+            vc++;
+            pc += 3;
+            cc += 4;
+            tc += 2;
+            ic += 3;
+
+            angle += segmentAngle;
+        }
+
+        meshData.vertexCount = vc;
+        meshData.positionsCount = pc;
+        meshData.colorsCount = cc;
+        meshData.texCoordsCount = tc;
+        meshData.indexCount = ic;
+    }
+
+    private void addMeshTail(float xMin, float xMax, float yMin, float tailWidth, float tailHeight, Vector2f tailTarget, MeshData meshData) {
+
+        float tailOffset = tailWidth * 0.65f;
+
+        float depth = rectTrans.getDepth();
+
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+        int vc = meshData.vertexCount;
+        int pc = meshData.positionsCount;
+        int cc = meshData.colorsCount;
+        int tc = meshData.texCoordsCount;
+        int ic = meshData.indexCount;
+
+        // Top left
+        meshData.positions[pc + 0] = xMax - tailWidth - tailOffset - halfWidth;
+        meshData.positions[pc + 1] = yMin - halfHeight;
+        meshData.positions[pc + 2] = depth;
+
+        meshData.texCoords[tc + 0] = 0.0f;
+        meshData.texCoords[tc + 1] = 0.0f;
+
+        // Top right
+        meshData.positions[pc + 3] = xMax - tailOffset - halfWidth;
+        meshData.positions[pc + 4] = yMin - halfHeight;
+        meshData.positions[pc + 5] = depth;
+
+        meshData.texCoords[tc + 2] = 1.0f;
+        meshData.texCoords[tc + 3] = 0.0f;
+
+        // Bottom right
+//        meshData.positions[pc + 6] = xMax - halfWidth;
+//        meshData.positions[pc + 7] = yMin - tailHeight - halfHeight;
+
+        float tailStartX = meshData.positions[pc + 0] + halfWidth + ((meshData.positions[pc + 3] - meshData.positions[pc + 0]) / 2.0f);
+        float tailStartY = yMin;// - halfHeight; 
+
+        Vector2f tailDir = new Vector2f(tailTarget.x, tailTarget.y + 1.65f);
+
+        tailDir.sub(new Vector2f(tailStartX, tailStartY - tailHeight));        
+
+
+        float tailY = tailTarget.y + 0.65f;
+        //if ((yMin - halfHeight) - tailY < tailHeight)
+        //    tailY = tailHeight;
+
+        /*
+        Create vector to target
+        Find intersect point at tailHeight
+        
+        x = y/m - b/m
+        
+        y = mx + b
+        b = y - mx
+        */
+
+        float slope = tailDir.y / tailDir.x;
+
+        float yIntercept = tailStartY - (slope * tailStartX);
+
+        float x = ((tailStartY - tailHeight)/ slope) - (yIntercept / slope);
+
+
+
+        meshData.positions[pc + 6] = x - halfWidth;
+        meshData.positions[pc + 7] = yMin - halfHeight - tailHeight;// - halfHeight;
+
+        meshData.positions[pc + 8] = depth;
+
+        meshData.texCoords[tc + 4] = 1.0f;
+        meshData.texCoords[tc + 5] = 1.0f;
+
+        meshData.indices[ic + 0] = vc + 0;
+        meshData.indices[ic + 1] = vc + 1;
+        meshData.indices[ic + 2] = vc + 2;
+
+        for (int i = 0; i < 3; i++) {
+
+            meshData.colors[cc + 0] = 1.0f;
+            meshData.colors[cc + 1] = 1.0f;
+            meshData.colors[cc + 2] = 1.0f;
+            meshData.colors[cc + 3] = 1.0f;
+
+            cc += 4;
+        }
+
+        meshData.vertexCount += 3;
+        meshData.positionsCount += 9;
+        meshData.colorsCount += 12;
+        meshData.texCoordsCount += 6;
+        meshData.indexCount += 3;
     }
 }

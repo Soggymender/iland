@@ -1,0 +1,9 @@
+begin
+    csta:open:enter
+    eint:
+    goto:begin
+
+enter
+    zone:forest:left_exit
+    eint:
+    goto:begin

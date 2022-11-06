@@ -5,6 +5,9 @@ import org.engine.renderer.DirectionalLight;
 import org.engine.renderer.PointLight;
 import org.engine.renderer.SpotLight;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class SceneLighting {
 
     private Vector3f ambientLight;
@@ -13,7 +16,7 @@ public class SceneLighting {
 
     private SpotLight[] spotLightList;
 
-    private DirectionalLight directionalLight;
+    private List<DirectionalLight> directionalLights = new ArrayList<DirectionalLight>();
 
     public Vector3f getAmbientLight() {
         return ambientLight;
@@ -40,10 +43,14 @@ public class SceneLighting {
     }
 
     public DirectionalLight getDirectionalLight() {
-        return directionalLight;
+        return directionalLights.get(0);
     }
 
-    public void setDirectionalLight(DirectionalLight directionalLight) {
-        this.directionalLight = directionalLight;
+    public List<DirectionalLight> getDirectionalLights() {
+        return directionalLights;
+    }
+
+    public void addDirectionalLight(DirectionalLight directionalLight) {
+        directionalLights.add(directionalLight);
     }
 }

@@ -4,16 +4,17 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import org.engine.scene.Entity;
-import org.engine.renderer.Viewport;
 
 public class Camera extends Entity {
 
-    private static final float FOV = (float)java.lang.Math.toRadians(60.0f);
-    private static final float Z_NEAR = 0.01f;
-    private static final float Z_FAR = 1000.0f;
+    float FOV = (float)java.lang.Math.toRadians(60.0f);
+    float Z_NEAR = -100.0f;
+    float Z_FAR = 100.0f;
 
-    Matrix4f viewMatrix;
-    Viewport viewport;
+    //private boolean centerOrtho = false;
+
+    protected Matrix4f viewMatrix;
+    protected Viewport viewport;
 
     public boolean autoResize = false;
 
@@ -43,9 +44,17 @@ public class Camera extends Entity {
         this.rotation = rotation;
     }
 
-    public void setViewport(float x, float y, float width, float height) {
+    public void setViewport(float x, float y, float width, float height, boolean centerOrtho) {
 
-        viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV);
+        viewport.set(x, y, width, height, Z_NEAR, Z_FAR, FOV, centerOrtho);
+    }
+
+    public void setViewportEx(float zNear, float zFar, boolean ortho) {
+
+        Z_NEAR = zNear;
+        Z_FAR = zFar;
+
+        viewport.useOrtho = ortho;
     }
 
     public Viewport getViewport() {
@@ -56,12 +65,22 @@ public class Camera extends Entity {
         return viewMatrix;
     }
 
+    public void setViewMatrix(Matrix4f newViewMat){
+
+        viewMatrix.set(newViewMat);
+    }
+
     public void updateViewMatrix() {
 
         viewMatrix.identity();
 
-        viewMatrix.rotate(rotation.x, new Vector3f(1, 0, 0)).rotate(rotation.y, new Vector3f(0, 1, 0));
+        
+    //    viewMatrix.scale(0.1f);
+
+        viewMatrix.rotate(-rotation.x, new Vector3f(1, 0, 0)).rotate(-rotation.y, new Vector3f(0, 1, 0));
         viewMatrix.translate(-position.x, -position.y, -position.z);
+
+
     }
 
     public Vector3f getPosition() {
@@ -120,7 +139,7 @@ public class Camera extends Entity {
             float windowWidth = window.getWidth();
             float windowHeight = window.getHeight();
 
-            viewport.set(0, 0, windowWidth, windowHeight, Z_NEAR, Z_FAR, FOV);
+            viewport.set(0, 0, windowWidth, windowHeight, Z_NEAR, Z_FAR, FOV, true);
 
           //  window.setResized(false);
         }

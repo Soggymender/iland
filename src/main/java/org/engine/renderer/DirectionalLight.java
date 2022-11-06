@@ -10,14 +10,23 @@ public class DirectionalLight {
 
     private float intensity;
 
+    public class Flags {
+        public boolean viewSpace = true;
+    }
+
+    public Flags flags;
+
     public DirectionalLight(Vector3f color, Vector3f direction, float intensity) {
         this.color = color;
         this.direction = direction;
         this.intensity = intensity;
+        this.flags = new Flags();
     }
 
     public DirectionalLight(DirectionalLight light) {
         this(new Vector3f(light.getColor()), new Vector3f(light.getDirection()), light.getIntensity());
+
+        this.flags.viewSpace = light.flags.viewSpace;
     }
 
     public Vector3f getColor() {

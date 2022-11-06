@@ -18,8 +18,15 @@ public class Transform {
 
     private static Matrix4f orthoModelMatrix = new Matrix4f();
 
-    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix) {
+    public static Matrix4f buildModelViewMatrix(Entity entity, Matrix4f viewMatrix, boolean billboard) {
         Vector3f rotation = entity.getRotation();
+
+        if (billboard) {
+
+            Vector3f viewRotation = new Vector3f();
+            viewMatrix.getEulerAnglesZYX(viewRotation);
+            rotation.y = viewRotation.y;
+        }
 
         modelMatrix.identity().translate(entity.getPosition()).
                 rotateX(-rotation.x).
@@ -48,6 +55,58 @@ public class Transform {
         return orthoModelMatrix;
     }
 
+    public static Vector3f project(Vector3f point, Camera camera) {
+
+        /*
+        vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+        gl_Position = projectionMatrix * mvPos;
+        */
+
+        Vector3f result = new Vector3f();
+
+        Viewport viewport = camera.getViewport();
+        
+        Matrix4f view = new Matrix4f(camera.getViewMatrix());
+        Matrix4f projection = viewport.getSelectedProjectionMatrix();
+
+//    view = view.invert();
+
+    Vector4f vec = new Vector4f();
+    vec.set(point, 1.0f);
+
+    //vec.mul(view);
+    //vec.mul(projection);
+
+    view.transform(vec);
+    //projection.transform(vec);
+
+/*
+
+        Matrix4f modelMatrix = new Matrix4f();
+        modelMatrix.identity().translate(point);
+
+        Matrix4f modelViewMatrix = new Matrix4f(view);
+        modelViewMatrix.mul(modelMatrix);
+        //modelMatrix.mul(modelViewMatrix);
+
+        Vector4f vec = new Vector4f();
+
+        //vec = vec.mul(modelMatrix);//modelViewMatrix);
+modelMatrix.transform(vec);
+
+        vec.w = 1.0f / vec.w;
+
+        result.x = vec.x * vec.w;
+        result.y = vec.y * vec.w;
+        result.z = vec.z * vec.w;
+*/
+        result.x = vec.x;
+        result.y = vec.y;
+        result.z = vec.z;
+
+        return result;
+    }
+
     public static Vector3f unproject(Vector3f point, Camera camera) {
 
         Vector3f result = new Vector3f();
@@ -55,7 +114,7 @@ public class Transform {
         Viewport viewport = camera.getViewport();
 
         Matrix4f model = new Matrix4f();
-        Matrix4f projection = viewport.getProjectionMatrix();
+        Matrix4f projection = viewport.getSelectedProjectionMatrix();
 
         Matrix4f temp = new Matrix4f(model);
         temp = temp.mul(projection);

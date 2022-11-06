@@ -47,4 +47,8 @@ public class Keyboard {
     public boolean keyJustDown(int key) {
         return keyStates[key] && !oldKeyStates[key];
     }
+
+    public boolean keyJustUp(int key) {
+        return !keyStates[key] && oldKeyStates[key];
+    }
 }

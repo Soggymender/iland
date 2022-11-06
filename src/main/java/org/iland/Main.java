@@ -10,7 +10,6 @@ import org.engine.scene.SceneRenderer;
 import org.engine.sketch.Sketch;
 
 public class Main {
-
     public static void main(String[] args) {
         try {
 

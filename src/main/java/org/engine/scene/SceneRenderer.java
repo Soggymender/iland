@@ -20,6 +20,7 @@ public class SceneRenderer {
 
     public static final int MAX_POINT_LIGHTS = 5;
     public static final int MAX_SPOT_LIGHTS = 5;
+    public static final int MAX_DIRECTIONAL_LIGHTS = 2;
 
     private Shader defaultShader;
     private Shader skyboxShader;
@@ -121,15 +122,48 @@ public class SceneRenderer {
         // TODO: Maybe an odd place for this. But keep in mind that scene entity update needs this flag before it is clear.
         window.setResized(false);
  
+        
         // Opaque
         Map<Shader, List<Mesh>> mapShaders = scene.getMeshShaders();
-        for (Shader shader : mapShaders.keySet()) {
+        
+        // Need to make multiple passes with a z clear between each.
+        // Count how many entities are on other layes to draw in future passes so we know
+        // preemptively when we are done.
+        int curLayer = 0;
+        int numLayersRemaining = 0;
+        boolean zDirty = false;
 
-            // Get the meshes that use this shader.
-            List<Mesh> meshList = mapShaders.get(shader);
+        do {
 
-            renderShaderMeshes(camera, shader, scene, meshList, false);
-        }
+            numLayersRemaining = 0;
+
+            if (zDirty) {
+                glClear(GL_DEPTH_BUFFER_BIT);
+                zDirty = false;
+            }
+
+            for (Shader shader : mapShaders.keySet()) {
+
+                // Get the meshes that use this shader.
+                List<Mesh> meshList = mapShaders.get(shader);
+
+                numLayersRemaining += renderShaderMeshes(curLayer, camera, shader, scene, meshList, false);
+
+                // An experiment in which any layer can contain transparent elements.
+                glDepthMask(false);
+                renderShaderMeshes(curLayer, camera, shader, scene, meshList, true);
+                glDepthMask(true);
+
+            }
+
+            zDirty = true;
+            curLayer++;
+
+        } while (numLayersRemaining > 0);
+        
+        /*
+        glDepthMask(false);
+   //     glClear(GL_DEPTH_BUFFER_BIT);
 
         // Transparent
         for (Shader shader : mapShaders.keySet()) {
@@ -137,12 +171,17 @@ public class SceneRenderer {
             // Get the meshes that use this shader.
             List<Mesh> meshList = mapShaders.get(shader);
 
-            renderShaderMeshes(camera, shader, scene, meshList, true);
-        }
+            renderShaderMeshes(0, camera, shader, scene, meshList, true);
 
+        }
+        
+        glDepthMask(true);
+        */
     }
 
-    private void renderShaderMeshes(Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
+    private int renderShaderMeshes(int curLayer, Camera camera, Shader shader, Scene scene, List<Mesh> meshList, boolean transparency) {
+
+        int numRemainingLayers = 0;
 
         shader.bind();
 
@@ -164,7 +203,7 @@ public class SceneRenderer {
 
             uniformManager.setMeshUniforms(mesh);
 
-            mesh.renderList(mapMeshes.get(mesh), (Entity entity) -> {
+            numRemainingLayers += mesh.renderList(curLayer, mapMeshes.get(mesh), (Entity entity) -> {
 
                 // TODO: Not actually sure if this needs to be a condition since each entity is checking in the
                 // inner loop.
@@ -175,6 +214,8 @@ public class SceneRenderer {
         }
 
         shader.unbind();
+
+        return numRemainingLayers;
     }
 
     private void setLightingUniforms(Camera camera, Shader shader, Scene scene) {
@@ -228,14 +269,27 @@ public class SceneRenderer {
             shader.setUniform("spotLights", currSpotLight, i);
         }
 
-        // Get a copy of the directional light object and transform its position to view coordinates
-        if (sceneLighting.getDirectionalLight() != null) {
-            DirectionalLight currDirLight = sceneLighting.getDirectionalLight();
+        List<DirectionalLight> directionalLights = sceneLighting.getDirectionalLights();
 
-            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
-            //dir.mul(viewMatrix);
-            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
-            shader.setUniform("directionalLight", currDirLight);
+        viewMatrix = viewMatrix.invert();
+
+        for (int i = 0; i < directionalLights.size(); i++) {
+
+            DirectionalLight light = directionalLights.get(i);
+
+            // Get a copy of the directional light object and transform its position to view coordinates
+            DirectionalLight currDirLight = new DirectionalLight(light);
+
+            if (currDirLight.flags.viewSpace) {
+                Vector4f dir = new Vector4f(currDirLight.getDirection(), 0.0f);
+                dir.mul(viewMatrix);
+                
+                currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            }
+                
+            shader.setUniform("directionalLights", currDirLight, i);
         }
+
+        viewMatrix = viewMatrix.invert();
     }
 }

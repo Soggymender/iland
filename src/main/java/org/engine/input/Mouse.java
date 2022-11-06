@@ -30,9 +30,11 @@ public class Mouse {
 
     private boolean prevLeftButtonPressed = false;
     private boolean prevRightButtonPressed = false;
+    private boolean prevMiddleButtonPressed = false;
 
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
+    private boolean middleButtonPressed = false;
 
     GLFWScrollCallback scrollCallback;
 
@@ -143,6 +145,8 @@ public class Mouse {
             return;
         }
 
+        double oldDisplVecX = displVec.x;
+        double oldDisplVecY = displVec.y;
 
         displVec.x = 0;
         displVec.y = 0;
@@ -151,19 +155,26 @@ public class Mouse {
         double deltay = currentPos.y - previousPos.y;
         boolean rotateX = deltax != 0;
         boolean rotateY = deltay != 0;
-        if (rotateX) {
-            displVec.y = (float) deltax;
-        }
-        if (rotateY) {
-            displVec.x = (float) deltay;
-        }
+     //   if (rotateX) {
+            displVec.x = (float) deltax;
+       // }
+        //if (rotateY) {
+            displVec.y = (float) deltay;
+        //}
 
+        displVec.x += oldDisplVecX;
+        displVec.y += oldDisplVecY;
+
+        displVec.x /= 2.0f;
+        displVec.y /= 2.0f;
 
         prevLeftButtonPressed = leftButtonPressed;
         prevRightButtonPressed = rightButtonPressed;
+        prevMiddleButtonPressed = middleButtonPressed;
 
         leftButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_1) != 0;
         rightButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_2) != 0;
+        middleButtonPressed = glfwGetMouseButton(window.getWindowHandle(), GLFW_MOUSE_BUTTON_3) != 0;
     }
 
     public void showCursor(boolean show) {
@@ -192,6 +203,10 @@ public class Mouse {
         return rightButtonPressed;
     }
 
+    public boolean middleButtonPressed() {
+        return middleButtonPressed;
+    }
+
     public boolean leftButtonJustPressed() {
         
         return leftButtonPressed && !prevLeftButtonPressed;
@@ -199,5 +214,9 @@ public class Mouse {
 
     public boolean rightButtonJustPressed() {
          return rightButtonPressed && !prevRightButtonPressed;
+     }
+
+     public boolean middleButtonJustPressed() {
+         return middleButtonPressed() && !prevMiddleButtonPressed;
      }
 }

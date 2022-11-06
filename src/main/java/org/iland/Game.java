@@ -81,7 +81,7 @@ public class Game implements SceneLoader.IEventHandler {
         // Directional Light
         float lightIntensity = 1.0f;
         Vector3f lightPosition = new Vector3f(-1, 0, 0);
-        sceneLighting.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
+        sceneLighting.addDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
     }
 
     public void shutdown() {
@@ -165,7 +165,7 @@ public class Game implements SceneLoader.IEventHandler {
         sceneRenderer.render(camera,scene, true);
     }
 
-    public Entity preLoadEntityEvent(Map<String, String>properties) {
+    public Entity preLoadEntityEvent(String name, Map<String, String>properties) {
 
         String type = properties.get("p_type");
         if (type != null && type.equals("terrain")) {

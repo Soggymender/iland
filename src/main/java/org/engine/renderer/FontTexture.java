@@ -92,6 +92,7 @@ public class FontTexture {
         g2D.setFont(font);
         fontMetrics = g2D.getFontMetrics();
         g2D.setColor(Color.WHITE);
+
         int startX = 0;
         for (char c : allChars.toCharArray()) {
             CharInfo charInfo = charMap.get(c);

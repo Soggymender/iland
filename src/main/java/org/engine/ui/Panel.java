@@ -8,9 +8,9 @@ import org.engine.core.Rect;
 
 public class Panel extends UiElement {
 
-    public Panel(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot) throws Exception {
+    public Panel(Canvas canvas, Entity parent, Rect rect, float cornerRadius, Rect anchor, Vector2f pivot) throws Exception {
 
-        super(canvas, parent, rect, anchor, pivot);
+        super(canvas, parent, rect, cornerRadius, anchor, pivot);
 
         java.util.Random rand = new java.util.Random();
 

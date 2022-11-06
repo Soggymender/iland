@@ -1,0 +1,9 @@
+begin
+    ckey:jar_owner:take_jar
+    eint:
+    goto:begin
+
+take_jar
+    take:
+    eint:
+    goto:take_jar

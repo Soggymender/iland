@@ -1,0 +1,12 @@
+begin
+    chld:turnip:cook_turnip
+    eint:
+    goto:begin
+
+cook_turnip
+    rinv:turnip
+    akey:guard_offduty
+    star:barrier
+    rcol:
+    star:village_guard
+    dest:dest_fireside

@@ -36,6 +36,9 @@ public class GuiUniformManager implements IUniformManager {
 
         Matrix4f ortho = camera.getViewport().getOrthoProjectionMatrix();
 
+        //Matrix4f ortho = new Matrix4f();
+        //ortho.identity();
+
         // Set ortohtaphic and model matrix for this HUD item
         Matrix4f projModelMatrix = Transform.buildOrthoProjectionModelMatrix(entity, ortho);
         shader.setUniform("projModelMatrix", projModelMatrix);

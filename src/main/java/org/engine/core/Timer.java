@@ -25,4 +25,8 @@ public class Timer {
     public double getLastLoopTime() {
         return lastLoopTime;
     }
+
+    public void flush() {
+        getElapsedTime();
+    }
 }

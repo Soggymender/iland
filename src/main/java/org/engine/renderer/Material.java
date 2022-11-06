@@ -14,6 +14,8 @@ public class Material {
 
     private Texture texture;
     private Shader shader;
+
+    private boolean usesTransparency = false;
 //    private Texture normalMap;
 
     public Material() {
@@ -102,8 +104,12 @@ public class Material {
         this.texture = texture;
     }
 
+    public void setTransparent() {
+        usesTransparency = true;
+    }
+
     public boolean isTransparent() {
-        return (this.diffuseColor.w < 1.0f);
+        return (this.diffuseColor.w < 1.0f) || usesTransparency;
     }
 
     public Shader getShader() { return shader; }

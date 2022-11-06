@@ -27,7 +27,7 @@ public class SkyboxUniformManager implements IUniformManager {
     public void setShaderUniforms(Viewport viewport) {
 
         // Update projection Matrix
-        Matrix4f projectionMatrix = viewport.getProjectionMatrix();
+        Matrix4f projectionMatrix = viewport.getSelectedProjectionMatrix();
         shader.setUniform("projectionMatrix", projectionMatrix);
 
         shader.setUniform("texture_sampler", 0);
@@ -43,7 +43,7 @@ public class SkyboxUniformManager implements IUniformManager {
         viewMatrix.m31(0);
         viewMatrix.m32(0);
 
-        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix);
+        Matrix4f modelViewMatrix = Transform.buildModelViewMatrix(entity, viewMatrix, false);
         shader.setUniform("modelViewMatrix", modelViewMatrix);
         shader.setUniform("ambientLight", scene.getSceneLighting().getAmbientLight());
 

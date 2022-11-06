@@ -22,6 +22,7 @@ public class Entity {
         public boolean renderable = false;
         public boolean visible = true;
         public boolean parentVisible = true;
+        public boolean billboard = false;
 
         protected Flags() {
 
@@ -39,6 +40,7 @@ public class Entity {
     private String name = new String();
 
     private Mesh[] meshes;
+    private int layer = 0;
 
     protected Vector3f position;
     protected Vector3f rotation;
@@ -52,6 +54,9 @@ public class Entity {
 
     protected BoundingBox bBox;
 
+    public boolean requestedParentValid = false;
+    public Entity requestedParent = null;
+    
     public Entity parent;
     public List<Entity> children = null;
 
@@ -60,6 +65,9 @@ public class Entity {
     // oldFlags should be updated each frame. Differences between the two sets indicate change caused by the update.
     public Flags oldFlags = null;
     public Flags flags = null;
+
+    public String stateName = "none";
+    public String requestedStateName = "none";
 
     public Entity() {
 
@@ -110,13 +118,29 @@ public class Entity {
         if (this.parent == null) {
             this.parent = parent;
 
-            this.parent.addChild(this);
+            if (parent != null) {
+                this.parent.addChild(this);
+            }
         } else {
             // If there is already a parent, adopt.
             // Consider how this may impact the scene update.
-//            Entity oldParent = this.parent;
-//            this.parent.removeChild(this);
+            //Entity oldParent = this.parent;
+            this.parent.removeChild(this);
+            this.parent = parent;
+
+            if (parent != null) {
+                this.parent.addChild(this);
+            }
         }
+    }
+
+    public void requestParent(Entity parent) {
+
+        // Changing the parent maintains the scene, but puts the entity in a new position
+        // within the scene hierarchy. The scene itself has to detect this itself and apply
+        // the change after the update.
+        requestedParentValid = true;
+        requestedParent = parent;
     }
 
     public void addChild(Entity child) {
@@ -148,6 +172,14 @@ public class Entity {
         return parent.findRoot();
     }
 
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+    
     public Vector3f getPosition() {
         return position;
     }
@@ -357,5 +389,13 @@ public class Entity {
                 support = other;
             }
         }
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void requestState(String state) {
+        requestedStateName = state;
     }
 }

@@ -39,6 +39,7 @@ public class HeightMapMesh {
         float incz = getZLength() / (height - 1);
 
         List<Float> positions = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
         List<Float> textCoords = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
 
@@ -52,6 +53,11 @@ public class HeightMapMesh {
 
                 positions.add(currentHeight); //y
                 positions.add(STARTZ + row * incz); //z
+
+                colors.add(1.0f);
+                colors.add(1.0f);
+                colors.add(1.0f);
+                colors.add(1.0f);
 
                 // Set texture coordinates
                 textCoords.add((float) textInc * (float) col / (float) width);
@@ -75,10 +81,11 @@ public class HeightMapMesh {
             }
         }
         float[] posArr = Utilities.listToArray(positions);
+        float[] colArr = Utilities.listToArray(colors);
         int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         float[] normalsArr = calcNormals(posArr, width, height);
-        this.mesh = new Mesh(Mesh.TRIANGLES, posArr, textCoordsArr, normalsArr, indicesArr);
+        this.mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normalsArr, indicesArr);
         Material material = new Material(texture, 0.0f);
         mesh.setMaterial(material);
     }

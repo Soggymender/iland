@@ -1,0 +1,58 @@
+begin
+    talk:I'm Lou, master of the diviner's guild.
+
+check_retire
+    chld:ros:retire
+    talk:what brings you here?
+    eint:
+    goto:check_retire
+
+retire
+    talk:A release from service? you look a bit young to be retiring already, but we are low on members at the moment.
+    rinv:ros
+    talk:guild membership requires administration of a test.
+    talk:find two sources of water and return with proof.
+    eint:
+
+check_either_water
+    chld:clean_water_jar:accept_clean_water
+    chld:dirty_water_jar:accept_dirty_water
+    talk:how is the test going?
+    eint:
+    goto:check_either_water
+
+accept_clean_water
+    talk:ah yes, this clean water will work perfectly.
+    rinv:clean_water_jar
+    eint:
+
+check_dirty_water
+    chld:dirty_water_jar:passed_test
+    talk:you are half way done.
+    eint:
+    goto:check_dirty_water
+
+accept_dirty_water
+    talk:this dirty water should do the trick.
+    rinv:dirty_water_jar
+    eint:
+
+check_clean_water
+    chld:clean_water_jar:passed_test
+    talk:you are half way done.
+    eint:
+    goto:check_clean_water
+
+passed_test
+    rinv:clean_water_jar
+    rinv:dirty_water_jar
+    talk:so, you found both of the village water sources. that officially makes you the newest member of the diviner's guild!. 
+    talk:did you notice how low the water levels are? The priest will want to talk to you about that.
+    akey:diviner
+    talk:but as for me, I should be getting back to my chores.
+    eint:
+
+doing_laundry
+    talk:i should be getting back to my chores. Dirty socks don't boil themselves you know.
+    eint:
+    goto:doing_laundry

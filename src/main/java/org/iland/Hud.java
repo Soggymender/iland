@@ -32,9 +32,9 @@ public class Hud {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
 
         canvas = new Canvas(window, new Vector2f(720, 480));
-        bPanel = new Panel(canvas,  canvas, new Rect(0, 0, -100, -100, true), new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
-        new Button(canvas, bPanel, new Rect(100, 100, 100, 30),      new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
-        new Panel(canvas,  bPanel, new Rect(-100, 100, 100, 50),     new Rect(1, 0, 1, 0, true), new Vector2f(1, 0));
+        bPanel = new Panel(canvas,  canvas, new Rect(0, 0, -100, -100, true), 0, new Rect(0, 0, 1, 1),       new Vector2f(0, 0));
+        new Button(canvas, bPanel, new Rect(100, 100, 100, 30), 0,     new Rect(0, 0, 0, 0),       new Vector2f(0, 0), "test words in a tiny button", fontTexture);
+        new Panel(canvas,  bPanel, new Rect(-100, 100, 100, 50), 0,    new Rect(1, 0, 1, 0, true), new Vector2f(1, 0));
 
         // Setup a text box.
         fpsText = new Text(canvas, canvas, new Rect(5, -5, 100, 20), new Rect(0, 1, 0, 1, true), new Vector2f(0, 1), "0.0", fontTexture);;

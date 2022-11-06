@@ -18,12 +18,13 @@ public class Text extends UiElement {
     private String text;
     private final FontTexture fontTexture;
 
-    private boolean xJustifyCenter = true;
+    public boolean xJustifyCenter = true;
+    public boolean yJustifyCenter = true;
     private boolean wordWrap = true;
 
     public Text(Canvas canvas, Entity parent, Rect rect, Rect anchor, Vector2f pivot, String textString, FontTexture fontTexture) throws Exception {
 
-        super(canvas, parent, rect, anchor, pivot);
+        super(canvas, parent, rect, 0, anchor, pivot);
 
         flags.forwardsInput = false;
         flags.acceptsInput = false;
@@ -48,9 +49,11 @@ public class Text extends UiElement {
             Shader defaultGuiShader = shaderCache.getShader("defaultGui");
 
             material.setShader(defaultGuiShader);
+            material.setTransparent();
         }
 
         List<Float> positions = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
         List<Float> textCoords = new ArrayList<>();
         float[] normals   = new float[0];
         List<Integer> indices   = new ArrayList<>();
@@ -78,7 +81,12 @@ public class Text extends UiElement {
             maxLineWidth += charWidth * scale;
         }
 
+        float halfWidth = canvas.workingResolution.x / 2.0f;
+        float halfHeight = canvas.workingResolution.y / 2.0f;
+
+
         float startX = rectTrans.globalRect.xMin;
+        float startY = rectTrans.globalRect.yMin;
 
         // Cannot x center justify if the line is longer than the box can hold.
         // This covers word wrap as well.
@@ -86,7 +94,12 @@ public class Text extends UiElement {
             startX += (maxWidth - maxLineWidth) / 2;
         }
 
-        float startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+        if (yJustifyCenter) {
+            startY = rectTrans.globalRect.yMin + (maxHeight - (texHeight * scale)) / 2;
+        }
+
+        // To screen space.
+        startY = canvas.workingResolution.y - startY;
 
         float depth = getDepth();
 
@@ -103,7 +116,7 @@ public class Text extends UiElement {
                 wordWidth = 0;
 
                 // Pre-emptively calculate whether there's room on another line to wrap to.
-                onLastLine = startY + (2 * texHeight * scale) > rectTrans.globalRect.yMax;
+                onLastLine = startY - (2 * texHeight * scale) < rectTrans.screenRect.yMin;//> rectTrans.globalRect.yMax;
 
                 // Start of a new word. Pre-calculate word wrap.
                 for (int j = i; j < numChars + 1; j++) {
@@ -119,9 +132,9 @@ public class Text extends UiElement {
 
                             // Wrap and continue.
                             startX = rectTrans.globalRect.xMin;
-                            startY += texHeight * scale;
+                            startY -= texHeight * scale;
 
-                            if (startY + texHeight > rectTrans.globalRect.yMax) {
+                            if (startY - texHeight * scale < rectTrans.screenRect.yMin) {
                                 full = true;
                             }
                         }
@@ -145,41 +158,39 @@ public class Text extends UiElement {
             float charWidth = (float) charInfo.getWidth();
 
             // If wrapping didn't happen for whatever reason, and this character doesn't fit, clip it and subsequent letters until a new word starts.
-            if (startX + charInfo.getWidth() * scale <= rectTrans.globalRect.xMax) {
+           // if (startX + charInfo.getWidth() * scale <= rectTrans.globalRect.xMax) {
 
-                if (characters[i] == ' ') {
-                    inWord = false;
-                }
+
 
                 // Build a character tile composed by two triangles
 
                 // Left Top vertex
-                positions.add(startX); // x
-                positions.add(startY); //y
+                positions.add(startX - halfWidth); // x
+                positions.add(startY - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add(charStartX / texWidth);
                 textCoords.add(0.0f);
                 indices.add(i * VERTICES_PER_QUAD);
 
                 // Left Bottom vertex
-                positions.add(startX); // x
-                positions.add(startY + texHeight * scale); //y
+                positions.add(startX - halfWidth); // x
+                positions.add(startY - texHeight * scale - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((float) charStartX / texWidth);
                 textCoords.add(1.0f);
                 indices.add(i * VERTICES_PER_QUAD + 1);
 
                 // Right Bottom vertex
-                positions.add(startX + charWidth * scale); // x
-                positions.add(startY + texHeight * scale); //y
+                positions.add(startX + charWidth * scale - halfWidth); // x
+                positions.add(startY - texHeight * scale - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((charStartX + charWidth) / texWidth);
                 textCoords.add(1.0f);
                 indices.add(i * VERTICES_PER_QUAD + 2);
 
                 // Right Top vertex
-                positions.add(startX + charWidth * scale); // x
-                positions.add(startY); //y
+                positions.add(startX + charWidth * scale - halfWidth); // x
+                positions.add(startY - halfHeight); //y
                 positions.add(depth); //z
                 textCoords.add((charStartX + charWidth) / texWidth);
                 textCoords.add(0.0f);
@@ -188,21 +199,33 @@ public class Text extends UiElement {
                 // Add indices por left top and bottom right vertices
                 indices.add(i * VERTICES_PER_QUAD);
                 indices.add(i * VERTICES_PER_QUAD + 2);
+
+                for (int j = 0; j < 4; j++) {
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                    colors.add(1.0f);
+                }
+            //}
+
+            if (characters[i] == ' ') {
+                inWord = false;
             }
 
             startX += charWidth * scale;
         }
 
         float[] posArr = Utilities.listToArray(positions);
+        float[] colArr = Utilities.listToArray(colors);
         float[] textCoordsArr = Utilities.listToArray(textCoords);
         int[] indicesArr = indices.stream().mapToInt(i->i).toArray();
 
         if (mesh == null) {
-            mesh = new Mesh(Mesh.TRIANGLES, posArr, textCoordsArr, normals, indicesArr);
+            mesh = new Mesh(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normals, indicesArr);
             setMesh(mesh);
             mesh.setMaterial(material);
         } else {
-            mesh.set(Mesh.TRIANGLES,posArr, textCoordsArr, normals, indicesArr);
+            mesh.set(Mesh.TRIANGLES, Mesh.SHADE_DEFAULT, posArr, colArr, textCoordsArr, normals, indicesArr);
         }
         
         return mesh;
@@ -241,6 +264,6 @@ public class Text extends UiElement {
      //   }
 
         buildMesh();
-        getMesh().getMaterial().setDiffuseColor(new Vector4f(1, 1, 1, 1));
+        getMesh().getMaterial().setDiffuseColor(new Vector4f(0, 0, 0, 0.7f));
     }
 }

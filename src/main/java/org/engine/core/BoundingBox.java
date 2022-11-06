@@ -11,6 +11,11 @@ public class BoundingBox {
         max = new Vector3f();
     }
 
+    public BoundingBox(BoundingBox other) {
+        min = new Vector3f(other.min);
+        max = new Vector3f(other.max);
+    }
+
     public void reset() {
         min.zero();
         max.zero();

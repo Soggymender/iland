@@ -17,6 +17,7 @@ public class Window {
 
     private long windowHandle;
 
+    private boolean focused;
     private boolean resized;
     private boolean vSync;
 
@@ -25,6 +26,7 @@ public class Window {
         this.width = width;
         this.height = height;
         this.vSync = vSync;
+        this.focused = false;
         this.resized = true; // It was created so it resized from nothing.
 
         initialize();
@@ -60,6 +62,10 @@ public class Window {
             this.width = width;
             this.height = height;
             this.setResized(true);
+        });
+
+        glfwSetWindowFocusCallback(windowHandle, (window, focused) -> {
+            this.setFocused(focused);
         });
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
@@ -139,6 +145,14 @@ public class Window {
 
     public void setResized(boolean resized) {
         this.resized = resized;
+    }
+
+    public boolean isFocused() {
+        return focused;
+    }
+
+    public void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
     public boolean isvSync() {

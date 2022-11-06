@@ -1,0 +1,19 @@
+begin
+    talk:oh, hello. how'd you get down here?
+    talk:This is the village cistern. dirty water filters through the ground, and by the time it reaches the well below, it's clean. Pretty neat huh.
+
+loop
+    chld:wellhouse_key:found
+    talk:I lost a key down here the other day while making repairs to the well rope.
+    talk:It's got to be here somewhere.
+    eint:
+    goto:loop
+
+found
+    talk:oh! you found the wellhouse key! that's great!
+    talk:while you're here, i could actually use a hand. when the well rope broke the bucket fell to the bottom of the well.
+
+bucket
+    talk:would you mind going down there and fetching it for me? the service ladder is up in the wellhouse.
+    eint:
+    goto:bucket

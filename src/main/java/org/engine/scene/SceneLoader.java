@@ -26,7 +26,7 @@ public class SceneLoader {
 
     public interface IEventHandler {
         
-        public Entity preLoadEntityEvent(Map<String, String>properties);
+        public Entity preLoadEntityEvent(String name, Map<String, String>properties);
         public void postLoadEntityEvent(Entity entity, Map<String, String>properties);
     }
 
@@ -34,7 +34,7 @@ public class SceneLoader {
 
         AIScene aiScene = aiImportFile(resourcePath, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
         if (aiScene == null) {
-            String error = aiGetErrorString();
+            //String error = aiGetErrorString();
             return;
             //throw new Exception(error);
         }
@@ -94,13 +94,15 @@ public class SceneLoader {
             // Engine types.
 
             String p_type = properties.get("p_type");
-            if (p_type != null && p_type == "terrain") {
+            if (p_type != null && p_type.equals("terrain")) {
 
-                Entity entity = eventHandler.preLoadEntityEvent(properties);
-                entity.setName(name.dataString().toLowerCase());
+                String entityName = name.dataString().toLowerCase();
+
+                Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
+                entity.setName(entityName);
                 entity.setParent(sceneRoot);
                 
-                Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                Mesh[] meshes = parseMesh(aiScene, aiNode, materials, properties);
                 
                 entity.setMeshes(meshes);
 
@@ -109,12 +111,16 @@ public class SceneLoader {
 
                 // Game types.
 
+                // Blender makes similar names unique by adding .001 etc. Strip it.
+                String entityName = name.dataString().toLowerCase().split("\\.")[0];
+
                 if (aiNode.mNumMeshes() > 0) {
-                    Entity entity = eventHandler.preLoadEntityEvent(properties);
-                    entity.setName(name.dataString().toLowerCase());
+
+                    Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
+                    entity.setName(entityName);
                     entity.setParent(sceneRoot);
 
-                    Mesh[] meshes = parseMesh(aiScene, aiNode, materials);
+                    Mesh[] meshes = parseMesh(aiScene, aiNode, materials, properties);
                     entity.setMeshes(meshes);
 
                     Matrix4f transform = toMatrix(aiNode.mTransformation());
@@ -128,24 +134,28 @@ public class SceneLoader {
                     eventHandler.postLoadEntityEvent(entity, properties); 
                 } else {
 
-                    Entity entity = eventHandler.preLoadEntityEvent(properties);
+                    Entity entity = eventHandler.preLoadEntityEvent(entityName, properties);
 
-                    if (entity == null) {
-                        entity = new Entity();
-                    }
-
-                    entity.setName(name.dataString().toLowerCase());
-                    entity.setParent(sceneRoot);
-
-                    Matrix4f transform = toMatrix(aiNode.mTransformation());
-                    Vector3f position = new Vector3f();
+                    // If etity is null, the game got all it needs out of the properties.
                     
-                    transform.getTranslation(position);
-                    position.div(100);
+                    //if (entity == null) {
+                    //    entity = new Entity();
+                    //}
 
-                    entity.setPosition(position);
+                    if (entity != null) {
+                        entity.setName(entityName);
+                        entity.setParent(sceneRoot);
 
-                    eventHandler.postLoadEntityEvent(entity, properties);
+                        Matrix4f transform = toMatrix(aiNode.mTransformation());
+                        Vector3f position = new Vector3f();
+                        
+                        transform.getTranslation(position);
+                        position.div(100);
+
+                        entity.setPosition(position);
+
+                        eventHandler.postLoadEntityEvent(entity, properties);
+                    }
                 }
             }
         }
@@ -165,10 +175,10 @@ public class SceneLoader {
             throw new Exception(error);
         }
 
-        return parseMesh(aiScene, texturesDir);
+        return parseMesh(aiScene, texturesDir, null);
     }
 
-    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials) {
+    public static Mesh[] parseMesh(AIScene aiScene, AINode aiNode, List<Material> materials, Map<String, String>properties) {
 
         int numMeshes = aiNode.mNumMeshes();
         IntBuffer aiMeshes = aiNode.mMeshes();
@@ -177,7 +187,7 @@ public class SceneLoader {
 
             int meshIndex = aiMeshes.get(i);
             AIMesh aiMesh = AIMesh.create(aiScene.mMeshes().get(meshIndex));
-            Mesh mesh = processMesh(aiMesh, materials);
+            Mesh mesh = processMesh(aiMesh, materials, properties);
             meshes[i] = mesh;
         }
 
@@ -185,7 +195,7 @@ public class SceneLoader {
     }
 
 
-    public static Mesh[] parseMesh(AIScene aiScene, String texturesDir) throws Exception {
+    public static Mesh[] parseMesh(AIScene aiScene, String texturesDir, Map<String, String>properties) throws Exception {
 
         int numMaterials = aiScene.mNumMaterials();
         PointerBuffer aiMaterials = aiScene.mMaterials();
@@ -200,7 +210,7 @@ public class SceneLoader {
         Mesh[] meshes = new Mesh[numMeshes];
         for (int i = 0; i < numMeshes; i++) {
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-            Mesh mesh = processMesh(aiMesh, materials);
+            Mesh mesh = processMesh(aiMesh, materials, properties);
             meshes[i] = mesh;
         }
 
@@ -244,13 +254,14 @@ public class SceneLoader {
             specular = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
         }
 
-        Material material = new Material(ambient, diffuse, specular, 1.0f);
+        Material material = new Material(ambient, diffuse, specular, 0.0f);
         material.setTexture(texture);
         materials.add(material);
     }
 
-    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
+    private static Mesh processMesh(AIMesh aiMesh, List<Material> materials, Map<String, String>properties) {
         List<Float> vertices = new ArrayList<>();
+        List<Float> colors = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
@@ -258,11 +269,24 @@ public class SceneLoader {
         BoundingBox bbox = new BoundingBox();
 
         processVertices(aiMesh, vertices, bbox);
+        processColors(aiMesh, colors);
         processNormals(aiMesh, normals);
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh = new Mesh(Mesh.TRIANGLES, Utilities.listToArray(vertices),
+        int shadeType = Mesh.SHADE_DEFAULT;
+
+        if (properties != null) {
+        
+            String p_shade = properties.get("p_shade");
+            if (p_shade != null && p_shade.equals("outline")) {
+                shadeType = Mesh.SHADE_OUTLINE;
+            }
+        }
+
+        Mesh mesh = new Mesh(Mesh.TRIANGLES, shadeType,
+                Utilities.listToArray(vertices),
+                Utilities.listToArray(colors),
                 Utilities.listToArray(textures),
                 Utilities.listToArray(normals),
                 Utilities.listIntToArray(indices),
@@ -278,6 +302,19 @@ public class SceneLoader {
         mesh.setMaterial(material);
 
         return mesh;
+    }
+
+    private static void processColors(AIMesh aiMesh, List<Float> colors) {
+
+        AIVector3D.Buffer aiVertices = aiMesh.mVertices();
+        while (aiVertices.remaining() > 0) {
+            AIVector3D aiVertex = aiVertices.get();
+
+            colors.add(1.0f);
+            colors.add(1.0f);
+            colors.add(1.0f);
+            colors.add(1.0f);
+        }       
     }
 
     private static void processVertices(AIMesh aiMesh, List<Float> vertices, BoundingBox bbox) {

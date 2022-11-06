@@ -1,0 +1,17 @@
+begin
+    talk:welcome to the jar shop! did you hear about our sale?
+    talk:it's buy one, get one 100% off. also, for new customers we have a limited time $0 down, $0 payments for 6 months plan on your first jar...
+    talk:we're able to keep our prices so low because we don't operate on commision.
+    talk:so... can I interest you in a jar?
+    eint:
+    talk:excellent! remember, the payments on this baby won't kick in for 6 months so you have plenty of time to get situated financially.
+    talk:and, with our buy one get one 100% off sale, you actually walk out of here today with TWO jars. Not bad!
+    talk:hey, you must have been shopping our flyers! smart!
+    talk:well, enjoy your new jars, now you just need to find something to put in them.
+    akey:jar_owner
+    eint:
+
+sold_out
+    talk:it looks like you bought our last two jars.
+    eint:
+    goto:sold_out
