@@ -1,6 +1,9 @@
 # iland
 java lwjgl 3 engine and test "games"
 
+DISCLAIMER
+Please note that iland is an after-hours side project. Due to time limitations it does not fully reflect my technical abilities. Though in terms of a very minimalist engine, I'm overal happy with how it is structured, especially the scene management, scene loading, and basic quest-scripting implementations. "Minimalist" is the key word throughout. As an architect I strongly prefer data separation, and limitation of system interdependency.
+
 
 GENERAL
 The project currently consists of three packages: engine, iland, and tiland.
